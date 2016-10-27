@@ -34,6 +34,9 @@ import java.util.List;
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener {
+    /**
+     * 主页面
+     */
     private ViewPager mViewPager;
     private static final int FRAGMENTS_IN_VIEW_PAGER = 5;
     private long firstTimeOfExit = 0;

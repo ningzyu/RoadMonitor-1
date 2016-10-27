@@ -41,6 +41,9 @@ import rx.Observable;
  * @author Michael Zhao
  */
 public class AlertFragment extends BaseListFragment<AlertData> {
+    /**\
+     * 警告——fragment页
+     */
     private List<SimpleItem> mListLeft = new ArrayList<>();
     private List<SimpleItem> mListRight = new ArrayList<>();
     private SimpleListAdapter mAdapter;

@@ -33,7 +33,9 @@ import com.sxhxjy.roadmonitor.util.Utils;
  * @author Michael Zhao
  */
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
-
+    /**
+     * 登录页
+     */
     public ImageView imageViewQQ;
     public ImageView imageViewWechat;
     public ImageView imageViewWeibo;

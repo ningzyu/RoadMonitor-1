@@ -29,6 +29,9 @@ import java.util.List;
  * @author Michael Zhao
  */
 public class DataAnalysisFragment extends BaseFragment {
+    /**\
+     * 数据分析——fragment页
+     */
     private CountDownTimer mTimer;
 
     @Nullable
