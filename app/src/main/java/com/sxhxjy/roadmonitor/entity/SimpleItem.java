@@ -1,11 +1,13 @@
 package com.sxhxjy.roadmonitor.entity;
 
+import java.io.Serializable;
+
 /**
  * 2016/9/18
  *
  * @author Michael Zhao
  */
-public class SimpleItem {
+public class SimpleItem implements Serializable {
     String id;
     String title;
     boolean checked;

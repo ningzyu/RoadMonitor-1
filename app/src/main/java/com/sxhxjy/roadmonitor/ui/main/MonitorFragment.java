@@ -205,14 +205,14 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
             mTimer.cancel();
         LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
         lineChartView.getLines().clear();
-        mTimer = new CountDownTimer(100000, 1000) {
+        mTimer = new CountDownTimer(100000, 10000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 for (final SimpleItem simpleItem : mListLeft) {
                     if (simpleItem.isChecked()) {
                         codeId = simpleItem.getCode();
-                        long interval = 10000;
-                        if (timeId.equals("0")) interval = 10000;
+                        long interval = 1000000;
+                        if (timeId.equals("0")) interval = 1000000;
                         getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis() - interval, System.currentTimeMillis()), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {

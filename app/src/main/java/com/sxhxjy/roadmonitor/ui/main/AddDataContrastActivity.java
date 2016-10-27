@@ -105,7 +105,6 @@ public class AddDataContrastActivity extends BaseActivity {
                             MyLinearLayout myLinearLayout = (MyLinearLayout) view;
                             myLinearLayout.setContent(aType[which]);
                             mTypeList.get(which).setChecked(true);
-                            code = mTypeList.get(which).getCode();
                             title = mTypeList.get(which).getTitle();
                             dialog.dismiss();
                         }
