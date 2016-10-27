@@ -78,4 +78,8 @@ public class MyLinearLayout extends LinearLayout {
     public void setContent(CharSequence content) {
         tvContent.setText(content);
     }
+
+    public String getContent()  {
+        return tvContent.getText().toString();
+    }
 }

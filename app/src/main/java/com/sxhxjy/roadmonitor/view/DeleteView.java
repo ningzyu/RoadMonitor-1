@@ -45,4 +45,8 @@ public class DeleteView extends LinearLayout implements View.OnClickListener {
     public void onClick(View v) {
         mContainer.removeView(this);
     }
+
+    public String getContent() {
+        return textView.getText().toString();
+    }
 }

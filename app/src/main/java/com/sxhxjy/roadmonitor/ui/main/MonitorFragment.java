@@ -59,8 +59,9 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     private FilterTreeAdapter filterTreeAdapter;
     private CountDownTimer mTimer;
     private String codeId;
+    private String timeId = "0";
 
-    // multiple position clicked
+    // filter item clicked
     private View.OnClickListener simpleListListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -89,12 +90,13 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 } else {
                     mAdapter.getListData().get(p).setChecked(!mAdapter.getListData().get(p).isChecked());
                 }
-            } else {
+            } else { // time filter
                 for (SimpleItem simpleItem : mAdapter.getListData()) {
                     simpleItem.setChecked(false);
                 }
                 mAdapter.getListData().get(p).setChecked(true);
                 mFilterList.setVisibility(View.GONE);
+                getChartData();
             }
 
 
@@ -131,9 +133,9 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         mFilterTitleLeft = (TextView) view.findViewById(R.id.filter_left);
         mFilterTitleRight = (TextView) view.findViewById(R.id.filter_right);
 
-        mListRight.add(new SimpleItem("", "最近一天", false));
-        mListRight.add(new SimpleItem("", "最近一周", false));
-        mListRight.add(new SimpleItem("", "最近一月", false));
+        mListRight.add(new SimpleItem("0", "最近一天", false));
+        mListRight.add(new SimpleItem("1", "最近一周", false));
+        mListRight.add(new SimpleItem("2", "最近一月", false));
 
         mFilterTitleLeft.setOnClickListener(this);
         mFilterTitleRight.setOnClickListener(this);
@@ -209,7 +211,9 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 for (final SimpleItem simpleItem : mListLeft) {
                     if (simpleItem.isChecked()) {
                         codeId = simpleItem.getCode();
-                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis() - 10000, System.currentTimeMillis()), new MySubscriber<List<RealTimeData>>() {
+                        long interval = 10000;
+                        if (timeId.equals("0")) interval = 10000;
+                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis() - interval, System.currentTimeMillis()), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
                                 LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);

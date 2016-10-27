@@ -1,6 +1,10 @@
 package com.sxhxjy.roadmonitor.ui.main;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -11,7 +15,13 @@ import android.widget.ImageView;
 
 import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.base.BaseFragment;
+import com.sxhxjy.roadmonitor.base.MySubscriber;
+import com.sxhxjy.roadmonitor.entity.RealTimeData;
+import com.sxhxjy.roadmonitor.entity.SimpleItem;
 import com.sxhxjy.roadmonitor.util.ActivityUtil;
+import com.sxhxjy.roadmonitor.view.LineChartView;
+
+import java.util.List;
 
 /**
  * 2016/9/26
@@ -19,6 +29,8 @@ import com.sxhxjy.roadmonitor.util.ActivityUtil;
  * @author Michael Zhao
  */
 public class DataAnalysisFragment extends BaseFragment {
+    private CountDownTimer mTimer;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,7 +47,8 @@ public class DataAnalysisFragment extends BaseFragment {
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                ActivityUtil.startActivityForResult(getActivity(), AddDataContrastActivity.class);
+                Intent intent = new Intent(getActivity(), AddDataContrastActivity.class);
+                startActivityForResult(intent, 1000);
                 return true;
             }
         });
@@ -51,4 +64,39 @@ public class DataAnalysisFragment extends BaseFragment {
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {
+            if (mTimer != null)
+                mTimer.cancel();
+            LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
+            lineChartView.getLines().clear();
+            mTimer = new CountDownTimer(100000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                    getMessage(getHttpService().getRealTimeData(data.getStringExtra("code"), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
+                        @Override
+                        protected void onMyNext(List<RealTimeData> realTimeDatas) {
+                            LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
+                            lineChartView.addPoints(LineChartView.convert(realTimeDatas), data.getStringExtra("title"), Color.MAGENTA);
+                        }
+                    });
+
+
+                }
+
+                @Override
+                public void onFinish() {
+
+                }
+            };
+            mTimer.start();
+        }
+    }
+
+    private void getChartData() {
+
+    }
 }

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -23,8 +24,11 @@ import com.sxhxjy.roadmonitor.util.ActivityUtil;
 import com.sxhxjy.roadmonitor.view.DeleteView;
 import com.sxhxjy.roadmonitor.view.MyLinearLayout;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 2016/9/29
@@ -39,8 +43,12 @@ public class AddDataContrastActivity extends BaseActivity {
     private LinearLayout timeContent;
     private String[] aLocation;
     private List<SimpleItem> mLocationList = new ArrayList<>();
-    private List<SimpleItem> mTypeList = new ArrayList<SimpleItem>();
+    private List<SimpleItem> mTypeList = new ArrayList<>();
     private String[] aType;
+    private String code;
+//    private ArrayList<>
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
+    private String title;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,7 +60,17 @@ public class AddDataContrastActivity extends BaseActivity {
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                ActivityUtil.finishActivityWithResult(AddDataContrastActivity.this, -1, null);
+                Bundle b = new Bundle();
+                DeleteView myLinearLayout = (DeleteView) timeContent.getChildAt(0);
+                String[] strings = myLinearLayout.getContent().split("  ----  ");
+                b.putString("code", code);
+                b.putString("title", title);
+                b.putLong("start", simpleDateFormat.parse(strings[0], new ParsePosition(0)).getTime());
+                b.putLong("end", simpleDateFormat.parse(strings[1], new ParsePosition(0)).getTime());
+
+                Intent data = new Intent();
+                setResult(RESULT_OK, data);
+                finish();
                 return true;
             }
         });
@@ -63,86 +81,105 @@ public class AddDataContrastActivity extends BaseActivity {
     }
 
     public void monitorType(final View view) {
-        getMessage(getHttpService().getMonitorTypeTree(), new MySubscriber<List<MonitorTypeTree>>() {
-            @Override
-            protected void onMyNext(List<MonitorTypeTree> monitorTypeTrees) {
-                for (MonitorTypeTree monitorTypeTree : monitorTypeTrees) {
-                    if (monitorTypeTree.getChildrenPoint() != null) {
-                        for (MonitorTypeTree.ChildrenPointBean childrenPointBean : monitorTypeTree.getChildrenPoint()) {
-                            mTypeList.add(new SimpleItem(childrenPointBean.getId(), childrenPointBean.getName(), false));
+        if (mTypeList.isEmpty()) {
+            getMessage(getHttpService().getMonitorTypeTree(), new MySubscriber<List<MonitorTypeTree>>() {
+                @Override
+                protected void onMyNext(List<MonitorTypeTree> monitorTypeTrees) {
+                    for (MonitorTypeTree monitorTypeTree : monitorTypeTrees) {
+                        if (monitorTypeTree.getChildrenPoint() != null) {
+                            for (MonitorTypeTree.ChildrenPointBean childrenPointBean : monitorTypeTree.getChildrenPoint()) {
+                                mTypeList.add(new SimpleItem(childrenPointBean.getId(), childrenPointBean.getName(), false));
+                            }
                         }
+
                     }
 
-                }
-
-                aType = new String[mTypeList.size()];
-                for (int i = 0; i < mTypeList.size(); i++) {
-                    aType[i] = mTypeList.get(i).getTitle();
-                }
-
-                new AlertDialog.Builder(AddDataContrastActivity.this).setTitle("选择监测因素").setSingleChoiceItems(aType, 0, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        MyLinearLayout myLinearLayout = (MyLinearLayout) view;
-                        myLinearLayout.setContent(aType[which]);
-                        dialog.dismiss();
+                    aType = new String[mTypeList.size()];
+                    for (int i = 0; i < mTypeList.size(); i++) {
+                        aType[i] = mTypeList.get(i).getTitle();
                     }
-                }).create().show();
+
+                    new AlertDialog.Builder(AddDataContrastActivity.this).setTitle("选择监测因素").setSingleChoiceItems(aType, 0, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            MyLinearLayout myLinearLayout = (MyLinearLayout) view;
+                            myLinearLayout.setContent(aType[which]);
+                            mTypeList.get(which).setChecked(true);
+                            code = mTypeList.get(which).getCode();
+                            title = mTypeList.get(which).getTitle();
+                            dialog.dismiss();
+                        }
+                    }).create().show();
 
 
-            }
-        });
-
-
+                }
+            });
+        } else {
+            new AlertDialog.Builder(AddDataContrastActivity.this).setTitle("选择监测因素").setSingleChoiceItems(aType, 0, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    MyLinearLayout myLinearLayout = (MyLinearLayout) view;
+                    myLinearLayout.setContent(aType[which]);
+                    mTypeList.get(which).setChecked(true);
+                    dialog.dismiss();
+                }
+            }).create().show();
+        }
     }
 
     public void monitorLocation(final View view) {
         if (!mLocationList.isEmpty()) {
-            final boolean[] aTypeChecked = new boolean[]{true, false, false};
-
-            new AlertDialog.Builder(AddDataContrastActivity.this).setTitle("选择监测点位置").setMultiChoiceItems(aLocation, aTypeChecked, new DialogInterface.OnMultiChoiceClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                    mLocationList.get(which).setChecked(isChecked);
-                }
-            }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    StringBuilder sb = new StringBuilder();
-                    int checked = 0;
-                    for (int i = 0; i < aTypeChecked.length; i++) {
-                        if (aTypeChecked[i]) {
-                            checked++;
-                            sb.append(aLocation[i]).append("  ");
-                        }
-                    }
-                    MyLinearLayout myLinearLayout = (MyLinearLayout) view;
-                    myLinearLayout.setContent(sb.toString());
-                    if (checked > 1) {
-                        addTimeSingle.setVisibility(View.VISIBLE);
-                        addTimeMultiple.setVisibility(View.GONE);
-                    } else {
-                        addTimeSingle.setVisibility(View.GONE);
-                        addTimeMultiple.setVisibility(View.VISIBLE);
-                    }
-                }
-            }).create().show();
+            showDialogPosition(view);
         } else {
-
-            getMessage(getHttpService().getPositions(MyApplication.getMyApplication().getSharedPreference().getString("stationId", ""), MyApplication.getMyApplication().getSharedPreference().getString("gid", "")), new MySubscriber<List<MonitorPosition>>() {
-                @Override
-                protected void onMyNext(List<MonitorPosition> monitorPositions) {
-                    aLocation = new String[monitorPositions.size()];
-                    int i = 0;
-                    for (MonitorPosition position : monitorPositions) {
-                        mLocationList.add(new SimpleItem(position.getId(), position.getName(), false));
-                        aLocation[i++] = position.getName();
-                    }
-
+            for (SimpleItem item :mTypeList) {
+                if (item.isChecked()) {
+                    getMessage(getHttpService().getPositions(item.getId(), MyApplication.getMyApplication().getSharedPreference().getString("gid", "")), new MySubscriber<List<MonitorPosition>>() {
+                        @Override
+                        protected void onMyNext(List<MonitorPosition> monitorPositions) {
+                            aLocation = new String[monitorPositions.size()];
+                            int i = 0;
+                            for (MonitorPosition position : monitorPositions) {
+                                mLocationList.add(new SimpleItem(position.getId(), position.getName(), false));
+                                aLocation[i++] = position.getName();
+                            }
+                            showDialogPosition(view);
+                        }
+                    });
                 }
-            });
-
+            }
         }
+    }
+
+    private void showDialogPosition(final View view) {
+        final boolean[] aTypeChecked = new boolean[]{true, false, false};
+
+        new AlertDialog.Builder(AddDataContrastActivity.this).setTitle("选择监测点位置").setMultiChoiceItems(aLocation, aTypeChecked, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                mLocationList.get(which).setChecked(isChecked);
+            }
+        }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                StringBuilder sb = new StringBuilder();
+                int checked = 0;
+                for (int i = 0; i < aTypeChecked.length; i++) {
+                    if (aTypeChecked[i]) {
+                        checked++;
+                        sb.append(aLocation[i]).append("  ");
+                    }
+                }
+                MyLinearLayout myLinearLayout = (MyLinearLayout) view;
+                myLinearLayout.setContent(sb.toString());
+                if (checked > 1) {
+                    addTimeSingle.setVisibility(View.VISIBLE);
+                    addTimeMultiple.setVisibility(View.GONE);
+                } else {
+                    addTimeSingle.setVisibility(View.GONE);
+                    addTimeMultiple.setVisibility(View.VISIBLE);
+                }
+            }
+        }).create().show();
     }
 
     public void timeStart(View view) {

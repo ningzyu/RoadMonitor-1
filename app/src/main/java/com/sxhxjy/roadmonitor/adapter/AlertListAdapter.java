@@ -54,9 +54,12 @@ public class AlertListAdapter extends RecyclerView.Adapter<AlertListAdapter.View
 
         if (mList.get(position).getConfirmInfo() == null) {
             holder.isConfirmed.setText("未确认");
+            holder.isConfirmed.setBackgroundDrawable(mFragment.getResources().getDrawable(R.drawable.round_rectangle_red_stroke));
         } else {
             holder.isConfirmed.setText("已确认");
+            holder.isConfirmed.setBackgroundDrawable(mFragment.getResources().getDrawable(R.drawable.round_rectangle_keycolor_stroke));
         }
+        holder.level.setText(mList.get(position).getLevel());
         holder.location.setText(mList.get(position).getAlarmContent());
         holder.reason.setText(mList.get(position).getGenerationReason());
         holder.date.setText(sdf.format(new Date(mList.get(position).getStime())) + "--" + sdf.format(new Date(mList.get(position).getEtime())));
