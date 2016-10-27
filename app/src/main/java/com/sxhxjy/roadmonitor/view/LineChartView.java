@@ -31,7 +31,7 @@ import java.util.Random;
  */
 public class LineChartView extends View {
     private static final int DELAY = 1000;
-    private static final int POINTS_COUNT = 16;
+    private static final int POINTS_COUNT = 1000;
     private static final int OFFSET = 60;
     private static final int OFFSET_LEGEND = 40;
     private static final int LEGEND_WIDTH= 70;
@@ -206,8 +206,11 @@ public class LineChartView extends View {
     }
 
     public static List<MyPoint> convert(List<RealTimeData> list) {
+
         List<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
+            if (points.size() == POINTS_COUNT)
+                points.remove(0);
             points.add(new MyPoint(realTimeData.getSaveTime(), (long) realTimeData.getX()));
         }
         return points;

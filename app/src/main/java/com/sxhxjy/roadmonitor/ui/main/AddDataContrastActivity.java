@@ -82,7 +82,7 @@ public class AddDataContrastActivity extends BaseActivity {
 
     public void monitorType(final View view) {
         if (mTypeList.isEmpty()) {
-            getMessage(getHttpService().getMonitorTypeTree(), new MySubscriber<List<MonitorTypeTree>>() {
+            getMessage(getHttpService().getMonitorTypeTree(MyApplication.getMyApplication().getSharedPreference().getString("gid","")), new MySubscriber<List<MonitorTypeTree>>() {
                 @Override
                 protected void onMyNext(List<MonitorTypeTree> monitorTypeTrees) {
                     for (MonitorTypeTree monitorTypeTree : monitorTypeTrees) {

@@ -212,7 +212,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                     if (simpleItem.isChecked()) {
                         codeId = simpleItem.getCode();
                         long interval = 1000000;
-                        if (timeId.equals("0")) interval = 1000000;
+                        if (timeId.equals("0")) interval = 1000 * 3600 * 12;
                         getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis() - interval, System.currentTimeMillis()), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
@@ -233,7 +233,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     }
 
     private void getTypeTree(){
-        getMessage(getHttpService().getMonitorTypeTree(), new MySubscriber<List<MonitorTypeTree>>() {
+        getMessage(getHttpService().getMonitorTypeTree(MyApplication.getMyApplication().getSharedPreference().getString("gid","")), new MySubscriber<List<MonitorTypeTree>>() {
             @Override
             protected void onMyNext(List<MonitorTypeTree> monitorTypeTrees) {
                 for (MonitorTypeTree monitorTypeTree : monitorTypeTrees) {

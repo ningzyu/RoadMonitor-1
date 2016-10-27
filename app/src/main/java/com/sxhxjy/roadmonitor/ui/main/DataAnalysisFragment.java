@@ -21,6 +21,7 @@ import com.sxhxjy.roadmonitor.entity.SimpleItem;
 import com.sxhxjy.roadmonitor.util.ActivityUtil;
 import com.sxhxjy.roadmonitor.view.LineChartView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,7 +63,9 @@ public class DataAnalysisFragment extends BaseFragment {
         left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActivityUtil.startActivityForResult(getActivity(), AddDataCorrelationActivity.class);
+                Intent intent = new Intent(getActivity(), AddDataCorrelationActivity.class);
+                startActivityForResult(intent, 1001);
+
             }
         });
     }
@@ -70,6 +73,8 @@ public class DataAnalysisFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        // data contrast
         if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {
             if (mTimer != null)
                 mTimer.cancel();
@@ -97,9 +102,49 @@ public class DataAnalysisFragment extends BaseFragment {
             };
             mTimer.start();
         }
+
+        // data correlation
+        /**
+         *  b.putSerializable("positionItems", positionItems);
+         b.putSerializable("positionItemsCorrelation", positionItemsCorrelation);
+         b.putString("title", title);
+         b.putString("titleCorrelation", titleCorrelation);
+         b.putLong("start", simpleDateFormat.parse(startTime, new ParsePosition(0)).getTime());
+         b.putLong("end", simpleDateFormat.parse(endTime, new ParsePosition(0)).getTime());
+         */
+        if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
+            final ArrayList<SimpleItem> positionItems = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItems");
+            ArrayList<SimpleItem> positionItemsCorrelation = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItemsCorrelation");
+            if (mTimer != null)
+                mTimer.cancel();
+            LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
+            lineChartView.getLines().clear();
+            mTimer = new CountDownTimer(100000, 10000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    for (SimpleItem item : positionItems) {
+                        getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
+                            @Override
+                            protected void onMyNext(List<RealTimeData> realTimeDatas) {
+                                LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
+                                lineChartView.addPoints(LineChartView.convert(realTimeDatas), data.getStringExtra("title"), Color.MAGENTA);
+                            }
+                        });
+                    }
+
+
+
+                }
+
+                @Override
+                public void onFinish() {
+
+                }
+            };
+            mTimer.start();
+
+
+        }
     }
 
-    private void getChartData() {
-
-    }
 }

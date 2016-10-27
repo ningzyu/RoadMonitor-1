@@ -68,7 +68,7 @@ public interface HttpService {
     Observable<HttpResponse<Monitor>> getMonitor(@Query("id") String id);
 
     @GET("points/pointTreeList")
-    Observable<HttpResponse<List<MonitorTypeTree>>> getMonitorTypeTree();
+    Observable<HttpResponse<List<MonitorTypeTree>>> getMonitorTypeTree(@Query("groupId") String groupId);
 
     @GET("alarm/getAlermFilter")
     Observable<HttpResponse<AlertTree>> getAlertTree();
