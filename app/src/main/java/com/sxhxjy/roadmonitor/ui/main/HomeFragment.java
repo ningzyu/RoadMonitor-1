@@ -22,7 +22,9 @@ import com.tencent.tencentmap.mapsdk.map.TencentMap;
  */
 
 public class HomeFragment extends BaseFragment {
-
+    /**\
+     * 首页——fragment页
+     */
     private MapView mapview;
 
     @Nullable

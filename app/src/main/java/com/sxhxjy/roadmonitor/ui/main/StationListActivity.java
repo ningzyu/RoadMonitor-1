@@ -39,7 +39,6 @@ public class StationListActivity extends BaseActivity {
                 .add(R.id.container, new StationListFragment()).commit();
     }
 
-
     @Override
     public void onBackPressed() {
 

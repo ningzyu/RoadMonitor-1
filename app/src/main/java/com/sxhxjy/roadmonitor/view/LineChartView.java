@@ -150,7 +150,7 @@ public class LineChartView extends View {
             }
         }
 
-        // draw y
+        
         mPaint.setColor(getResources().getColor(R.color.default_color));
         mPaint.setStrokeWidth(2);
         canvas.drawLine(0, 0, 0, - yAxisLength, mPaint);

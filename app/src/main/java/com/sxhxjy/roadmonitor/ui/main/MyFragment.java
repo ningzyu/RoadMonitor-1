@@ -16,6 +16,9 @@ import com.sxhxjy.roadmonitor.base.BaseFragment;
  */
 
 public class MyFragment extends BaseFragment {
+    /**\
+     * 我的——fragment页
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
