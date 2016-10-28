@@ -104,14 +104,7 @@ public class DataAnalysisFragment extends BaseFragment {
         }
 
         // data correlation
-        /**
-         *  b.putSerializable("positionItems", positionItems);
-         b.putSerializable("positionItemsCorrelation", positionItemsCorrelation);
-         b.putString("title", title);
-         b.putString("titleCorrelation", titleCorrelation);
-         b.putLong("start", simpleDateFormat.parse(startTime, new ParsePosition(0)).getTime());
-         b.putLong("end", simpleDateFormat.parse(endTime, new ParsePosition(0)).getTime());
-         */
+
         if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
             final ArrayList<SimpleItem> positionItems = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItems");
             ArrayList<SimpleItem> positionItemsCorrelation = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItemsCorrelation");

@@ -114,7 +114,9 @@ public class AddDataCorrelationActivity extends BaseActivity {
                             aLocation = new String[monitorPositions.size()];
                             int i = 0;
                             for (MonitorPosition position : monitorPositions) {
-                                mLocationList.add(new SimpleItem(position.getId(), position.getName(), false));
+                                SimpleItem simpleItem = new SimpleItem(position.getId(), position.getName(), false);
+                                simpleItem.setCode(position.code);
+                                mLocationList.add(simpleItem);
                                 aLocation[i++] = position.getName();
                             }
                             showDialogPosition(view);
