@@ -27,7 +27,7 @@ import java.util.List;
 
 /**
  * Main activity
- *
+ * <p>
  * Git:https://github.com/michaelzhaofuning/RoadMonitor.git
  *
  * @author Michael Zhao
@@ -205,7 +205,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     public void onPageScrolled(int i, float v, int i1) {
 
     }
-
     @Override
     public void onPageSelected(int i) {
         switch (i) {

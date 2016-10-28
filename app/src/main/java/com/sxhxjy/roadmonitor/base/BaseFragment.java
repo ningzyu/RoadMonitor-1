@@ -36,12 +36,12 @@ public class BaseFragment extends Fragment {
 
 
     protected Toolbar mToolbar;
-
+    //定义标题栏
     public void initToolBar(View view, String title, boolean canBack) {
         mToolbar = (Toolbar) view.findViewById(R.id.tool_bar);
         if (mToolbar != null) {
             mToolbar.setVisibility(View.VISIBLE);
-            mToolbar.setBackgroundResource(R.color.colorPrimary);
+            mToolbar.setBackgroundResource(R.color.colorPrimary);//背景色
             TextView mTitle = (TextView) mToolbar.findViewById(R.id.toolbar_title);
             mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
             if (title != null && mTitle != null) mTitle.setText(title);
@@ -52,6 +52,7 @@ public class BaseFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         getActivity().onBackPressed();
+
                     }
                 });
             }
