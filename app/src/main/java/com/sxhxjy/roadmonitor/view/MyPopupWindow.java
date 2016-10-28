@@ -16,7 +16,9 @@ import com.sxhxjy.roadmonitor.base.BaseActivity;
  * @author Michael Zhao
  */
 public class MyPopupWindow extends PopupWindow implements PopupWindow.OnDismissListener {
-
+    /**
+     * 弹出窗口
+     */
 
     protected BaseActivity mActivity;
     protected View view;

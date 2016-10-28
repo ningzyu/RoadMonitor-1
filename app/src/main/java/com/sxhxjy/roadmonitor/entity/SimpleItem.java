@@ -8,6 +8,9 @@ import java.io.Serializable;
  * @author Michael Zhao
  */
 public class SimpleItem implements Serializable {
+    /**
+     * 下拉单选列表实体类
+     */
     String id;
     String title;
     boolean checked;
@@ -29,7 +32,6 @@ public class SimpleItem implements Serializable {
         this.title = title;
         this.checked = checked;
     }
-
     public String getId() {
         return id;
     }

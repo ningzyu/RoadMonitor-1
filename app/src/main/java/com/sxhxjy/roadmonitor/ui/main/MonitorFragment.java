@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -47,7 +46,9 @@ import java.util.List;
  */
 
 public class MonitorFragment extends BaseFragment implements View.OnClickListener {
-
+    /**
+     * 实时数据-fragment
+     */
     public List<FilterTreeAdapter.Group> groupsOfFilterTree = new ArrayList<>();
     private String stationId;
     private TextView mTextViewCenter;
