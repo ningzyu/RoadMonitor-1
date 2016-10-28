@@ -31,7 +31,7 @@ import java.util.Random;
  */
 public class LineChartView extends View {
     private static final int DELAY = 1000;
-    private static final int POINTS_COUNT = 1000;
+    private static final int POINTS_COUNT = 20;
     private static final int OFFSET = 60;
     private static final int OFFSET_LEGEND = 40;
     private static final int LEGEND_WIDTH= 70;
@@ -44,7 +44,7 @@ public class LineChartView extends View {
     private Random mRandom = new Random(47);
     private int xAxisLength, yAxisLength;
     private long xStart, xEnd;
-    private int yStart, yEnd;
+    private float yStart, yEnd;
     private float firstPointX, nextPointX, firstPointY, nextPointY;
 
     private long BASE_TIME = System.currentTimeMillis();
@@ -106,9 +106,9 @@ public class LineChartView extends View {
         for (MyLine line : myLines) {
             xEnd = Collections.max(line.points, comparatorX).time;
             xStart = Collections.min(line.points, comparatorX).time;
-            yEnd = (int) Collections.max(line.points, comparatorY).value;
-//        yStart = (int) Collections.min(mList, comparatorY).value;
-            yStart = 0;
+            yEnd = Collections.max(line.points, comparatorY).value;
+            yStart = Collections.min(line.points, comparatorY).value;
+//            yStart = 0;
         }
 
         mPaint.setTextSize(20);
@@ -160,11 +160,11 @@ public class LineChartView extends View {
         canvas.drawText(yStart + "", - OFFSET_SCALE, 0, mPaint);
         for (int j = 0; j < SPLIT_TO; j++) {
             float y = yStart + (yEnd - yStart) / SPLIT_TO * (j + 1);
-            float yInView = y / (yEnd - yStart) * yAxisLength;
+            float yInView = (y - yStart) / (yEnd - yStart) * yAxisLength;
             yInView = -yInView; // reverse
 
             mPaint.setStrokeWidth(1);
-            canvas.drawText((int) y + "", - OFFSET_SCALE, yInView, mPaint);
+            canvas.drawText(y + "", - OFFSET_SCALE, yInView, mPaint);
             mPaint.setStrokeWidth(2);
             canvas.drawLine(0, yInView, OFFSET_SCALE, yInView, mPaint);
 
@@ -190,8 +190,9 @@ public class LineChartView extends View {
             rectF.top = OFFSET;
             rectF.left = 0;
             rectF.bottom = rectF.top + OFFSET_LEGEND - 20;
-            rectF.right = OFFSET_LEGEND * 3;
+            rectF.right = rectF.left + OFFSET_LEGEND * 3;
             canvas.drawRoundRect(rectF, 2, 2, mPaint);
+            rectF.left += rectF.width() + OFFSET_LEGEND * 3;
             mPaint.setColor(getResources().getColor(R.color.default_text_color));
             mPaint.setStrokeWidth(0.1f);
             mPaint.setTextAlign(Paint.Align.LEFT);
@@ -211,7 +212,7 @@ public class LineChartView extends View {
         for (RealTimeData realTimeData : list) {
             if (points.size() == POINTS_COUNT)
                 points.remove(0);
-            points.add(new MyPoint(realTimeData.getSaveTime(), (long) realTimeData.getX()));
+            points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getX()));
         }
         return points;
     }
@@ -222,7 +223,7 @@ public class LineChartView extends View {
         for (RealTimeData realTimeData : list) {
             if (points.size() == POINTS_COUNT)
                 points.remove(0);
-            points.add(new MyPoint(realTimeData.getSaveTime(), (long) realTimeData.getY()));
+            points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getY()));
         }
         return points;
     }
@@ -233,7 +234,7 @@ public class LineChartView extends View {
         for (RealTimeData realTimeData : list) {
             if (points.size() == POINTS_COUNT)
                 points.remove(0);
-            points.add(new MyPoint(realTimeData.getSaveTime(), (long) realTimeData.getZ()));
+            points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getZ()));
         }
         return points;
     }
@@ -252,19 +253,25 @@ public class LineChartView extends View {
     private Comparator<MyPoint> comparatorY =  new Comparator<MyPoint>() {
         @Override
         public int compare(MyPoint lhs, MyPoint rhs) {
-            return (int) (lhs.value - rhs.value);
+            if (lhs.value - rhs.value > 0)
+                return 1;
+            if (lhs.value - rhs.value < 0)
+                return -1;
+            if (lhs.value - rhs.value == 0)
+                return 0;
+            return 0;
         }
     };
 
 
     public static class MyPoint {
-        MyPoint(long time, long value) {
+        MyPoint(long time, float value) {
             this.time = time;
             this.value = value;
         }
 
         long time;
-        long value;
+        float value;
 
     }
 

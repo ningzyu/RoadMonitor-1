@@ -212,21 +212,23 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                     if (simpleItem.isChecked()) {
                         codeId = simpleItem.getCode();
                         long interval = 100000;
-                        if (timeId.equals("0")) interval = 1000 * 3600 * 24 * 2;
+                        if (timeId.equals("0")) interval = 1000 * 4000;
                         final long finalInterval = interval;
 
-                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis() - finalInterval, System.currentTimeMillis() - finalInterval / 2), new MySubscriber<List<RealTimeData>>() {
+                        getMessage(getHttpService().getRealTimeData("BD-1", System.currentTimeMillis() - finalInterval, System.currentTimeMillis()), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
 
-                                if (realTimeDatas.get(0).getY() == 0) { // y is null
+                                if (realTimeDatas.get(0).getX() != 0) {
                                     if (mChartsContainer.getChildAt(0) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView0 = (LineChartView) mChartsContainer.getChildAt(0).findViewById(R.id.chart);
                                     lineChartView0.getLines().clear();
                                     lineChartView0.addPoints(LineChartView.convert(realTimeDatas), simpleItem.getTitle(), Color.MAGENTA);
                                     getParamInfo(mChartsContainer.getChildAt(0).findViewById(R.id.param_info));
-                                } else {
+                                }
+
+                                if (realTimeDatas.get(0).getY() != 0) {
                                     if (mChartsContainer.getChildAt(1) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView1 = (LineChartView) mChartsContainer.getChildAt(1).findViewById(R.id.chart);
