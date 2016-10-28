@@ -130,7 +130,7 @@ public abstract class BaseListFragment<I> extends BaseFragment implements SwipeR
         mContainer = (LinearLayout) view.findViewById(R.id.container);
         mGlobalContainer = (FrameLayout) view.findViewById(R.id.list_container);
 
-        init();
+        init();//初始化控件
         initRecyclerView();
     }
 

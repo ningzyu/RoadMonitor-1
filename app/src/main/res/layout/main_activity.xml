@@ -1,82 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <android.support.v4.view.ViewPager android:id="@+id/view_pager"
-               android:layout_width="match_parent"
-               android:layout_height="match_parent" android:layout_above="@+id/nav_footer">
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/nav_footer"></android.support.v4.view.ViewPager>
 
-    </android.support.v4.view.ViewPager>
-
-    <View android:layout_width="match_parent" android:layout_height="1px" android:background="@color/default_color"
-          android:layout_above="@+id/nav_footer" android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_above="@+id/nav_footer"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/default_color" />
 
     <LinearLayout
-            android:orientation="horizontal"
-            android:id="@+id/nav_footer"
-            android:layout_width="match_parent"
-            android:layout_height="52dp" android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true">
+        android:id="@+id/nav_footer"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
         <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" android:layout_weight="1" android:id="@+id/bar0"
-                android:gravity="center">
+            android:id="@+id/bar0"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
             <ImageView
-                    android:id="@+id/imageView_bar0" style="@style/nav_footer_image_view"/>
+                android:id="@+id/imageView_bar0"
+                style="@style/nav_footer_image_view" />
+
             <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="首页"
-                    android:id="@+id/textView_bar0"
-                    android:textSize="@dimen/nav_footer_text_size"/>
+                android:id="@+id/textView_bar0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="首页"
+                android:textSize="@dimen/nav_footer_text_size" />
         </LinearLayout>
-        <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:gravity="center" android:layout_height="fill_parent"
-                      android:layout_weight="1" android:id="@+id/bar1">
+
+        <LinearLayout
+            android:id="@+id/bar1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
             <ImageView
-                    android:id="@+id/imageView_bar1" style="@style/nav_footer_image_view"/>
+                android:id="@+id/imageView_bar1"
+                style="@style/nav_footer_image_view" />
+
             <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="实时数据"
-                    android:id="@+id/textView_bar1"
-                    android:textSize="@dimen/nav_footer_text_size"/>
+                android:id="@+id/textView_bar1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="实时数据"
+                android:textSize="@dimen/nav_footer_text_size" />
         </LinearLayout>
-        <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:gravity="center"
-            android:layout_height="fill_parent" android:layout_weight="1" android:id="@+id/bar2">
+
+        <LinearLayout
+            android:id="@+id/bar2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
             <ImageView
-                android:id="@+id/imageView_bar2" style="@style/nav_footer_image_view"/>
+                android:id="@+id/imageView_bar2"
+                style="@style/nav_footer_image_view" />
+
             <TextView
+                android:id="@+id/textView_bar2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="数据分析"
-                android:id="@+id/textView_bar2"
-                android:textSize="@dimen/nav_footer_text_size"/>
+                android:textSize="@dimen/nav_footer_text_size" />
         </LinearLayout>
-        <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:gravity="center"
-            android:layout_height="fill_parent" android:layout_weight="1" android:id="@+id/bar3">
+
+        <LinearLayout
+            android:id="@+id/bar3"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
             <ImageView
-                android:id="@+id/imageView_bar3" style="@style/nav_footer_image_view"/>
+                android:id="@+id/imageView_bar3"
+                style="@style/nav_footer_image_view" />
+
             <TextView
+                android:id="@+id/textView_bar3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="警告"
-                android:id="@+id/textView_bar3"
-                android:textSize="@dimen/nav_footer_text_size"/>
+                android:textSize="@dimen/nav_footer_text_size" />
         </LinearLayout>
-        <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:gravity="center"
-                      android:layout_height="fill_parent" android:layout_weight="1" android:id="@+id/bar4">
+
+        <LinearLayout
+            android:id="@+id/bar4"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
             <ImageView
-                    android:id="@+id/imageView_bar4" style="@style/nav_footer_image_view"/>
+                android:id="@+id/imageView_bar4"
+                style="@style/nav_footer_image_view" />
+
             <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="我"
-                    android:id="@+id/textView_bar4"
-                    android:textSize="@dimen/nav_footer_text_size"/>
+                android:id="@+id/textView_bar4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="我"
+                android:textSize="@dimen/nav_footer_text_size" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

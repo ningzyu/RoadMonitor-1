@@ -41,7 +41,8 @@ import rx.Observable;
  * @author Michael Zhao
  */
 public class AlertFragment extends BaseListFragment<AlertData> {
-    /**\
+    /**
+     *
      * 警告——fragment页
      */
     private List<SimpleItem> mListLeft = new ArrayList<>();
@@ -173,7 +174,6 @@ public class AlertFragment extends BaseListFragment<AlertData> {
         groups.add(group2);
 
 
-
         getMessage(getHttpService().getAlertTree(), new MySubscriber<AlertTree>() {
             @Override
             protected void onMyNext(AlertTree alertTree) {
@@ -192,7 +192,6 @@ public class AlertFragment extends BaseListFragment<AlertData> {
         });
 
 
-
         filterTreeAdapter = new FilterTreeAdapter(groups);
         expandableListView.setAdapter(filterTreeAdapter);
         expandableListView.expandGroup(0);
@@ -200,9 +199,9 @@ public class AlertFragment extends BaseListFragment<AlertData> {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 
-                    for (SimpleItem simpleItem : groups.get(groupPosition).getList()) {
-                        simpleItem.setChecked(false);
-                    }
+                for (SimpleItem simpleItem : groups.get(groupPosition).getList()) {
+                    simpleItem.setChecked(false);
+                }
 
                 filterTreeAdapter.mGroups.get(groupPosition).getList().get(childPosition).setChecked(true);
                 filterTreeAdapter.notifyDataSetChanged();

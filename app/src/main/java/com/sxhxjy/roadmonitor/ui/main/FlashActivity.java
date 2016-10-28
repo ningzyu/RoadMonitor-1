@@ -20,6 +20,9 @@ import java.util.TimerTask;
  * @author Michael Zhao
  */
 public class FlashActivity extends Activity {
+    /**
+     * 广告页，第一次进入
+     */
     private final long DELAY = 1000;
 
     @Override
