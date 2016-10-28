@@ -216,6 +216,28 @@ public class LineChartView extends View {
         return points;
     }
 
+    public static List<MyPoint> convertY(List<RealTimeData> list) {
+
+        List<MyPoint> points = new ArrayList<>();
+        for (RealTimeData realTimeData : list) {
+            if (points.size() == POINTS_COUNT)
+                points.remove(0);
+            points.add(new MyPoint(realTimeData.getSaveTime(), (long) realTimeData.getY()));
+        }
+        return points;
+    }
+
+    public static List<MyPoint> convertZ(List<RealTimeData> list) {
+
+        List<MyPoint> points = new ArrayList<>();
+        for (RealTimeData realTimeData : list) {
+            if (points.size() == POINTS_COUNT)
+                points.remove(0);
+            points.add(new MyPoint(realTimeData.getSaveTime(), (long) realTimeData.getZ()));
+        }
+        return points;
+    }
+
     public List<MyLine> getLines() {
         return myLines;
     }

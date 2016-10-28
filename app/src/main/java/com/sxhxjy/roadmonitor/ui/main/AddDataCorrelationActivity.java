@@ -65,6 +65,7 @@ public class AddDataCorrelationActivity extends BaseActivity {
                 b.putLong("end", simpleDateFormat.parse(endTime, new ParsePosition(0)).getTime());
 
                 Intent data = new Intent();
+                data.putExtras(b);
                 setResult(RESULT_OK, data);
                 finish();
                 return true;
@@ -142,7 +143,7 @@ public class AddDataCorrelationActivity extends BaseActivity {
     }
 
     private void showDialogPosition(final View view) {
-        final boolean[] aTypeChecked = new boolean[]{true, false, false};
+        final boolean[] aTypeChecked = new boolean[mLocationList.size()];
 
         new AlertDialog.Builder(AddDataCorrelationActivity.this).setTitle("选择监测点位置").setMultiChoiceItems(aLocation, aTypeChecked, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
@@ -195,13 +196,15 @@ public class AddDataCorrelationActivity extends BaseActivity {
                         sb.append(":");
                         sb.append(minute < 10 ? "0" + minute : minute);
                         myLinearLayout.setContent(sb.toString());
+
+                        if (myLinearLayout.getId() == R.id.start_time)
+                            startTime = sb.toString();
+                        else
+                            endTime = sb.toString();
                     }
                 }, 0, 0, true).show();
             }
         }, 2016, 0, 1).show();
-        if (myLinearLayout.getId() == R.id.start_time)
-            startTime = sb.toString();
-        else
-            endTime = sb.toString();
+
     }
 }

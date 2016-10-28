@@ -28,9 +28,9 @@ public class RealTimeData {
     private String xColName;
     private double x;
     private String yColName;
-    private String y;
+    private double y;
     private String zColName;
-    private String z;
+    private double z;
     private String typeCode;
     private String typeValue;
     private String typeUnit;
@@ -84,11 +84,11 @@ public class RealTimeData {
         this.yColName = yColName;
     }
 
-    public String getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(String y) {
+    public void setY(double y) {
         this.y = y;
     }
 
@@ -100,11 +100,11 @@ public class RealTimeData {
         this.zColName = zColName;
     }
 
-    public String getZ() {
+    public double getZ() {
         return z;
     }
 
-    public void setZ(String z) {
+    public void setZ(double z) {
         this.z = z;
     }
 

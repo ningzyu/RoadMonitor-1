@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sxhxjy.roadmonitor.R;
@@ -107,6 +109,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
             mAdapter.notifyDataSetChanged();
         }
     };
+    private LinearLayout mChartsContainer;
 
     @Nullable
     @Override
@@ -129,6 +132,8 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         mTextViewCenter.setOnClickListener(this);
         mTextViewCenter.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(R.mipmap.expand), null);
         mTextViewCenter.setCompoundDrawablePadding(20);
+        mChartsContainer = (LinearLayout) getView().findViewById(R.id.charts_container);
+
 
         mFilterTitleLeft = (TextView) view.findViewById(R.id.filter_left);
         mFilterTitleRight = (TextView) view.findViewById(R.id.filter_right);
@@ -194,30 +199,47 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 return true;
             }
         });
-
-
-        getParamInfo();
-
     }
 
     private void getChartData() {
         if (mTimer != null)
             mTimer.cancel();
-        LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
-        lineChartView.getLines().clear();
         mTimer = new CountDownTimer(100000, 10000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 for (final SimpleItem simpleItem : mListLeft) {
                     if (simpleItem.isChecked()) {
                         codeId = simpleItem.getCode();
-                        long interval = 1000000;
-                        if (timeId.equals("0")) interval = 1000 * 3600 * 12;
-                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis() - interval, System.currentTimeMillis()), new MySubscriber<List<RealTimeData>>() {
+                        long interval = 100000;
+                        if (timeId.equals("0")) interval = 1000 * 3600 * 24 * 2;
+                        final long finalInterval = interval;
+
+                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis() - finalInterval, System.currentTimeMillis() - finalInterval / 2), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
-                                LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
-                                lineChartView.addPoints(LineChartView.convert(realTimeDatas), simpleItem.getTitle(), Color.MAGENTA);
+
+                                if (realTimeDatas.get(0).getY() == 0) { // y is null
+                                    if (mChartsContainer.getChildAt(0) == null)
+                                        getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
+                                    LineChartView lineChartView0 = (LineChartView) mChartsContainer.getChildAt(0).findViewById(R.id.chart);
+                                    lineChartView0.getLines().clear();
+                                    lineChartView0.addPoints(LineChartView.convert(realTimeDatas), simpleItem.getTitle(), Color.MAGENTA);
+                                    getParamInfo(mChartsContainer.getChildAt(0).findViewById(R.id.param_info));
+                                } else {
+                                    if (mChartsContainer.getChildAt(1) == null)
+                                        getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
+                                    LineChartView lineChartView1 = (LineChartView) mChartsContainer.getChildAt(1).findViewById(R.id.chart);
+                                    lineChartView1.getLines().clear();
+                                    lineChartView1.addPoints(LineChartView.convertY(realTimeDatas), simpleItem.getTitle() + " y", Color.MAGENTA);
+                                    getParamInfo(mChartsContainer.getChildAt(1).findViewById(R.id.param_info));
+
+                                    if (mChartsContainer.getChildAt(2) == null)
+                                        getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
+                                    LineChartView lineChartView2 = (LineChartView) mChartsContainer.getChildAt(2).findViewById(R.id.chart);
+                                    lineChartView2.getLines().clear();
+                                    lineChartView2.addPoints(LineChartView.convertY(realTimeDatas), simpleItem.getTitle() + " z", Color.MAGENTA);
+                                    getParamInfo(mChartsContainer.getChildAt(2).findViewById(R.id.param_info));
+                                }
                             }
                         });
                     }
@@ -251,17 +273,17 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         });
     }
 
-    private void getParamInfo() {
+    private void getParamInfo(final View view) {
         getMessage(getHttpService().getParamInfo(stationId), new MySubscriber<ParamInfo>() {
             @Override
             protected void onMyNext(ParamInfo paramInfo) {
-                ((TextView) getView().findViewById(R.id.position)).setText("位置：" + MyApplication.getMyApplication().getSharedPreference().getString("stationName", ""));
-                ((TextView) getView().findViewById(R.id.min)).setText("最小值：" + paramInfo.getXmin() + "");
-                ((TextView) getView().findViewById(R.id.max)).setText("最大值：" + paramInfo.getXmax() + "");
-                ((TextView) getView().findViewById(R.id.threshold1)).setText("一级阈值：" + paramInfo.getxOneThreshold() + "");
-                ((TextView) getView().findViewById(R.id.threshold2)).setText("二级阈值：" + paramInfo.getxTwoThreshold() + "");
-                ((TextView) getView().findViewById(R.id.threshold3)).setText("三级阈值：" + paramInfo.getxThreeThreshold() + "");
-                ((TextView) getView().findViewById(R.id.threshold4)).setText("四级阈值：" + paramInfo.getxFourThreshold() + "");
+                ((TextView) view.findViewById(R.id.position)).setText("位置：" + MyApplication.getMyApplication().getSharedPreference().getString("stationName", ""));
+                ((TextView) view.findViewById(R.id.min)).setText("最小值：" + paramInfo.getXmin() + "");
+                ((TextView) view.findViewById(R.id.max)).setText("最大值：" + paramInfo.getXmax() + "");
+                ((TextView) view.findViewById(R.id.threshold1)).setText("一级阈值：" + paramInfo.getxOneThreshold() + "");
+                ((TextView) view.findViewById(R.id.threshold2)).setText("二级阈值：" + paramInfo.getxTwoThreshold() + "");
+                ((TextView) view.findViewById(R.id.threshold3)).setText("三级阈值：" + paramInfo.getxThreeThreshold() + "");
+                ((TextView) view.findViewById(R.id.threshold4)).setText("四级阈值：" + paramInfo.getxFourThreshold() + "");
 
             }
         });
@@ -274,7 +296,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
             stationId = data.getStringExtra("stationId");
             mTextViewCenter.setText(data.getStringExtra("stationName"));
             cacheStation(stationId, data.getStringExtra("stationName"));
-            getParamInfo();
+            groupsOfFilterTree.clear();
         }
     }
 
