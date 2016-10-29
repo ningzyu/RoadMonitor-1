@@ -21,6 +21,9 @@ import java.util.List;
  */
 
 public class FilterTreeAdapter extends BaseExpandableListAdapter {
+    /**
+     * 抽屉中下拉类表适配器
+     */
     public List<Group> mGroups;
     public FilterTreeAdapter(List<Group> groups) {
         mGroups = groups;

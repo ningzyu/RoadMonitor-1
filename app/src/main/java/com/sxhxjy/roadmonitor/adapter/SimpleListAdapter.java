@@ -21,6 +21,9 @@ import java.util.List;
  * @author Michael Zhao
  */
 public class SimpleListAdapter extends RecyclerView.Adapter<SimpleListAdapter.ViewHolder> {
+    /**
+     * 下拉列表适配器
+     */
     private BaseFragment mFragment;
     private List<SimpleItem> mList;
     private RecyclerView mFilterList;

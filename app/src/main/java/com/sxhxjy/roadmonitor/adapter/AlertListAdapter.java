@@ -3,6 +3,7 @@ package com.sxhxjy.roadmonitor.adapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.DialogPreference;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.base.BaseFragment;
@@ -73,44 +75,70 @@ public class AlertListAdapter extends RecyclerView.Adapter<AlertListAdapter.View
 
     @Override
     public void onClick(View v) {
+        ViewHolder holder=new ViewHolder(v);
+        String isCon= holder.isConfirmed.getText().toString();
         final int p = (int) v.getTag();
+        if (isCon.equals("已确认")){
+            alertDialog = new AlertDialog.Builder(mFragment.getActivity()).setTitle("确定警告信息").
+                    setView(mFragment.getActivity().getLayoutInflater().
+                            inflate(R.layout.dialog_view_alerts, null)).
+                    setNegativeButton("取消", null).setNeutralButton("查看详情", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Bundle b = new Bundle();
+                    b.putString("start", mList.get(p).getStime()+"");
+                    b.putString("end", mList.get(p).getEtime()+"");
+                    b.putString("id", mList.get(p).getId());
+                    ActivityUtil.startActivityForResult(mFragment.getActivity(), AlertDetailActivity.class, b, 100);
+                }
+            }).show();
+            String info=mList.get(p).getConfirmInfo();
+            String arrs[]=info.split(";");//拆分字符串为数组
+            ((TextView) alertDialog.findViewById(R.id.tv_Info)).setText(arrs[0]);
+            ((TextView) alertDialog.findViewById(R.id.tv_content)).setText(arrs[1]);
+            ((TextView) alertDialog.findViewById(R.id.tv_time)).setText(arrs[2]);
+        }else{
+            alertDialog = new AlertDialog.Builder(mFragment.getActivity()).setTitle("确定警告信息").
+                    setView(mFragment.getActivity().getLayoutInflater().
+                            inflate(R.layout.dialog_view_alert, null)).
+                    setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mFragment.getMessage(mFragment.getHttpService().confirmAlertMsg(mList.get(p).getId(), UserManager.getUID(), ((EditText) alertDialog.findViewById(R.id.editText)).getText().toString(), mList.get(p).getStime()+"", mList.get(p).getEtime()+""), new MySubscriber<Object>() {
+                        @Override
+                        public void onNext(Object o) {
+                            mFragment.showToastMsg("确定警告信息成功！");
+                            mList.get(p).setConfirmInfo("");
+                            notifyDataSetChanged();
+                        }
 
-        alertDialog = new AlertDialog.Builder(mFragment.getActivity()).setTitle("确定警告信息").setView(mFragment.getActivity().getLayoutInflater().inflate(R.layout.dialog_view_alert, null)).setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mFragment.getMessage(mFragment.getHttpService().confirmAlertMsg(mList.get(p).getId(), UserManager.getUID(), ((EditText) alertDialog.findViewById(R.id.editText)).getText().toString(), mList.get(p).getStime()+"", mList.get(p).getEtime()+""), new MySubscriber<Object>() {
-                    @Override
-                    public void onNext(Object o) {
-                        mFragment.showToastMsg("确定警告信息成功！");
-                        mList.get(p).setConfirmInfo("");
-                        notifyDataSetChanged();
-                    }
+                        @Override
+                        protected void onMyNext(Object o) {
 
-                    @Override
-                    protected void onMyNext(Object o) {
+                        }
 
-                    }
+                        @Override
+                        public void onError(Throwable e) {
+                            super.onError(e);
+                        }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
-                    }
+                    });
 
-                });
+                }
+            }).setNegativeButton("取消", null).setNeutralButton("查看详情", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Bundle b = new Bundle();
+                    b.putString("start", mList.get(p).getStime()+"");
+                    b.putString("end", mList.get(p).getEtime()+"");
+                    b.putString("id", mList.get(p).getId());
+                    ActivityUtil.startActivityForResult(mFragment.getActivity(), AlertDetailActivity.class, b, 100);
+                }
+            }).create();
+            alertDialog.show();
+            ((EditText) alertDialog.findViewById(R.id.editText)).setText(mList.get(p).getConfirmInfo());
+        }
 
-            }
-        }).setNegativeButton("取消", null).setNeutralButton("查看详情", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Bundle b = new Bundle();
-                b.putString("start", mList.get(p).getStime()+"");
-                b.putString("end", mList.get(p).getEtime()+"");
-                b.putString("id", mList.get(p).getId());
-                ActivityUtil.startActivityForResult(mFragment.getActivity(), AlertDetailActivity.class, b, 100);
-            }
-        }).create();
-        alertDialog.show();
-        ((EditText) alertDialog.findViewById(R.id.editText)).setText(mList.get(p).getConfirmInfo());
 
     }
 

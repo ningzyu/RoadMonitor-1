@@ -47,7 +47,9 @@ import java.util.Random;
  */
 
 public class MonitorFragment extends BaseFragment implements View.OnClickListener {
-
+    /**
+     * 实时数据-fragment
+     */
     public List<FilterTreeAdapter.Group> groupsOfFilterTree = new ArrayList<>();
     private String stationId;
     private TextView mTextViewCenter;
