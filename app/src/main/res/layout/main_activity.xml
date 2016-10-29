@@ -62,7 +62,7 @@
                 android:id="@+id/textView_bar1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="实时数据"
+                android:text="监测项目"
                 android:textSize="@dimen/nav_footer_text_size" />
         </LinearLayout>
 

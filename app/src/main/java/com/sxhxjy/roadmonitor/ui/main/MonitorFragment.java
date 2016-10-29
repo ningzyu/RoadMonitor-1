@@ -66,6 +66,11 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     private String codeId;
     private String timeId = "0";
 
+    // when init is
+    private boolean init = true;
+
+    private ArrayList<RealTimeData> mRealTimes = new ArrayList<>();
+
     // filter item clicked
     private View.OnClickListener simpleListListener = new View.OnClickListener() {
         @Override
@@ -163,9 +168,13 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
             public boolean onMenuItemClick(MenuItem item) {
                 if (groupsOfFilterTree.isEmpty()) getTypeTree();
                 myPopupWindow.show();
+
+                if (mFilterList.getVisibility() == View.VISIBLE)
+                    mFilterList.setVisibility(View.GONE);
                 return true;
             }
         });
+        if (groupsOfFilterTree.isEmpty()) getTypeTree();
 
         myPopupWindow = new MyPopupWindow((BaseActivity) getActivity(), R.layout.popup_window_right);
 
@@ -179,6 +188,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                init = false; // we clicked, init should be false
                 for (FilterTreeAdapter.Group group : filterTreeAdapter.mGroups) {
                     for (SimpleItem simpleItem : group.getList()) {
                         simpleItem.setChecked(false);
@@ -188,17 +198,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
 //                codeId = filterTreeAdapter.mGroups.get(groupPosition).getList().get(childPosition).getId();
                 myPopupWindow.dismiss();
                 filterTreeAdapter.notifyDataSetChanged();
-                getMessage(getHttpService().getPositions(filterTreeAdapter.mGroups.get(groupPosition).getList().get(childPosition).getId(), MyApplication.getMyApplication().getSharedPreference().getString("gid", "")), new MySubscriber<List<MonitorPosition>>() {
-                    @Override
-                    protected void onMyNext(List<MonitorPosition> monitorPositions) {
-                        mListLeft.clear();
-                        for (MonitorPosition position : monitorPositions) {
-                            SimpleItem simpleItem = new SimpleItem(position.getId(), position.getName(), false);
-                            simpleItem.setCode(position.code);
-                            mListLeft.add(simpleItem);
-                        }
-                    }
-                });
+                getLocation(groupPosition, childPosition);
                 return true;
             }
         });
@@ -216,6 +216,8 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         mTimer = new CountDownTimer(100000, 10000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                mRealTimes.clear();
+
                 for (int j = 0; j < mChartsContainer.getChildCount(); j++) {
                     ((LineChartView) mChartsContainer.getChildAt(j).findViewById(R.id.chart)).getLines().clear();
                 }
@@ -230,22 +232,25 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                         getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis(), System.currentTimeMillis() + 1000 * 3600 *24), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
+                                mRealTimes.addAll(realTimeDatas);
 
-                                if (realTimeDatas.get(0).getX() != 0) {
                                     if (mChartsContainer.getChildAt(0) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView0 = (LineChartView) mChartsContainer.getChildAt(0).findViewById(R.id.chart);
                                     lineChartView0.addPoints(LineChartView.convert(realTimeDatas), simpleItem.getTitle(), simpleItem.getColor());
                                     getParamInfo(mChartsContainer.getChildAt(0).findViewById(R.id.param_info));
-                                }
 
-                                if (realTimeDatas.get(0).getY() != 0) {
+
+                                if (realTimeDatas.get(0).getTypeCode() != 1) {
                                     if (mChartsContainer.getChildAt(1) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView1 = (LineChartView) mChartsContainer.getChildAt(1).findViewById(R.id.chart);
                                     lineChartView1.addPoints(LineChartView.convertY(realTimeDatas), simpleItem.getTitle() + " y", simpleItem.getColor());
                                     getParamInfo(mChartsContainer.getChildAt(1).findViewById(R.id.param_info));
 
+
+                                }
+                                if (realTimeDatas.get(0).getTypeCode() == 2) {
                                     if (mChartsContainer.getChildAt(2) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView2 = (LineChartView) mChartsContainer.getChildAt(2).findViewById(R.id.chart);
@@ -266,21 +271,50 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         mTimer.start();
     }
 
+    private void getLocation(int groupPosition, int childPosition) {
+        getMessage(getHttpService().getPositions(filterTreeAdapter.mGroups.get(groupPosition).getList().get(childPosition).getId(), MyApplication.getMyApplication().getSharedPreference().getString("gid", "")), new MySubscriber<List<MonitorPosition>>() {
+            @Override
+            protected void onMyNext(List<MonitorPosition> monitorPositions) {
+                mListLeft.clear();
+                int i = 0;
+                for (MonitorPosition position : monitorPositions) {
+                    SimpleItem simpleItem = new SimpleItem(position.getId(), position.getName(), i++ == 0);
+                    simpleItem.setCode(position.code);
+                    mListLeft.add(simpleItem);
+
+                    if (init)   // if init, we get chart data
+                        getChartData();
+
+                }
+            }
+        });
+    }
+
     private void getTypeTree(){
         getMessage(getHttpService().getMonitorTypeTree(MyApplication.getMyApplication().getSharedPreference().getString("gid","")), new MySubscriber<List<MonitorTypeTree>>() {
             @Override
             protected void onMyNext(List<MonitorTypeTree> monitorTypeTrees) {
+                int i = 0;
+
                 for (MonitorTypeTree monitorTypeTree : monitorTypeTrees) {
                     List<SimpleItem> list = new ArrayList<SimpleItem>();
                     if (monitorTypeTree.getChildrenPoint() != null) {
-                        for (MonitorTypeTree.ChildrenPointBean childrenPointBean : monitorTypeTree.getChildrenPoint()) {
-                            list.add(new SimpleItem(childrenPointBean.getId(), childrenPointBean.getName(), false));
+                        for (MonitorTypeTree.ChildrenPointBean childrenPointBean : monitorTypeTree.getChildrenPoint()) { // first click
+                            list.add(new SimpleItem(childrenPointBean.getId(), childrenPointBean.getName(), i++ == 0));
                         }
                     }
                     FilterTreeAdapter.Group group = new FilterTreeAdapter.Group(list, monitorTypeTree.getName());
                     groupsOfFilterTree.add(group);
                 }
                 filterTreeAdapter.notifyDataSetChanged();
+
+                for (int j = 0; j < groupsOfFilterTree.size(); j++) {
+                    for (int k = 0; k < groupsOfFilterTree.get(j).getList().size(); k++) {
+                        if (groupsOfFilterTree.get(j).getList().get(k).isChecked()) {
+                            getLocation(j, k);
+                        }
+                    }
+                }
             }
         });
     }
@@ -322,7 +356,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 break;
             case R.id.toolbar_left:
                 Bundle b = new Bundle();
-                b.putString("type", codeId);
+                b.putSerializable("data", mRealTimes);
                 ActivityUtil.startActivityForResult(getActivity(), RealTimeDataListActivity.class, b, 100);
                 break;
 

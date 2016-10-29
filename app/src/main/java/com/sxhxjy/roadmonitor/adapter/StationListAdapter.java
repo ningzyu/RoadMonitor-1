@@ -83,34 +83,38 @@ public class StationListAdapter extends RecyclerView.Adapter<StationListAdapter.
     @Override
     public void onClick(View v) {
         int p = (int) v.getTag();
-        if (isStation) {
-            if (mFragment.getActivity().getCallingActivity().getShortClassName().equals(".ui.main.LoginActivity")) {
-                Bundle b = new Bundle();
-                b.putString("stationId", mList.get(p).getId());
-                b.putString("stationName", mList.get(p).getTitle());
-                ActivityUtil.startActivityForResult(mFragment.getActivity(), MainActivity.class, b, 111);
-                mFragment.getActivity().finish();
-            } else {
-                Intent intent = new Intent();
-                intent.putExtra("stationId", mList.get(p).getId());
-                intent.putExtra("stationName", mList.get(p).getTitle());
-                mFragment.getActivity().setResult(Activity.RESULT_OK, intent);
-                mFragment.getActivity().finish();
-            }
-        }
+        if (isStation) { // is station, end
 
-        if (currentGroup.get(p).childrenGroup != null) {
-            mList.clear();
-            for (GroupTree childrenGroup : currentGroup.get(p).childrenGroup) {
-                SimpleItem item = new SimpleItem();
-                item.setTitle(childrenGroup.name);
-                item.setId(childrenGroup.id);
-                mList.add(item);
+
+        } else { // is group, we will traversal
+
+            if (currentGroup.get(p).childrenGroup != null) {
+                mList.clear();
+                for (GroupTree childrenGroup : currentGroup.get(p).childrenGroup) {
+                    SimpleItem item = new SimpleItem();
+                    item.setTitle(childrenGroup.name);
+                    item.setId(childrenGroup.id);
+                    mList.add(item);
+                }
+                currentGroup = currentGroup.get(p).childrenGroup;
+                notifyDataSetChanged();
+            } else {
+//                getStations(mList.get(p).getId());
+
+                if (mFragment.getActivity().getCallingActivity().getShortClassName().equals(".ui.main.LoginActivity")) {
+                    Bundle b = new Bundle();
+                    b.putString("stationId", currentGroup.get(p).id);
+                    b.putString("stationName", currentGroup.get(p).name);
+                    ActivityUtil.startActivityForResult(mFragment.getActivity(), MainActivity.class, b, 111);
+                    mFragment.getActivity().finish();
+                } else {
+                    Intent intent = new Intent();
+                    intent.putExtra("stationId", currentGroup.get(p).id);
+                    intent.putExtra("stationName", currentGroup.get(p).name);
+                    mFragment.getActivity().setResult(Activity.RESULT_OK, intent);
+                    mFragment.getActivity().finish();
+                }
             }
-            currentGroup = currentGroup.get(p).childrenGroup;
-            notifyDataSetChanged();
-        } else {
-            getStations(mList.get(p).getId());
         }
     }
 

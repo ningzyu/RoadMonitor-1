@@ -82,6 +82,8 @@ public class FilterTreeAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        if (mGroups.size() == 0 || mGroups.get(groupPosition).list.size() == 0) return convertView;
+
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.filter_tree_item, parent, false);
         }

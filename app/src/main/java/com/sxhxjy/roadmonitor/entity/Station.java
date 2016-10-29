@@ -83,7 +83,7 @@ public class Station {
      */
 
     public PriDict priDict;
-    public int xmax;
+    public float xmax;
     public Object ymax;
     public Object zmax;
     public Object gid;

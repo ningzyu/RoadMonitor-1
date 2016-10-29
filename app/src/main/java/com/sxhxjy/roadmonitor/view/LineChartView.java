@@ -31,7 +31,7 @@ import java.util.Random;
  */
 public class LineChartView extends View {
     private static final int DELAY = 1000;
-    private static final int POINTS_COUNT = 100;
+    private static final int POINTS_COUNT = 24;
     private static final int OFFSET = 60;
     private static final int OFFSET_LEGEND = 40;
     private static final int LEGEND_WIDTH= 70;

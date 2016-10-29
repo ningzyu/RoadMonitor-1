@@ -26,6 +26,7 @@ import com.sxhxjy.roadmonitor.view.MyLinearLayout;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -185,6 +186,7 @@ public class AddDataCorrelationActivity extends BaseActivity {
 
     public void chooseTime(final MyLinearLayout myLinearLayout) {
         final StringBuilder sb = new StringBuilder();
+        Date date = new Date(System.currentTimeMillis());
 
         new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -210,7 +212,7 @@ public class AddDataCorrelationActivity extends BaseActivity {
                     }
                 }, 0, 0, true).show();
             }
-        }, 2016, 0, 1).show();
+        }, 2016, date.getMonth(), date.getDay()).show();
 
     }
 }

@@ -12,6 +12,7 @@ import com.sxhxjy.roadmonitor.base.BaseListFragment;
 import com.sxhxjy.roadmonitor.base.HttpResponse;
 import com.sxhxjy.roadmonitor.entity.RealTimeData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -29,7 +30,7 @@ public class RealTimeDataListActivity extends BaseActivity {
         setContentView(R.layout.base_activity);
         Fragment f = new RealTimeDataListFragment();
         Bundle b = new Bundle();
-        b.putString("type", getIntent().getStringExtra("type"));
+        b.putSerializable("data", getIntent().getSerializableExtra("data"));
         f.setArguments(b);
         getFragmentManager().beginTransaction()
                 .add(R.id.container, f).commit();
@@ -40,7 +41,10 @@ public class RealTimeDataListActivity extends BaseActivity {
 
         @Override
         public Observable<HttpResponse<List<RealTimeData>>> getObservable() {
-            return getHttpService().getRealTimeData(getArguments().getString("type"), System.currentTimeMillis() - 10000, System.currentTimeMillis());
+            mList.addAll((ArrayList<RealTimeData>) getArguments().getSerializable("data"));
+            mAdapter.notifyDataSetChanged();
+            return null;
+//            return getHttpService().getRealTimeData(getArguments().getString("type"), System.currentTimeMillis() - 10000, System.currentTimeMillis());
         }
 
         @Override

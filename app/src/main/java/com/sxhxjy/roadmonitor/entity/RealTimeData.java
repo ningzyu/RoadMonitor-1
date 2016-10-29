@@ -1,11 +1,13 @@
 package com.sxhxjy.roadmonitor.entity;
 
+import java.io.Serializable;
+
 /**
  * 2016/9/19
  *
  * @author Michael Zhao
  */
-public class RealTimeData {
+public class RealTimeData implements Serializable {
     /**
      * id : 5028586
      * name : 忻报高速边坡1
@@ -31,7 +33,7 @@ public class RealTimeData {
     private double y;
     private String zColName;
     private double z;
-    private String typeCode;
+    private int typeCode;
     private String typeValue;
     private String typeUnit;
     private long saveTime;
@@ -108,11 +110,11 @@ public class RealTimeData {
         this.z = z;
     }
 
-    public String getTypeCode() {
+    public int getTypeCode() {
         return typeCode;
     }
 
-    public void setTypeCode(String typeCode) {
+    public void setTypeCode(int typeCode) {
         this.typeCode = typeCode;
     }
 

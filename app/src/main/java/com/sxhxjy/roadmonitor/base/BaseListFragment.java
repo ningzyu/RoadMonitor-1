@@ -48,7 +48,7 @@ public abstract class BaseListFragment<I> extends BaseFragment implements SwipeR
     protected int mPageIndex = 1;
     protected ArrayList<I> mList = new ArrayList<>();
     protected RelativeLayout mActionBar;
-    public boolean FAKE = true;
+    public boolean FAKE = false;
     private Gson gson = new Gson();
 
     protected SwipeRefreshLayout swipeRefreshLayout;

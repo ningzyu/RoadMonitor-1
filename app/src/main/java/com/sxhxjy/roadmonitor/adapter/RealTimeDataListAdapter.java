@@ -51,7 +51,13 @@ public class RealTimeDataListAdapter extends RecyclerView.Adapter<RealTimeDataLi
         holder.location.setText(mList.get(position).getName());
 
         holder.date.setText(sdf.format(new Date(mList.get(position).getSaveTime())) );
-        holder.value.setText(mList.get(position).getXColName() + ": " + mList.get(position).getX() + mList.get(position).getTypeUnit());
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(mList.get(position).getXColName()).append(": ").append(mList.get(position).getX()).append(mList.get(position).getTypeUnit()).append("  ");
+        if (mList.get(position).getTypeCode() != 1)
+            stringBuilder.append(mList.get(position).getYColName()).append(": ").append(mList.get(position).getY()).append(mList.get(position).getTypeUnit()).append("  ");
+        if (mList.get(position).getTypeCode() == 2)
+            stringBuilder.append(mList.get(position).getZColName()).append(": ").append(mList.get(position).getZ()).append(mList.get(position).getTypeUnit());
+        holder.value.setText(stringBuilder.toString());
     }
 
     @Override
