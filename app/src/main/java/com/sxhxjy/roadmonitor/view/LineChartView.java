@@ -31,7 +31,7 @@ import java.util.Random;
  */
 public class LineChartView extends View {
     private static final int DELAY = 1000;
-    private static final int POINTS_COUNT = 20;
+    private static final int POINTS_COUNT = 100;
     private static final int OFFSET = 60;
     private static final int OFFSET_LEGEND = 40;
     private static final int LEGEND_WIDTH= 70;
@@ -99,15 +99,28 @@ public class LineChartView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.translate(OFFSET, getMeasuredHeight() - OFFSET - OFFSET_LEGEND);
         canvas.drawColor(getResources().getColor(R.color.white));
 
-        if (myLines.isEmpty()) return;
+        if (myLines.isEmpty()) {
+            mPaint.setTextSize(70);
+            mPaint.setColor(Color.GRAY);
+            String emptyHint = "请选择数据源";
+            float width = mPaint.measureText(emptyHint);
+            canvas.drawText(emptyHint, getMeasuredWidth() / 2 - width / 2, getMeasuredHeight() / 2, mPaint);
+            return;
+        }
+
+        canvas.translate(OFFSET, getMeasuredHeight() - OFFSET - OFFSET_LEGEND);
+
+
+        xStart = System.currentTimeMillis() + 1000*3600*60;
+        yEnd = -10000f;
+
         for (MyLine line : myLines) {
-            xEnd = Collections.max(line.points, comparatorX).time;
-            xStart = Collections.min(line.points, comparatorX).time;
-            yEnd = Collections.max(line.points, comparatorY).value;
-            yStart = Collections.min(line.points, comparatorY).value;
+            xEnd = Math.max(Collections.max(line.points, comparatorX).time, xEnd);
+            xStart = Math.min(Collections.min(line.points, comparatorX).time, xStart);
+            yEnd = Math.max(Collections.max(line.points, comparatorY).value, yEnd);
+            yStart = Math.min(Collections.min(line.points, comparatorY).value, yStart);
 //            yStart = 0;
         }
 
@@ -124,12 +137,12 @@ public class LineChartView extends View {
                 nextPointY = -(float) (((double) (myPoint.value - yStart)) / (yEnd - yStart) * yAxisLength);
 
                 mPaint.setColor(line.color);
-                mPaint.setStrokeWidth(10);
+                mPaint.setStrokeWidth(4);
 
                 if (line.points.indexOf(myPoint) != 0) // do not draw line when draw first point !
                     canvas.drawLine(firstPointX, firstPointY, nextPointX, nextPointY, mPaint);
 
-                mPaint.setStrokeWidth(24);
+                mPaint.setStrokeWidth(8);
 
                 if (myPoint.value > ALERT_VALUE) {
                     mPaint.setColor(getResources().getColor(android.R.color.holo_red_light));
@@ -150,7 +163,7 @@ public class LineChartView extends View {
             }
         }
 
-        
+        // draw y
         mPaint.setColor(getResources().getColor(R.color.default_color));
         mPaint.setStrokeWidth(2);
         canvas.drawLine(0, 0, 0, - yAxisLength, mPaint);
@@ -185,14 +198,14 @@ public class LineChartView extends View {
         canvas.drawText(ALERT_VALUE + "", xAxisLength + OFFSET_SCALE, alertY - OFFSET_SCALE, mPaint);
 
         // draw legend
+        rectF.setEmpty();
         for (MyLine myLine : myLines) {
             mPaint.setColor(myLine.color);
             rectF.top = OFFSET;
-            rectF.left = 0;
             rectF.bottom = rectF.top + OFFSET_LEGEND - 20;
             rectF.right = rectF.left + OFFSET_LEGEND * 3;
             canvas.drawRoundRect(rectF, 2, 2, mPaint);
-            rectF.left += rectF.width() + OFFSET_LEGEND * 3;
+            rectF.left += rectF.width() + OFFSET_LEGEND * 4;
             mPaint.setColor(getResources().getColor(R.color.default_text_color));
             mPaint.setStrokeWidth(0.1f);
             mPaint.setTextAlign(Paint.Align.LEFT);

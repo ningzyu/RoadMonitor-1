@@ -150,7 +150,7 @@ public class AddDataContrastActivity extends BaseActivity {
     }
 
     private void showDialogPosition(final View view) {
-        final boolean[] aTypeChecked = new boolean[]{true, false, false};
+        final boolean[] aTypeChecked = new boolean[mLocationList.size()];
 
         new AlertDialog.Builder(AddDataContrastActivity.this).setTitle("选择监测点位置").setMultiChoiceItems(aLocation, aTypeChecked, new DialogInterface.OnMultiChoiceClickListener() {
             @Override

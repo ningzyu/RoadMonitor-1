@@ -12,7 +12,19 @@ public class SimpleItem implements Serializable {
     String title;
     boolean checked;
 
-    String code; // shit
+
+    int color; // to draw line
+
+    String code; // position
+
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
 
     public String getCode() {
         return code;

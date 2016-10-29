@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * 2016/9/29
@@ -106,6 +108,7 @@ public class AddDataCorrelationActivity extends BaseActivity {
         if (!mLocationList.isEmpty()) {
             showDialogPosition(view);
         } else {
+            final Random random = new Random();
             for (SimpleItem item :mTypeList) {
                 if (item.isChecked()) {
                     getMessage(getHttpService().getPositions(item.getId(), MyApplication.getMyApplication().getSharedPreference().getString("gid", "")), new MySubscriber<List<MonitorPosition>>() {
@@ -116,6 +119,7 @@ public class AddDataCorrelationActivity extends BaseActivity {
                             for (MonitorPosition position : monitorPositions) {
                                 SimpleItem simpleItem = new SimpleItem(position.getId(), position.getName(), false);
                                 simpleItem.setCode(position.code);
+                                simpleItem.setColor(Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
                                 mLocationList.add(simpleItem);
                                 aLocation[i++] = position.getName();
                             }

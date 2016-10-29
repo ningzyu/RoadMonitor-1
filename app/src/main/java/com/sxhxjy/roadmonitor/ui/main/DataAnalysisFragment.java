@@ -107,20 +107,27 @@ public class DataAnalysisFragment extends BaseFragment {
 
         if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
             final ArrayList<SimpleItem> positionItems = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItems");
-            ArrayList<SimpleItem> positionItemsCorrelation = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItemsCorrelation");
+            final ArrayList<SimpleItem> positionItemsCorrelation = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItemsCorrelation");
             if (mTimer != null)
                 mTimer.cancel();
-            LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
-            lineChartView.getLines().clear();
-            mTimer = new CountDownTimer(100000, 10000) {
+            final LineChartView lineChartView =  (LineChartView) getView().findViewById(R.id.chart);
+            mTimer = new CountDownTimer(30000, 10000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
-                    for (SimpleItem item : positionItems) {
+                    lineChartView.getLines().clear();
+                    for (final SimpleItem item : positionItems) {
                         getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
-                                LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
-                                lineChartView.addPoints(LineChartView.convert(realTimeDatas), data.getStringExtra("title"), Color.MAGENTA);
+                                lineChartView.addPoints(LineChartView.convert(realTimeDatas), data.getStringExtra("title") + item.getTitle(), item.getColor());
+                            }
+                        });
+                    }
+                    for (final SimpleItem item : positionItemsCorrelation) {
+                        getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
+                            @Override
+                            protected void onMyNext(List<RealTimeData> realTimeDatas) {
+                                lineChartView.addPoints(LineChartView.convert(realTimeDatas), data.getStringExtra("title")+ item.getTitle(), item.getColor());
                             }
                         });
                     }

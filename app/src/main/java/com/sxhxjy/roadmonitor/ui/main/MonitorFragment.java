@@ -38,6 +38,7 @@ import com.sxhxjy.roadmonitor.view.MyPopupWindow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * 2016/9/26
@@ -59,6 +60,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     private MyPopupWindow myPopupWindow;
     private FilterTreeAdapter filterTreeAdapter;
     private CountDownTimer mTimer;
+    private Random random = new Random(47);
     private String codeId;
     private String timeId = "0";
 
@@ -201,19 +203,29 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     }
 
     private void getChartData() {
+
         if (mTimer != null)
             mTimer.cancel();
+
+        for (SimpleItem simpleItem : mListLeft) {
+            simpleItem.setColor(Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+        }
+
         mTimer = new CountDownTimer(100000, 10000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                for (int j = 0; j < mChartsContainer.getChildCount(); j++) {
+                    ((LineChartView) mChartsContainer.getChildAt(j).findViewById(R.id.chart)).getLines().clear();
+                }
                 for (final SimpleItem simpleItem : mListLeft) {
                     if (simpleItem.isChecked()) {
                         codeId = simpleItem.getCode();
                         long interval = 100000;
-                        if (timeId.equals("0")) interval = 1000 * 4000;
+                        if (timeId.equals("0"))
+                            interval = 1000;
                         final long finalInterval = interval;
 
-                        getMessage(getHttpService().getRealTimeData("BD-1", System.currentTimeMillis() - finalInterval, System.currentTimeMillis()), new MySubscriber<List<RealTimeData>>() {
+                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis(), System.currentTimeMillis() + 1000 * 3600 *24), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
 
@@ -221,8 +233,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                     if (mChartsContainer.getChildAt(0) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView0 = (LineChartView) mChartsContainer.getChildAt(0).findViewById(R.id.chart);
-                                    lineChartView0.getLines().clear();
-                                    lineChartView0.addPoints(LineChartView.convert(realTimeDatas), simpleItem.getTitle(), Color.MAGENTA);
+                                    lineChartView0.addPoints(LineChartView.convert(realTimeDatas), simpleItem.getTitle(), simpleItem.getColor());
                                     getParamInfo(mChartsContainer.getChildAt(0).findViewById(R.id.param_info));
                                 }
 
@@ -230,15 +241,13 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                     if (mChartsContainer.getChildAt(1) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView1 = (LineChartView) mChartsContainer.getChildAt(1).findViewById(R.id.chart);
-                                    lineChartView1.getLines().clear();
-                                    lineChartView1.addPoints(LineChartView.convertY(realTimeDatas), simpleItem.getTitle() + " y", Color.MAGENTA);
+                                    lineChartView1.addPoints(LineChartView.convertY(realTimeDatas), simpleItem.getTitle() + " y", simpleItem.getColor());
                                     getParamInfo(mChartsContainer.getChildAt(1).findViewById(R.id.param_info));
 
                                     if (mChartsContainer.getChildAt(2) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView2 = (LineChartView) mChartsContainer.getChildAt(2).findViewById(R.id.chart);
-                                    lineChartView2.getLines().clear();
-                                    lineChartView2.addPoints(LineChartView.convertY(realTimeDatas), simpleItem.getTitle() + " z", Color.MAGENTA);
+                                    lineChartView2.addPoints(LineChartView.convertZ(realTimeDatas), simpleItem.getTitle() + " z", simpleItem.getColor());
                                     getParamInfo(mChartsContainer.getChildAt(2).findViewById(R.id.param_info));
                                 }
                             }
