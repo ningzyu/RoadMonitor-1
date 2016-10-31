@@ -44,7 +44,12 @@ public interface HttpService {
     ////  general
     /////////////////////////////////////////////////////////////////////////
 
-
+    /**
+     *
+     * 首页返回地图上面监测项的接口（get）:
+     http://192.168.1.172:8088/ClearPro/web/points/findAppRootPoint?groupId=4028812c57b6993b0157b6aca4410004
+     参数：groupId：组织id
+     */
 // TODO: home
 //    @GET("points/findAppRootPoint")
 //    Observable<HttpResponse<List<>>> getHomeData(@Query("groupId") String groupId);
