@@ -88,7 +88,7 @@ public class DataAnalysisFragment extends BaseFragment {
                         @Override
                         protected void onMyNext(List<RealTimeData> realTimeDatas) {
                             LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
-                            lineChartView.addPoints(LineChartView.convert(realTimeDatas), data.getStringExtra("title"), Color.MAGENTA);
+                            lineChartView.addPoints(lineChartView.convert(realTimeDatas), data.getStringExtra("title"), Color.MAGENTA);
                         }
                     });
 
@@ -119,7 +119,7 @@ public class DataAnalysisFragment extends BaseFragment {
                         getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
-                                lineChartView.addPoints(LineChartView.convert(realTimeDatas), data.getStringExtra("title") + item.getTitle(), item.getColor());
+                                lineChartView.addPoints(lineChartView.convert(realTimeDatas), data.getStringExtra("title") + item.getTitle(), item.getColor());
                             }
                         });
                     }
@@ -127,7 +127,7 @@ public class DataAnalysisFragment extends BaseFragment {
                         getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
-                                lineChartView.addPoints(LineChartView.convert(realTimeDatas), data.getStringExtra("title")+ item.getTitle(), item.getColor());
+                                lineChartView.addPoints(lineChartView.convert(realTimeDatas), data.getStringExtra("title")+ item.getTitle(), item.getColor());
                             }
                         });
                     }

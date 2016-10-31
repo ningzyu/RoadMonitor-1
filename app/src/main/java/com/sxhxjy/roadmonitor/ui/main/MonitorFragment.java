@@ -237,7 +237,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                     if (mChartsContainer.getChildAt(0) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView0 = (LineChartView) mChartsContainer.getChildAt(0).findViewById(R.id.chart);
-                                    lineChartView0.addPoints(LineChartView.convert(realTimeDatas), simpleItem.getTitle(), simpleItem.getColor());
+                                    lineChartView0.addPoints(lineChartView0.convert(realTimeDatas), simpleItem.getTitle(), simpleItem.getColor());
                                     getParamInfo(mChartsContainer.getChildAt(0).findViewById(R.id.param_info));
 
 
@@ -245,7 +245,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                     if (mChartsContainer.getChildAt(1) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView1 = (LineChartView) mChartsContainer.getChildAt(1).findViewById(R.id.chart);
-                                    lineChartView1.addPoints(LineChartView.convertY(realTimeDatas), simpleItem.getTitle() + " y", simpleItem.getColor());
+                                    lineChartView1.addPoints(lineChartView1.convertY(realTimeDatas), simpleItem.getTitle() + " y", simpleItem.getColor());
                                     getParamInfo(mChartsContainer.getChildAt(1).findViewById(R.id.param_info));
 
 
@@ -254,7 +254,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                     if (mChartsContainer.getChildAt(2) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView2 = (LineChartView) mChartsContainer.getChildAt(2).findViewById(R.id.chart);
-                                    lineChartView2.addPoints(LineChartView.convertZ(realTimeDatas), simpleItem.getTitle() + " z", simpleItem.getColor());
+                                    lineChartView2.addPoints(lineChartView2.convertZ(realTimeDatas), simpleItem.getTitle() + " z", simpleItem.getColor());
                                     getParamInfo(mChartsContainer.getChildAt(2).findViewById(R.id.param_info));
                                 }
                             }

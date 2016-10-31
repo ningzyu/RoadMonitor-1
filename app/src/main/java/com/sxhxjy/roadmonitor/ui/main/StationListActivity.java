@@ -60,7 +60,7 @@ public class StationListActivity extends BaseActivity {
 
         @Override
         public void getMessage() {
-            getHttpService().getGroups(new Gson().fromJson(CacheManager.getInstance().get("login"), LoginData.class).getGid()).subscribeOn(Schedulers.io())
+            getHttpService().getGroups(new Gson().fromJson(CacheManager.getInstance().get("login"), LoginData.class).getUser().getGid()).subscribeOn(Schedulers.io())
                     .unsubscribeOn(Schedulers.io())
                     .map(new Func1<HttpResponse<List<GroupTree>>, List<GroupTree>>() {
                         @Override

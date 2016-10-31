@@ -44,6 +44,10 @@ public final class UserManager {
         return MyApplication.getMyApplication().getSharedPreference().getString("uid", "0");
     }
 
+    public static String getGroupId() {
+        return MyApplication.getMyApplication().getSharedPreference().getString("stationId", "0");
+    }
+
     public static void loginUser(BaseActivity activity, UserData userData) {
         User user = new User();
         user.setAvatar(userData.data.get(0).vcPhoto);

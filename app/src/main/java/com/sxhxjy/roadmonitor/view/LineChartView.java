@@ -7,21 +7,19 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
-import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.entity.RealTimeData;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -48,6 +46,7 @@ public class LineChartView extends View {
     private float firstPointX, nextPointX, firstPointY, nextPointY;
 
     private long BASE_TIME = System.currentTimeMillis();
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
 
     private int[] colors = {Color.BLUE, Color.GREEN, Color.YELLOW, Color.CYAN};
 
@@ -62,7 +61,7 @@ public class LineChartView extends View {
 
 
     private RectF rectF = new RectF();
-
+    private String yAxisName;
 
 
     public LineChartView(Context context, AttributeSet attrs) {
@@ -124,6 +123,11 @@ public class LineChartView extends View {
 //            yStart = 0;
         }
 
+
+
+
+
+
         mPaint.setTextSize(20);
 
         // draw point and line
@@ -171,6 +175,7 @@ public class LineChartView extends View {
 
         mPaint.setTextAlign(Paint.Align.RIGHT);
         canvas.drawText(yStart + "", - OFFSET_SCALE, 0, mPaint);
+
         for (int j = 0; j < SPLIT_TO; j++) {
             float y = yStart + (yEnd - yStart) / SPLIT_TO * (j + 1);
             float yInView = (y - yStart) / (yEnd - yStart) * yAxisLength;
@@ -180,8 +185,10 @@ public class LineChartView extends View {
             canvas.drawText(y + "", - OFFSET_SCALE, yInView, mPaint);
             mPaint.setStrokeWidth(2);
             canvas.drawLine(0, yInView, OFFSET_SCALE, yInView, mPaint);
-
         }
+
+        mPaint.setTextAlign(Paint.Align.LEFT); // yAxisName
+        canvas.drawText(yAxisName, - OFFSET_SCALE * 3, -yAxisLength - OFFSET / 2, mPaint);
 
         // draw alert line
         mPaint.setColor(getResources().getColor(android.R.color.holo_red_light));
@@ -219,7 +226,7 @@ public class LineChartView extends View {
         invalidate();
     }
 
-    public static List<MyPoint> convert(List<RealTimeData> list) {
+    public  List<MyPoint> convert(List<RealTimeData> list) {
 
         List<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
@@ -227,10 +234,11 @@ public class LineChartView extends View {
                 points.remove(0);
             points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getX()));
         }
+        yAxisName = list.get(0).getXColName() + "/ " + list.get(0).getTypeUnit();
         return points;
     }
 
-    public static List<MyPoint> convertY(List<RealTimeData> list) {
+    public  List<MyPoint> convertY(List<RealTimeData> list) {
 
         List<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
@@ -238,10 +246,11 @@ public class LineChartView extends View {
                 points.remove(0);
             points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getY()));
         }
+        yAxisName = list.get(0).getYColName() + "/ " + list.get(0).getTypeUnit();
         return points;
     }
 
-    public static List<MyPoint> convertZ(List<RealTimeData> list) {
+    public  List<MyPoint> convertZ(List<RealTimeData> list) {
 
         List<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
@@ -249,6 +258,7 @@ public class LineChartView extends View {
                 points.remove(0);
             points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getZ()));
         }
+        yAxisName = list.get(0).getZColName() + "/ " + list.get(0).getTypeUnit();
         return points;
     }
 
