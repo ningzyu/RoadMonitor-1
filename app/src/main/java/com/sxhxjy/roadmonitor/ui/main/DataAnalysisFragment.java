@@ -131,20 +131,15 @@ public class DataAnalysisFragment extends BaseFragment {
                             }
                         });
                     }
-
-
-
                 }
-
                 @Override
                 public void onFinish() {
-
                 }
             };
             mTimer.start();
-
-
         }
+
+
     }
 
 }
