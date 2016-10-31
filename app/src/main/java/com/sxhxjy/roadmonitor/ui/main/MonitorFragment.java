@@ -174,6 +174,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 return true;
             }
         });
+
         if (groupsOfFilterTree.isEmpty()) getTypeTree();
 
         myPopupWindow = new MyPopupWindow((BaseActivity) getActivity(), R.layout.popup_window_right);
@@ -323,13 +324,13 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         getMessage(getHttpService().getParamInfo(stationId), new MySubscriber<ParamInfo>() {
             @Override
             protected void onMyNext(ParamInfo paramInfo) {
-                ((TextView) view.findViewById(R.id.position)).setText("位置：" + MyApplication.getMyApplication().getSharedPreference().getString("stationName", ""));
-                ((TextView) view.findViewById(R.id.min)).setText("最小值：" + paramInfo.getXmin() + "");
-                ((TextView) view.findViewById(R.id.max)).setText("最大值：" + paramInfo.getXmax() + "");
-                ((TextView) view.findViewById(R.id.threshold1)).setText("一级阈值：" + paramInfo.getxOneThreshold() + "");
-                ((TextView) view.findViewById(R.id.threshold2)).setText("二级阈值：" + paramInfo.getxTwoThreshold() + "");
-                ((TextView) view.findViewById(R.id.threshold3)).setText("三级阈值：" + paramInfo.getxThreeThreshold() + "");
-                ((TextView) view.findViewById(R.id.threshold4)).setText("四级阈值：" + paramInfo.getxFourThreshold() + "");
+//                ((TextView) view.findViewById(R.id.position)).setText("位置：" + MyApplication.getMyApplication().getSharedPreference().getString("stationName", ""));
+//                ((TextView) view.findViewById(R.id.min)).setText("最小值：" + paramInfo.getXmin() + "");
+//                ((TextView) view.findViewById(R.id.max)).setText("最大值：" + paramInfo.getXmax() + "");
+//                ((TextView) view.findViewById(R.id.threshold1)).setText("一级阈值：" + paramInfo.getxOneThreshold() + "");
+//                ((TextView) view.findViewById(R.id.threshold2)).setText("二级阈值：" + paramInfo.getxTwoThreshold() + "");
+//                ((TextView) view.findViewById(R.id.threshold3)).setText("三级阈值：" + paramInfo.getxThreeThreshold() + "");
+//                ((TextView) view.findViewById(R.id.threshold4)).setText("四级阈值：" + paramInfo.getxFourThreshold() + "");
 
             }
         });

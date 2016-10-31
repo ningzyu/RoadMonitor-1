@@ -9,6 +9,7 @@ import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.sxhxjy.roadmonitor.R;
@@ -18,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -37,6 +39,7 @@ public class LineChartView extends View {
 
     private static final float OFFSET_SCALE = 8;
     private static final float SPLIT_TO = 5;
+    private static final float X_SPLIT_TO = 5;
 
     private static final int ALERT_VALUE = 80;
     private Random mRandom = new Random(47);
@@ -47,6 +50,7 @@ public class LineChartView extends View {
 
     private long BASE_TIME = System.currentTimeMillis();
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
+    private Date date = new Date();
 
     private int[] colors = {Color.BLUE, Color.GREEN, Color.YELLOW, Color.CYAN};
 
@@ -109,7 +113,7 @@ public class LineChartView extends View {
             return;
         }
 
-        canvas.translate(OFFSET, getMeasuredHeight() - OFFSET - OFFSET_LEGEND);
+        canvas.translate(OFFSET + 10, getMeasuredHeight() - OFFSET - OFFSET_LEGEND);
 
 
         xStart = System.currentTimeMillis() + 1000*3600*60;
@@ -154,17 +158,21 @@ public class LineChartView extends View {
 
                 canvas.drawPoint(nextPointX, nextPointY, mPaint);
 
-
-                // draw x
-                mPaint.setColor(getResources().getColor(R.color.default_color));
-                mPaint.setStrokeWidth(2);
-                mPaint.setTextAlign(Paint.Align.CENTER);
-
-                canvas.drawLine(nextPointX, 0, nextPointX, -OFFSET_SCALE, mPaint);
-                mPaint.setStrokeWidth(1);
-                canvas.drawText((myPoint.time - BASE_TIME) / 1000 + " s", nextPointX, OFFSET_SCALE * 4, mPaint);
-
             }
+        }
+
+        // draw x
+        mPaint.setColor(getResources().getColor(R.color.default_color));
+        mPaint.setTextAlign(Paint.Align.CENTER);
+        for (int j = 0; j <= X_SPLIT_TO; j++) {
+            long x = xStart + (long) ((xEnd - xStart) / X_SPLIT_TO * j);
+            float xInView = (x - xStart) * 1f / (xEnd - xStart) * xAxisLength;
+            date.setTime(x);
+            mPaint.setStrokeWidth(1);
+            canvas.drawText(date.getHours() + ": 00", xInView, OFFSET_SCALE * 4, mPaint);
+            mPaint.setStrokeWidth(2);
+            canvas.drawLine(xInView, 0, xInView, -OFFSET_SCALE, mPaint);
+            mPaint.setStrokeWidth(2);
         }
 
         // draw y
@@ -210,7 +218,7 @@ public class LineChartView extends View {
             mPaint.setColor(myLine.color);
             rectF.top = OFFSET;
             rectF.bottom = rectF.top + OFFSET_LEGEND - 20;
-            rectF.right = rectF.left + OFFSET_LEGEND * 3;
+            rectF.right = rectF.left + OFFSET_LEGEND;
             canvas.drawRoundRect(rectF, 2, 2, mPaint);
             rectF.left += rectF.width() + OFFSET_LEGEND * 4;
             mPaint.setColor(getResources().getColor(R.color.default_text_color));
@@ -219,6 +227,14 @@ public class LineChartView extends View {
             canvas.drawText(myLine.name, rectF.right + 15, rectF.bottom, mPaint);
         }
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+
+
+        return true;
     }
 
     public void addPoints(List<MyPoint> points, String s, int color) {
