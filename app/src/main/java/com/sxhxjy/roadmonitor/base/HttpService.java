@@ -44,6 +44,11 @@ public interface HttpService {
     ////  general
     /////////////////////////////////////////////////////////////////////////
 
+
+// TODO: home
+//    @GET("points/findAppRootPoint")
+//    Observable<HttpResponse<List<>>> getHomeData(@Query("groupId") String groupId);
+
 //    @FormUrlEncoded
 //    @POST("stations/findPointByStationId")
 @GET("stations/findPointByStationId")

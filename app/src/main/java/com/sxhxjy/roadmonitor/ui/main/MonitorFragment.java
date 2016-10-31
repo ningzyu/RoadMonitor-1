@@ -213,7 +213,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
             simpleItem.setColor(Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
         }
 
-        mTimer = new CountDownTimer(100000, 10000) {
+        mTimer = new CountDownTimer(30000, 10000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mRealTimes.clear();

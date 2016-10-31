@@ -56,6 +56,14 @@ public class StationListAdapter extends RecyclerView.Adapter<StationListAdapter.
                 mList.add(item);
             }
         currentGroup = data;
+
+        if (currentGroup != null && currentGroup.size() == 1 && currentGroup.get(0).childrenGroup == null) {
+            Bundle b = new Bundle();
+            b.putString("stationId", currentGroup.get(0).id);
+            b.putString("stationName", currentGroup.get(0).name);
+            ActivityUtil.startActivityForResult(mFragment.getActivity(), MainActivity.class, b, 111);
+            mFragment.getActivity().finish();
+        }
     }
 
     @Override
