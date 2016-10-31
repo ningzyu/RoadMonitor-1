@@ -5,11 +5,46 @@
 
 
 <include layout="@layout/toolbar_layout"/>
+    <!--折线图控件-->
     <com.sxhxjy.roadmonitor.view.LineChartView
         android:layout_width="match_parent"
         android:layout_marginBottom="30dp"
         android:layout_marginTop="20dp"
         android:id="@+id/chart"
         android:layout_height="match_parent" />
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv1_data"
+            android:text="监测因素"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv2_data"
+            android:text="监测位置"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv3_data"
+            android:text="关联监测因素"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv4_data"
+            android:text="关联监测位置"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv5_data"
+            android:text="开始时间"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv6_data"
+            android:text="结束时间"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 </LinearLayout>

@@ -33,6 +33,9 @@ import java.util.Locale;
  * @author Michael Zhao
  */
 public class AlertListAdapter extends RecyclerView.Adapter<AlertListAdapter.ViewHolder> implements View.OnClickListener {
+    /**
+     *
+     */
     private List<AlertData> mList;
     private BaseFragment mFragment;
     private AlertDialog alertDialog;
