@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.base.BaseFragment;
@@ -34,7 +35,7 @@ public class DataAnalysisFragment extends BaseFragment {
      * 数据分析——fragment页
      */
     private CountDownTimer mTimer;
-
+    private TextView tv1,tv2,tv3,tv4,tv5,tv6;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,8 +46,6 @@ public class DataAnalysisFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initToolBar(view, "数据分析", false);
-
-
         mToolbar.inflateMenu(R.menu.data_right);
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -138,8 +137,19 @@ public class DataAnalysisFragment extends BaseFragment {
             };
             mTimer.start();
         }
-
-
+//        tv1.setText("监测因素"+data.getStringExtra(""));
+//        tv2.setText("监测位置"+data.getStringExtra("code"));
+//        tv3.setText("关联监测因素"+data.getStringExtra("title"));
+//        tv4.setText("关联监测位置"+data.getStringExtra("titleCorrelation"));
+//        tv5.setText("开始时间"+data.getLongExtra("start", 0));
+//        tv6.setText("结束时间"+data.getLongExtra("end", System.currentTimeMillis()));
     }
-
+    public void init(View v){
+        tv1= (TextView) v.findViewById(R.id.tv1_data);
+        tv2= (TextView) v.findViewById(R.id.tv2_data);
+        tv3= (TextView) v.findViewById(R.id.tv3_data);
+        tv4= (TextView) v.findViewById(R.id.tv4_data);
+        tv5= (TextView) v.findViewById(R.id.tv5_data);
+        tv6= (TextView) v.findViewById(R.id.tv6_data);
+    }
 }

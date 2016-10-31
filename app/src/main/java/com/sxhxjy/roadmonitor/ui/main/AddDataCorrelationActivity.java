@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
@@ -38,6 +39,9 @@ import java.util.Random;
  */
 
 public class AddDataCorrelationActivity extends BaseActivity {
+    /**
+     * 数据关联页
+     */
     private String[] aLocation;
     private List<SimpleItem> mLocationList = new ArrayList<>();
     private List<SimpleItem> mTypeList = new ArrayList<>();
@@ -59,6 +63,7 @@ public class AddDataCorrelationActivity extends BaseActivity {
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                //Bundle传值
                 Bundle b = new Bundle();
                 b.putSerializable("positionItems", positionItems);
                 b.putSerializable("positionItemsCorrelation", positionItemsCorrelation);
@@ -66,7 +71,12 @@ public class AddDataCorrelationActivity extends BaseActivity {
                 b.putString("titleCorrelation", titleCorrelation);
                 b.putLong("start", simpleDateFormat.parse(startTime, new ParsePosition(0)).getTime());
                 b.putLong("end", simpleDateFormat.parse(endTime, new ParsePosition(0)).getTime());
-
+                Log.i("bbbbbbbb",positionItems+"positionItems");
+                Log.i("bbbbbbbb",positionItemsCorrelation+"positionItemsCorrelation");
+                Log.i("bbbbbbbb",title+"title");
+                Log.i("bbbbbbbb",titleCorrelation+"titleCorrelation");
+                Log.i("bbbbbbbb",simpleDateFormat.parse(startTime, new ParsePosition(0)).getTime()+"start");
+                Log.i("bbbbbbbb",simpleDateFormat.parse(endTime, new ParsePosition(0)).getTime()+"end");
                 Intent data = new Intent();
                 data.putExtras(b);
                 setResult(RESULT_OK, data);

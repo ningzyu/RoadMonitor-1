@@ -113,12 +113,6 @@ public class HomeFragment extends BaseFragment{
                 map.put("father_id",father_id);
                 map.put("id",id);
                 map.put("name",name);
-                map.put("father_id",father_id);
-                map.put("id",id);
-                map.put("name",name);
-                map.put("father_id",father_id);
-                map.put("id",id);
-                map.put("name",name);
                 list.add(map);
             }
             HomelistAdapter adapter=new HomelistAdapter(getActivity(),list,R.layout.home_list_item);
@@ -127,7 +121,7 @@ public class HomeFragment extends BaseFragment{
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Map<String,Object> map=list.get(position);
-                    Toast.makeText(getActivity(),map.get("father_id").toString(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),map.get("id").toString(),Toast.LENGTH_SHORT).show();
                 }
             });
         } catch (JSONException e) {
