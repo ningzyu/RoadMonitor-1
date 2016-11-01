@@ -153,7 +153,8 @@ public class DataAnalysisFragment extends BaseFragment {
             tv2.setText(positionItems.get(0).getTitle());
             tv3.setText(data.getStringExtra("titleCorrelation"));
             tv4.setText(positionItemsCorrelation.get(0).getTitle());
-            tv5.setText(sdf.format(new Date(start))+"----"+sdf.format(new Date(end)));
+//            tv5.setText(sdf.format(new Date(start))+"----"+sdf.format(new Date(end)));
+            tv5.setText(data.getStringExtra("start1")+"----"+data.getStringExtra("end1"));
             mTimer.start();
         }
     }

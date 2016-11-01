@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,6 +59,15 @@ public class AlertFragment extends BaseListFragment<AlertData> {
 
     @Override
     public Observable<HttpResponse<List<AlertData>>> getObservable() {
+        for (FilterTreeAdapter.Group f:groups){
+            f.getGroupName();
+            List<SimpleItem> list=f.getList();
+            for (SimpleItem sim:list){
+                sim.getTitle();
+                sim.getId();
+                Log.i("bbbbbbbbb",sim.getTitle());
+            }
+        }
         return getHttpService().getAlertDataList("4028812c57a344a30157a376908c0009");
     }
 
