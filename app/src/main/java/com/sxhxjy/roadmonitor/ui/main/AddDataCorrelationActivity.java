@@ -71,9 +71,6 @@ public class AddDataCorrelationActivity extends BaseActivity {
                 b.putString("titleCorrelation", titleCorrelation);
                 b.putLong("start", simpleDateFormat.parse(startTime, new ParsePosition(0)).getTime());
                 b.putLong("end", simpleDateFormat.parse(endTime, new ParsePosition(0)).getTime());
-                b.putString("start1",startTime);
-                b.putString("end1",endTime);
-
                 Intent data = new Intent();
                 data.putExtras(b);
                 setResult(RESULT_OK, data);
@@ -152,12 +149,18 @@ public class AddDataCorrelationActivity extends BaseActivity {
                     title = mTypeList.get(which).getTitle();
                 }
                 dialog.dismiss();
+                mLocationList.clear();
             }
         }).create().show();
     }
 
     private void showDialogPosition(final View view) {
         final boolean[] aTypeChecked = new boolean[mLocationList.size()];
+
+        if (view.getId() == R.id.correlation_position)
+            positionItemsCorrelation.clear();
+        else
+            positionItems.clear();
 
         new AlertDialog.Builder(AddDataCorrelationActivity.this).setTitle("选择监测点位置").setMultiChoiceItems(aLocation, aTypeChecked, new DialogInterface.OnMultiChoiceClickListener() {
             @Override

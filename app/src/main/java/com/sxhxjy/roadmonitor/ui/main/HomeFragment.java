@@ -10,9 +10,12 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.adapter.HomelistAdapter;
 import com.sxhxjy.roadmonitor.base.BaseFragment;
+import com.sxhxjy.roadmonitor.base.CacheManager;
+import com.sxhxjy.roadmonitor.entity.LoginData;
 import com.sxhxjy.roadmonitor.view.HorizontalListView;
 import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
 import com.tencent.mapsdk.raster.model.LatLng;
@@ -65,17 +68,22 @@ public class HomeFragment extends BaseFragment{
         getOkHttp();
         mapview.onCreate(savedInstanceState);
         TencentMap tencentMap = mapview.getMap();
-        LatLng latLng = new LatLng(37.795034, 112.546477);
-        tencentMap.setCenter(latLng);
-        tencentMap.setZoom(17);
-        Marker marker = tencentMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .title("清控")
-                .anchor(0.5f, 0.5f)
-                .icon(BitmapDescriptorFactory
-                        .defaultMarker())
-                .draggable(true));
-        marker.showInfoWindow();
+        LoginData loginData = new Gson().fromJson(CacheManager.getInstance().get("login"), LoginData.class);
+        if (loginData != null) {
+            for (LoginData.UserGroupsBean groupsBean : loginData.getUserGroups()) {
+                LatLng latLng = new LatLng(groupsBean.getLatitude(), groupsBean.getLongitude());
+                tencentMap.setCenter(latLng);
+                tencentMap.setZoom(7);
+                Marker marker = tencentMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(groupsBean.getName())
+                        .anchor(0.5f, 0.5f)
+                        .icon(BitmapDescriptorFactory
+                                .defaultMarker())
+                        .draggable(true));
+                marker.showInfoWindow();
+            }
+        }
     }
     private void getOkHttp() {
         okHttpClient=new OkHttpClient();

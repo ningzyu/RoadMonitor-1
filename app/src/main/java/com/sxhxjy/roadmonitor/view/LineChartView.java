@@ -15,6 +15,7 @@ import android.view.View;
 import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.entity.RealTimeData;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +34,7 @@ public class LineChartView extends View {
     private static final int DELAY = 1000;
     private static final int POINTS_COUNT = 24;
     private static final int OFFSET = 60;
-    private static final int OFFSET_LEGEND = 40;
+    private static final int OFFSET_LEGEND = 70;
     private static final int LEGEND_WIDTH= 70;
     private static final int LEGEND_HEIGHT = 35;
 
@@ -41,7 +42,7 @@ public class LineChartView extends View {
     private static final float SPLIT_TO = 5;
     private static final float X_SPLIT_TO = 5;
 
-    private static final int ALERT_VALUE = 80;
+    private static final int ALERT_VALUE = 1000;
     private Random mRandom = new Random(47);
     private int xAxisLength, yAxisLength;
     private long xStart, xEnd;
@@ -67,12 +68,17 @@ public class LineChartView extends View {
     private RectF rectF = new RectF();
     private String yAxisName;
 
+    private NumberFormat numberFormat = NumberFormat.getInstance();
+
+
+
 
     public LineChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setDither(true);
         mPath.setFillType(Path.FillType.WINDING);
+        numberFormat.setMaximumFractionDigits(2);
 
         // fake data
         /*new CountDownTimer(1000000, DELAY) {
@@ -190,7 +196,7 @@ public class LineChartView extends View {
             yInView = -yInView; // reverse
 
             mPaint.setStrokeWidth(1);
-            canvas.drawText(y + "", - OFFSET_SCALE, yInView, mPaint);
+            canvas.drawText(numberFormat.format(y) + "", - OFFSET_SCALE, yInView, mPaint);
             mPaint.setStrokeWidth(2);
             canvas.drawLine(0, yInView, OFFSET_SCALE, yInView, mPaint);
         }
@@ -214,10 +220,11 @@ public class LineChartView extends View {
 
         // draw legend
         rectF.setEmpty();
+        mPaint.setTextSize(30);
         for (MyLine myLine : myLines) {
             mPaint.setColor(myLine.color);
             rectF.top = OFFSET;
-            rectF.bottom = rectF.top + OFFSET_LEGEND - 20;
+            rectF.bottom = rectF.top + OFFSET_LEGEND / 2 - 20;
             rectF.right = rectF.left + OFFSET_LEGEND;
             canvas.drawRoundRect(rectF, 2, 2, mPaint);
             rectF.left += rectF.width() + OFFSET_LEGEND * 4;
