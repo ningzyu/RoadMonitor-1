@@ -15,7 +15,6 @@ public class SimpleItem implements Serializable {
     String title;
     boolean checked;
 
-
     int color; // to draw line
 
     String code; // position
