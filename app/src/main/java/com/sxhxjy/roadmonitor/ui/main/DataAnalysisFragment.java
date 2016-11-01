@@ -62,23 +62,17 @@ public class DataAnalysisFragment extends BaseFragment {
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(getActivity(), AddDataContrastActivity.class);
-                startActivityForResult(intent, 1000);
+                if (item.getItemId() == R.id.data_contrast) {
+                    Intent intent = new Intent(getActivity(), AddDataContrastActivity.class);
+                    startActivityForResult(intent, 1000);
+                } else if (item.getItemId() == R.id.data_correlation) {
+                    Intent intent = new Intent(getActivity(), AddDataCorrelationActivity.class);
+                    startActivityForResult(intent, 1001);
+                }
                 return true;
             }
         });
 
-        ImageView left = (ImageView) view.findViewById(R.id.toolbar_left);
-        left.setVisibility(View.VISIBLE);
-        left.setImageResource(R.mipmap.data_correlation);
-        left.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddDataCorrelationActivity.class);
-                startActivityForResult(intent, 1001);
-
-            }
-        });
     }
 
     @Override
@@ -130,7 +124,7 @@ public class DataAnalysisFragment extends BaseFragment {
                         getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
-                                lineChartView.addPoints(lineChartView.convert(realTimeDatas), data.getStringExtra("title") + item.getTitle(), item.getColor());
+                                lineChartView.addPoints(lineChartView.convert(realTimeDatas), item.getTitle(), item.getColor());
                             }
                         });
                     }
@@ -138,7 +132,7 @@ public class DataAnalysisFragment extends BaseFragment {
                         getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
-                                lineChartView.addPoints(lineChartView.convert(realTimeDatas), data.getStringExtra("title")+ item.getTitle(), item.getColor());
+                                lineChartView.addPoints(lineChartView.convert(realTimeDatas), item.getTitle(), item.getColor());
                             }
                         });
                     }

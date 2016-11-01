@@ -58,7 +58,8 @@ public class AlertFragment extends BaseListFragment<AlertData> {
 
     @Override
     public Observable<HttpResponse<List<AlertData>>> getObservable() {
-        return getHttpService().getAlertDataList("4028812c57a344a30157a376908c0009", MyApplication.getMyApplication().getSharedPreference().getString("stationId"), MyApplication.getMyApplication().getSharedPreference().getString("gid"));
+        return null;
+//        return getHttpService().getAlertDataList("4028812c57a344a30157a376908c0009", MyApplication.getMyApplication().getSharedPreference().getString("stationId"), MyApplication.getMyApplication().getSharedPreference().getString("gid"));
     }
 
     @Override

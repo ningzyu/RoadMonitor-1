@@ -105,6 +105,9 @@ public class AddDataCorrelationActivity extends BaseActivity {
                 }
             });
         } else {
+            for (SimpleItem item : mTypeList) {
+                item.setChecked(false);
+            }
             showDialogType(view);
         }
     }
@@ -156,11 +159,6 @@ public class AddDataCorrelationActivity extends BaseActivity {
 
     private void showDialogPosition(final View view) {
         final boolean[] aTypeChecked = new boolean[mLocationList.size()];
-
-        if (view.getId() == R.id.correlation_position)
-            positionItemsCorrelation.clear();
-        else
-            positionItems.clear();
 
         new AlertDialog.Builder(AddDataCorrelationActivity.this).setTitle("选择监测点位置").setMultiChoiceItems(aLocation, aTypeChecked, new DialogInterface.OnMultiChoiceClickListener() {
             @Override

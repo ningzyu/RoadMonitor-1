@@ -184,41 +184,41 @@ dismissNetworkErrorLayout();
             mPullRefreshLoadLayout.refreshEnd();
             mPullRefreshLoadLayout.loadMoreEnd();
 
+        if (getObservable() != null) {
+            getObservable().subscribeOn(Schedulers.io())
+                    .unsubscribeOn(Schedulers.io())
+                    .map(new HttpResponseFunc<List<I>>((BaseActivity) getActivity()))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<List<I>>() {
+                        @Override
+                        public void onStart() {
+                        }
 
-        getObservable().subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .map(new HttpResponseFunc<List<I>>((BaseActivity) getActivity()))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<I>>() {
-                    @Override
-                    public void onStart() {
-                    }
+                        @Override
+                        public void onCompleted() {
+                        }
 
-                    @Override
-                    public void onCompleted() {
-                    }
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("retrofit", e.toString());
+                            mPullRefreshLoadLayout.refreshEnd();
+                            mPullRefreshLoadLayout.loadMoreEnd();
+                            showToastMsg("请检查您的网络连接");
+                            showNetworkErrorLayout();
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("retrofit", e.toString());
-                        mPullRefreshLoadLayout.refreshEnd();
-                        mPullRefreshLoadLayout.loadMoreEnd();
-                        showToastMsg("请检查您的网络连接");
-                        showNetworkErrorLayout();
+                        }
 
-                    }
-
-                    @Override
-                    public void onNext(List<I> es) {
-                        mList.clear();
-                        mList.addAll(es);
-                        showListViewOrEmptyView();
-                        mAdapter.notifyDataSetChanged();
-                        mPullRefreshLoadLayout.refreshEnd();
-                        mPullRefreshLoadLayout.loadMoreEnd();
-                    }
-                });
-
+                        @Override
+                        public void onNext(List<I> es) {
+                            mList.clear();
+                            mList.addAll(es);
+                            showListViewOrEmptyView();
+                            mAdapter.notifyDataSetChanged();
+                            mPullRefreshLoadLayout.refreshEnd();
+                            mPullRefreshLoadLayout.loadMoreEnd();
+                        }
+                    });
+        }
 
 
 

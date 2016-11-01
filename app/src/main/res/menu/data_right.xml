@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:title="数据分析" android:id="@+id/menu_right" app:showAsAction="always" android:icon="@mipmap/data_contrast"/>
+    <item android:title="数据对比" android:id="@+id/data_contrast" app:showAsAction="never" android:icon="@mipmap/data_contrast"/>
+    <item android:title="数据关联" android:id="@+id/data_correlation" android:icon="@mipmap/data_correlation" app:showAsAction="never" />
 </menu>
