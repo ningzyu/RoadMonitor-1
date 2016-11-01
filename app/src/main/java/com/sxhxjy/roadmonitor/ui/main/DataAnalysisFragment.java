@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * 2016/9/26
@@ -47,6 +48,8 @@ public class DataAnalysisFragment extends BaseFragment {
     private CountDownTimer mTimer;
     private TextView tv1,tv2,tv3,tv4,tv5;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
+    private Random random = new Random();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -83,13 +86,16 @@ public class DataAnalysisFragment extends BaseFragment {
         if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {
             if (mTimer != null)
                 mTimer.cancel();
-            LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
+            final LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
             lineChartView.getLines().clear();
             final ArrayList<SimpleItem> positionItems = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItems");
+
             if (positionItems.size() > 1) {
                 mTimer = new CountDownTimer(100000, 10000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
+                        lineChartView.getLines().clear();
+
                         for (final SimpleItem item : positionItems) {
                             getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
                                 @Override
@@ -107,6 +113,37 @@ public class DataAnalysisFragment extends BaseFragment {
 
                     }
                 };
+                mTimer.start();
+            } else {
+                final ArrayList<String> times = (ArrayList<String>) data.getSerializableExtra("times");
+
+                mTimer = new CountDownTimer(100000, 10000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        lineChartView.getLines().clear();
+
+                        for (String s : times) {
+                            String[] strings = s.split("  ----  ");
+                            getMessage(getHttpService().getRealTimeData(positionItems.get(0).getCode(), sdf.parse(strings[0], new ParsePosition(0)).getTime(), sdf.parse(strings[1], new ParsePosition(0)).getTime()), new MySubscriber<List<RealTimeData>>() {
+                                @Override
+                                protected void onMyNext(List<RealTimeData> realTimeDatas) {
+                                    LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
+                                    lineChartView.addPoints(lineChartView.convert(realTimeDatas), positionItems.get(0).getTitle(), Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onFinish() {
+
+                    }
+                };
+                // TODO
+
+
+
+
                 mTimer.start();
             }
         }

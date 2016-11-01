@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 /**
  * 2016/9/29
@@ -74,10 +75,13 @@ public class AddDataContrastActivity extends BaseActivity {
                     b.putLong("start", simpleDateFormat.parse(startTime, new ParsePosition(0)).getTime());
                     b.putLong("end", simpleDateFormat.parse(endTime, new ParsePosition(0)).getTime());
                 } else {
-                    DeleteView myLinearLayout = (DeleteView) timeContent.getChildAt(0);
-                    String[] strings = myLinearLayout.getContent().split("  ----  ");
-                    b.putLong("start", simpleDateFormat.parse(strings[0], new ParsePosition(0)).getTime());
-                    b.putLong("end", simpleDateFormat.parse(strings[1], new ParsePosition(0)).getTime());
+                    ArrayList<String> times = new ArrayList<String>();
+                    for (int i = 0; i < timeContent.getChildCount(); i++) {
+                        DeleteView myLinearLayout = (DeleteView) timeContent.getChildAt(i);
+                        times.add(myLinearLayout.getContent());
+                    }
+                    b.putStringArrayList("times", times);
+
                 }
 
                 Intent data = new Intent();
@@ -177,6 +181,7 @@ public class AddDataContrastActivity extends BaseActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 StringBuilder sb = new StringBuilder();
+                positionItems.clear();
                 int checked = 0;
                 for (int i = 0; i < aTypeChecked.length; i++) {
                     if (aTypeChecked[i]) {
@@ -240,7 +245,7 @@ public class AddDataContrastActivity extends BaseActivity {
 
     public void addTime(View view) {
         final StringBuilder sb = new StringBuilder();
-        Date date = new Date(System.currentTimeMillis());
+        final Date date = new Date(System.currentTimeMillis());
 
         new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -276,7 +281,7 @@ public class AddDataContrastActivity extends BaseActivity {
                                         timeContent.addView(new DeleteView(AddDataContrastActivity.this, sb.toString(), timeContent));                              }
                                 }, 0, 0, true).show();
                             }
-                        }, 2016, 0, 1).show();
+                        }, 2016, date.getMonth(), date.getDay()).show();
                         showToastMsg("请选择结束时间");
                     }
                 }, 0, 0, true).show();
