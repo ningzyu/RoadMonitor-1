@@ -141,14 +141,13 @@ public class DataAnalysisFragment extends BaseFragment {
                 public void onFinish() {
                 }
             };
-            int start=(int)data.getLongExtra("start", 0);
-            int end=(int)data.getLongExtra("end", 0);
+            long start=data.getLongExtra("start", 0);
+            long end=data.getLongExtra("end", 0);
             tv1.setText(data.getStringExtra("title"));
             tv2.setText(positionItems.get(0).getTitle());
             tv3.setText(data.getStringExtra("titleCorrelation"));
             tv4.setText(positionItemsCorrelation.get(0).getTitle());
-//            tv5.setText(sdf.format(new Date(start))+"----"+sdf.format(new Date(end)));
-            tv5.setText(data.getStringExtra("start1")+"----"+data.getStringExtra("end1"));
+            tv5.setText(sdf.format(new Date(start))+"----"+sdf.format(new Date(end)));
             mTimer.start();
         }
     }

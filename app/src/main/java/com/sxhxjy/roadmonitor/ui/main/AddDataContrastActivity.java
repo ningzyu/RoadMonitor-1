@@ -67,7 +67,6 @@ public class AddDataContrastActivity extends BaseActivity {
                 b.putString("title", title);
                 b.putLong("start", simpleDateFormat.parse(strings[0], new ParsePosition(0)).getTime());
                 b.putLong("end", simpleDateFormat.parse(strings[1], new ParsePosition(0)).getTime());
-
                 Intent data = new Intent();
                 setResult(RESULT_OK, data);
                 finish();
