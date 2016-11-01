@@ -57,7 +57,7 @@ public class StationListAdapter extends RecyclerView.Adapter<StationListAdapter.
             }
         currentGroup = data;
 
-        if (currentGroup != null && currentGroup.size() == 1 && currentGroup.get(0).childrenGroup == null) {
+        if (mFragment.getActivity().getCallingActivity().getShortClassName().equals(".ui.main.LoginActivity") &&currentGroup != null && currentGroup.size() == 1 && currentGroup.get(0).childrenGroup == null) {
             Bundle b = new Bundle();
             b.putString("stationId", currentGroup.get(0).id);
             b.putString("stationName", currentGroup.get(0).name);

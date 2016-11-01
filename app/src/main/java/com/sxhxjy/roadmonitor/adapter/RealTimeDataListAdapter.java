@@ -56,7 +56,7 @@ public class RealTimeDataListAdapter extends RecyclerView.Adapter<RealTimeDataLi
         if (mList.get(position).getTypeCode() != 1)
             stringBuilder.append(mList.get(position).getYColName()).append(": ").append(mList.get(position).getY()).append(mList.get(position).getTypeUnit()).append("  ");
         if (mList.get(position).getTypeCode() == 2)
-            stringBuilder.append(mList.get(position).getZColName()).append(": ").append(mList.get(position).getZ()).append(mList.get(position).getTypeUnit());
+            stringBuilder.append("\n\n" + mList.get(position).getZColName()).append(": ").append(mList.get(position).getZ()).append(mList.get(position).getTypeUnit());
         holder.value.setText(stringBuilder.toString());
     }
 

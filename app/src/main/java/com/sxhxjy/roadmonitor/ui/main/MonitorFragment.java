@@ -118,6 +118,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         }
     };
     private LinearLayout mChartsContainer;
+    private String positionId;
 
     @Nullable
     @Override
@@ -224,7 +225,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 }
                 for (final SimpleItem simpleItem : mListLeft) {
                     if (simpleItem.isChecked()) {
-                        codeId = simpleItem.getCode();
+                        codeId = simpleItem.getId();
                         long interval = 100000;
                         if (timeId.equals("0"))
                             interval = 1000;
@@ -239,7 +240,6 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView0 = (LineChartView) mChartsContainer.getChildAt(0).findViewById(R.id.chart);
                                     lineChartView0.addPoints(lineChartView0.convert(realTimeDatas), simpleItem.getTitle(), simpleItem.getColor());
-                                    getParamInfo(mChartsContainer.getChildAt(0).findViewById(R.id.param_info));
 
 
                                 if (realTimeDatas.get(0).getTypeCode() != 1) {
@@ -247,7 +247,6 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView1 = (LineChartView) mChartsContainer.getChildAt(1).findViewById(R.id.chart);
                                     lineChartView1.addPoints(lineChartView1.convertY(realTimeDatas), simpleItem.getTitle() + " y", simpleItem.getColor());
-                                    getParamInfo(mChartsContainer.getChildAt(1).findViewById(R.id.param_info));
 
 
                                 }
@@ -256,12 +255,23 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView2 = (LineChartView) mChartsContainer.getChildAt(2).findViewById(R.id.chart);
                                     lineChartView2.addPoints(lineChartView2.convertZ(realTimeDatas), simpleItem.getTitle() + " z", simpleItem.getColor());
-                                    getParamInfo(mChartsContainer.getChildAt(2).findViewById(R.id.param_info));
+                                }
+                            }
+
+                            @Override
+                            public void onCompleted() {
+                                if (mChartsContainer.getChildCount() == 0) {
+                                    getView().findViewById(R.id.empty).setVisibility(View.VISIBLE);
+                                } else {
+                                    getView().findViewById(R.id.empty).setVisibility(View.GONE);
                                 }
                             }
                         });
                     }
                 }
+
+                getParamInfo();
+
             }
 
             @Override
@@ -320,17 +330,45 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         });
     }
 
-    private void getParamInfo(final View view) {
-        getMessage(getHttpService().getParamInfo(stationId), new MySubscriber<ParamInfo>() {
+    private void getParamInfo() {
+        getMessage(getHttpService().getParamInfo(codeId), new MySubscriber<ParamInfo>() {
             @Override
             protected void onMyNext(ParamInfo paramInfo) {
-//                ((TextView) view.findViewById(R.id.position)).setText("位置：" + MyApplication.getMyApplication().getSharedPreference().getString("stationName", ""));
-//                ((TextView) view.findViewById(R.id.min)).setText("最小值：" + paramInfo.getXmin() + "");
-//                ((TextView) view.findViewById(R.id.max)).setText("最大值：" + paramInfo.getXmax() + "");
-//                ((TextView) view.findViewById(R.id.threshold1)).setText("一级阈值：" + paramInfo.getxOneThreshold() + "");
-//                ((TextView) view.findViewById(R.id.threshold2)).setText("二级阈值：" + paramInfo.getxTwoThreshold() + "");
-//                ((TextView) view.findViewById(R.id.threshold3)).setText("三级阈值：" + paramInfo.getxThreeThreshold() + "");
-//                ((TextView) view.findViewById(R.id.threshold4)).setText("四级阈值：" + paramInfo.getxFourThreshold() + "");
+
+                 if (mChartsContainer.getChildAt(0) != null) {
+                     View view = mChartsContainer.getChildAt(0);
+                     ((TextView) view.findViewById(R.id.position)).setText(paramInfo.getCode());
+                     ((TextView) view.findViewById(R.id.min)).setText(paramInfo.getXmin() + "");
+                     ((TextView) view.findViewById(R.id.max)).setText(paramInfo.getXmax() + "");
+                     ((TextView) view.findViewById(R.id.threshold1)).setText(paramInfo.getxOneThreshold());
+                     ((TextView) view.findViewById(R.id.threshold2)).setText(paramInfo.getxTwoThreshold());
+                     ((TextView) view.findViewById(R.id.threshold3)).setText(paramInfo.getxThreeThreshold());
+                     ((TextView) view.findViewById(R.id.threshold4)).setText(paramInfo.getxFourThreshold());
+                 }
+
+                if (mChartsContainer.getChildAt(1) != null) {
+                    View view = mChartsContainer.getChildAt(1);
+                    ((TextView) view.findViewById(R.id.position)).setText(paramInfo.getCode());
+                    ((TextView) view.findViewById(R.id.min)).setText(paramInfo.getYmin() + "");
+                    ((TextView) view.findViewById(R.id.max)).setText(paramInfo.getYmax() + "");
+                    ((TextView) view.findViewById(R.id.threshold1)).setText(paramInfo.getyOneThreshold());
+                    ((TextView) view.findViewById(R.id.threshold2)).setText(paramInfo.getyTwoThreshold());
+                    ((TextView) view.findViewById(R.id.threshold3)).setText(paramInfo.getyThreeThreshold());
+                    ((TextView) view.findViewById(R.id.threshold4)).setText(paramInfo.getyFourThreshold());
+                }
+
+                if (mChartsContainer.getChildAt(2) != null) {
+                    View view = mChartsContainer.getChildAt(2);
+                    ((TextView) view.findViewById(R.id.position)).setText(paramInfo.getCode());
+                    ((TextView) view.findViewById(R.id.min)).setText(paramInfo.getZmin() + "");
+                    ((TextView) view.findViewById(R.id.max)).setText(paramInfo.getZmax() + "");
+                    ((TextView) view.findViewById(R.id.threshold1)).setText(paramInfo.getzOneThreshold());
+                    ((TextView) view.findViewById(R.id.threshold2)).setText(paramInfo.getzTwoThreshold());
+                    ((TextView) view.findViewById(R.id.threshold3)).setText(paramInfo.getzThreeThreshold());
+                    ((TextView) view.findViewById(R.id.threshold4)).setText(paramInfo.getzFourThreshold());
+                }
+
+
 
             }
         });
