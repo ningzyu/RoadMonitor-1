@@ -58,7 +58,7 @@ public class AlertFragment extends BaseListFragment<AlertData> {
 
     @Override
     public Observable<HttpResponse<List<AlertData>>> getObservable() {
-        return getHttpService().getAlertDataList("4028812c57a344a30157a376908c0009");
+        return getHttpService().getAlertDataList("4028812c57a344a30157a376908c0009", MyApplication.getMyApplication().getSharedPreference().getString("stationId"), MyApplication.getMyApplication().getSharedPreference().getString("gid"));
     }
 
     @Override
@@ -148,19 +148,11 @@ public class AlertFragment extends BaseListFragment<AlertData> {
 
         groups = new ArrayList<>();
         final List<SimpleItem> mList0 = new ArrayList<>();
-/*        mList0.add(new SimpleItem("", "全部", true));
-        mList0.add(new SimpleItem("", "一级", false));
-        mList0.add(new SimpleItem("", "二级", false));
-        mList0.add(new SimpleItem("", "三级", false));*/
+
         final List<SimpleItem> mList1 = new ArrayList<>();
-/*        mList1.add(new SimpleItem("", "全部", true));
-        mList1.add(new SimpleItem("", "传感器", false));
-        mList1.add(new SimpleItem("", "节点", false));
-        mList1.add(new SimpleItem("", "DTU", false));*/
+
         final List<SimpleItem> mList2 = new ArrayList<>();
- /*       mList2.add(new SimpleItem("", "全部", true));
-        mList2.add(new SimpleItem("", "新告警", false));
-        mList2.add(new SimpleItem("", "历史告警", false));*/
+
         //抽屉
         FilterTreeAdapter.Group group0 = new FilterTreeAdapter.Group(mList0, "告警等级");
         FilterTreeAdapter.Group group1 = new FilterTreeAdapter.Group(mList1, "设备类型");

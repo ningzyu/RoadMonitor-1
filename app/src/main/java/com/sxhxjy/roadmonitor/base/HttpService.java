@@ -106,7 +106,7 @@ public interface HttpService {
     Observable<HttpResponse<List<AlertData>>> getAlertDataDetail(@Query("stationId") String stationId, @Query("stime") String startTime, @Query("etime") String endTime);
 
     @GET("alarmUnionData/pageList")
-    Observable<HttpResponse<List<AlertData>>> getAlertDataList(@Query("cStype") String type);
+    Observable<HttpResponse<List<AlertData>>> getAlertDataList(@Query("cStype") String type, @Query("stationId") String stationId, @Query("orgId") String gid, @Query("level") String level, @Query("beforeTime") long beforeTime, @Query("afterTime") long afterTime);
 
     /////////////////////////////////////////////////////////////////////////
     ////  home
