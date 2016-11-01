@@ -204,8 +204,7 @@ dismissNetworkErrorLayout();
                             mPullRefreshLoadLayout.refreshEnd();
                             mPullRefreshLoadLayout.loadMoreEnd();
                             showToastMsg("请检查您的网络连接");
-                            showNetworkErrorLayout();
-
+                            showListViewOrEmptyView();
                         }
 
                         @Override

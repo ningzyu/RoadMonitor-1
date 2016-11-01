@@ -122,13 +122,13 @@ public class DataAnalysisFragment extends BaseFragment {
                     public void onTick(long millisUntilFinished) {
                         lineChartView.getLines().clear();
 
-                        for (String s : times) {
+                        for (final String s : times) {
                             String[] strings = s.split("  ----  ");
                             getMessage(getHttpService().getRealTimeData(positionItems.get(0).getCode(), sdf.parse(strings[0], new ParsePosition(0)).getTime(), sdf.parse(strings[1], new ParsePosition(0)).getTime()), new MySubscriber<List<RealTimeData>>() {
                                 @Override
                                 protected void onMyNext(List<RealTimeData> realTimeDatas) {
                                     LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
-                                    lineChartView.addPoints(lineChartView.convert(realTimeDatas), positionItems.get(0).getTitle(), Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+                                    lineChartView.addPoints(lineChartView.convert(realTimeDatas), s, Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
                                 }
                             });
                         }
