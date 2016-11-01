@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,8 @@ import com.sxhxjy.roadmonitor.view.MyPopupWindow;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -43,7 +46,6 @@ import rx.Observable;
  */
 public class AlertFragment extends BaseListFragment<AlertData> {
     /**
-     *
      * 警告——fragment页
      */
     private List<SimpleItem> mListLeft = new ArrayList<>();//等级列表
@@ -54,23 +56,45 @@ public class AlertFragment extends BaseListFragment<AlertData> {
     private RecyclerView mFilterList;//下拉列表控件
     private MyPopupWindow myPopupWindow;//弹出窗口
     private FilterTreeAdapter filterTreeAdapter;//抽屉中下拉类表适配器
-
-
+    private String level,cStype;
+    private  long afterTime,beforeTime;
     @Override
     public Observable<HttpResponse<List<AlertData>>> getObservable() {
-        for (FilterTreeAdapter.Group f:groups){
-            f.getGroupName();
-            List<SimpleItem> list=f.getList();
-            for (SimpleItem sim:list){
-                sim.getTitle();
-                sim.getId();
-                Log.i("bbbbbbbbb",sim.getTitle());
+        FilterTreeAdapter.Group f1=groups.get(0);//告警等级
+        FilterTreeAdapter.Group f2=groups.get(1);//设备类型
+        FilterTreeAdapter.Group f3=groups.get(2);//状态
+        for (SimpleItem s:f1.getList()){
+            if (s.isChecked()==true){
+                level=s.getId();
             }
         }
-        return getHttpService().getAlertDataList("4028812c57a344a30157a376908c0009");
-        return getHttpService().getAlertDataList("4028812c57a344a30157a376908c0009", MyApplication.getMyApplication().getSharedPreference().getString("stationId"), MyApplication.getMyApplication().getSharedPreference().getString("gid"));
-    }
+        for (SimpleItem s:f2.getList()){
+            if (s.isChecked()==true){
+                cStype=s.getId();
+            }
+        }
 
+        for (SimpleItem s:mListRight){
+            long time = 0;
+            if (s.isChecked()==true){
+                String title=s.getTitle();
+                if (title.equals("最近一天")){
+                    time=86400000;
+                }else if (title.equals("最近一周")){
+                    time=86400000*7;
+                }else if (title.equals("最近一月")){
+                    time=86400000*30;
+                }
+                afterTime= System.currentTimeMillis();
+                beforeTime=afterTime-time;
+            }
+        }
+        return getHttpService().getAlertDataList(
+                MyApplication.getMyApplication().getSharedPreference().getString("stationId", ""),
+                MyApplication.getMyApplication().getSharedPreference().getString("gid", ""),
+                level,cStype,beforeTime,afterTime
+     );
+    }
     @Override
     protected Class<AlertData> getItemClass() {
         return AlertData.class;
@@ -208,13 +232,7 @@ public class AlertFragment extends BaseListFragment<AlertData> {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for(int i=0;i<groups.size();i++){
-                    String s=groups.get(i).toString();
-                    if (s.equals("true")){
-                        Toast.makeText(getActivity(),"你选择的是："+s,Toast.LENGTH_SHORT).show();
-                    }
-                    Toast.makeText(getActivity(),"你选择的是："+s,Toast.LENGTH_SHORT).show();
-                }
+                onRefresh();
                 myPopupWindow.dismiss();
             }
         });
