@@ -71,6 +71,7 @@ public class AddDataCorrelationActivity extends BaseActivity {
                 b.putString("titleCorrelation", titleCorrelation);
                 b.putLong("start", simpleDateFormat.parse(startTime, new ParsePosition(0)).getTime());
                 b.putLong("end", simpleDateFormat.parse(endTime, new ParsePosition(0)).getTime());
+
                 Log.i("bbbbbbbb",positionItems+"positionItems");
                 Log.i("bbbbbbbb",positionItemsCorrelation+"positionItemsCorrelation");
                 Log.i("bbbbbbbb",title+"title");

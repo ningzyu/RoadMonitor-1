@@ -1,18 +1,23 @@
 package com.sxhxjy.roadmonitor.ui.main;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.base.BaseFragment;
@@ -21,9 +26,14 @@ import com.sxhxjy.roadmonitor.entity.RealTimeData;
 import com.sxhxjy.roadmonitor.entity.SimpleItem;
 import com.sxhxjy.roadmonitor.util.ActivityUtil;
 import com.sxhxjy.roadmonitor.view.LineChartView;
+import com.sxhxjy.roadmonitor.view.MyLinearLayout;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 2016/9/26
@@ -35,7 +45,8 @@ public class DataAnalysisFragment extends BaseFragment {
      * 数据分析——fragment页
      */
     private CountDownTimer mTimer;
-    private TextView tv1,tv2,tv3,tv4,tv5,tv6;
+    private TextView tv1,tv2,tv3,tv4,tv5;
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,6 +56,7 @@ public class DataAnalysisFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        init(view);
         initToolBar(view, "数据分析", false);
         mToolbar.inflateMenu(R.menu.data_right);
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -135,14 +147,15 @@ public class DataAnalysisFragment extends BaseFragment {
                 public void onFinish() {
                 }
             };
+            int start=(int)data.getLongExtra("start", 0);
+            int end=(int)data.getLongExtra("end", 0);
+            tv1.setText(data.getStringExtra("title"));
+            tv2.setText(positionItems.get(0).getTitle());
+            tv3.setText(data.getStringExtra("titleCorrelation"));
+            tv4.setText(positionItemsCorrelation.get(0).getTitle());
+            tv5.setText(sdf.format(new Date(start))+"----"+sdf.format(new Date(end)));
             mTimer.start();
         }
-//        tv1.setText("监测因素"+data.getStringExtra(""));
-//        tv2.setText("监测位置"+data.getStringExtra("code"));
-//        tv3.setText("关联监测因素"+data.getStringExtra("title"));
-//        tv4.setText("关联监测位置"+data.getStringExtra("titleCorrelation"));
-//        tv5.setText("开始时间"+data.getLongExtra("start", 0));
-//        tv6.setText("结束时间"+data.getLongExtra("end", System.currentTimeMillis()));
     }
     public void init(View v){
         tv1= (TextView) v.findViewById(R.id.tv1_data);
@@ -150,6 +163,5 @@ public class DataAnalysisFragment extends BaseFragment {
         tv3= (TextView) v.findViewById(R.id.tv3_data);
         tv4= (TextView) v.findViewById(R.id.tv4_data);
         tv5= (TextView) v.findViewById(R.id.tv5_data);
-        tv6= (TextView) v.findViewById(R.id.tv6_data);
     }
 }
