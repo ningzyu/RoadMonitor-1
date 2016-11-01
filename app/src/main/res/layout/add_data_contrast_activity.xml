@@ -31,23 +31,28 @@
         android:id="@+id/add_time_single"
         android:visibility="gone"
         android:orientation="vertical">
-        <com.sxhxjy.roadmonitor.view.MyLinearLayout
-            android:layout_width="match_parent"
-            app:titleOfMyLinearLayout="结束时间"
-            app:expandedOfMyLinearLayout="true"
-            android:onClick="timeEnd"
-            android:layout_height="wrap_content">
-
-        </com.sxhxjy.roadmonitor.view.MyLinearLayout>
 
         <com.sxhxjy.roadmonitor.view.MyLinearLayout
             android:layout_width="match_parent"
             app:titleOfMyLinearLayout="开始时间"
             app:expandedOfMyLinearLayout="true"
+            android:id="@+id/start_time"
             android:onClick="timeStart"
             android:layout_height="wrap_content">
 
         </com.sxhxjy.roadmonitor.view.MyLinearLayout>
+
+        <com.sxhxjy.roadmonitor.view.MyLinearLayout
+            android:layout_width="match_parent"
+            app:titleOfMyLinearLayout="结束时间"
+            app:expandedOfMyLinearLayout="true"
+            android:onClick="timeEnd"
+            android:id="@+id/end_time"
+
+            android:layout_height="wrap_content">
+
+        </com.sxhxjy.roadmonitor.view.MyLinearLayout>
+
     </LinearLayout>
 
 

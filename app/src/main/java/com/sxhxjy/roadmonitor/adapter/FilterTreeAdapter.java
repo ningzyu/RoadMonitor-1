@@ -67,12 +67,12 @@ public class FilterTreeAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        if (mGroups.size() == 0)
-            return convertView;
-
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.filter_tree_item, parent, false);
         }
+
+        if (mGroups.size() == 0)
+            return convertView;
 
         TextView textView = (TextView) convertView.findViewById(R.id.title);
         textView.setText(mGroups.get(groupPosition).getGroupName());

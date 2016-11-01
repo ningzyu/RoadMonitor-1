@@ -302,7 +302,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     }
 
     private void getTypeTree(){
-        getMessage(getHttpService().getMonitorTypeTree(MyApplication.getMyApplication().getSharedPreference().getString("gid","")), new MySubscriber<List<MonitorTypeTree>>() {
+        getMessage(getHttpService().getMonitorTypeTree(MyApplication.getMyApplication().getSharedPreference().getString("stationId","")), new MySubscriber<List<MonitorTypeTree>>() {
             @Override
             protected void onMyNext(List<MonitorTypeTree> monitorTypeTrees) {
                 int i = 0;

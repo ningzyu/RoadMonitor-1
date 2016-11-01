@@ -46,7 +46,7 @@ public class DataAnalysisFragment extends BaseFragment {
      */
     private CountDownTimer mTimer;
     private TextView tv1,tv2,tv3,tv4,tv5;
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,27 +85,30 @@ public class DataAnalysisFragment extends BaseFragment {
                 mTimer.cancel();
             LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
             lineChartView.getLines().clear();
-            mTimer = new CountDownTimer(100000, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-
-                    getMessage(getHttpService().getRealTimeData(data.getStringExtra("code"), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
-                        @Override
-                        protected void onMyNext(List<RealTimeData> realTimeDatas) {
-                            LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
-                            lineChartView.addPoints(lineChartView.convert(realTimeDatas), data.getStringExtra("title"), Color.MAGENTA);
+            final ArrayList<SimpleItem> positionItems = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItems");
+            if (positionItems.size() > 1) {
+                mTimer = new CountDownTimer(100000, 10000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        for (final SimpleItem item : positionItems) {
+                            getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
+                                @Override
+                                protected void onMyNext(List<RealTimeData> realTimeDatas) {
+                                    LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
+                                    lineChartView.addPoints(lineChartView.convert(realTimeDatas), item.getTitle(), item.getColor());
+                                }
+                            });
                         }
-                    });
 
+                    }
 
-                }
+                    @Override
+                    public void onFinish() {
 
-                @Override
-                public void onFinish() {
-
-                }
-            };
-            mTimer.start();
+                    }
+                };
+                mTimer.start();
+            }
         }
 
         // data correlation
@@ -141,13 +144,13 @@ public class DataAnalysisFragment extends BaseFragment {
                 public void onFinish() {
                 }
             };
-            long start=data.getLongExtra("start", 0);
-            long end=data.getLongExtra("end", 0);
+            long start= data.getLongExtra("start", 0);
+            long end= data.getLongExtra("end", 0);
             tv1.setText(data.getStringExtra("title"));
             tv2.setText(positionItems.get(0).getTitle());
             tv3.setText(data.getStringExtra("titleCorrelation"));
             tv4.setText(positionItemsCorrelation.get(0).getTitle());
-            tv5.setText(sdf.format(new Date(start))+"----"+sdf.format(new Date(end)));
+            tv5.setText(sdf.format(new Date(start))+"---"+sdf.format(new Date(end)));
             mTimer.start();
         }
     }

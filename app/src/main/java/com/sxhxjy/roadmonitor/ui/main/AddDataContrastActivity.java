@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -27,8 +28,10 @@ import com.sxhxjy.roadmonitor.view.MyLinearLayout;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * 2016/9/29
@@ -45,10 +48,13 @@ public class AddDataContrastActivity extends BaseActivity {
     private List<SimpleItem> mLocationList = new ArrayList<>();
     private List<SimpleItem> mTypeList = new ArrayList<>();
     private String[] aType;
-    private String code;
+    private ArrayList<SimpleItem> positionItems = new ArrayList<>();
 //    private ArrayList<>
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
     private String title;
+    private String startTime;
+    private String endTime;
+    private Random random = new Random();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,13 +67,21 @@ public class AddDataContrastActivity extends BaseActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Bundle b = new Bundle();
-                DeleteView myLinearLayout = (DeleteView) timeContent.getChildAt(0);
-                String[] strings = myLinearLayout.getContent().split("  ----  ");
-                b.putString("code", code);
+
                 b.putString("title", title);
-                b.putLong("start", simpleDateFormat.parse(strings[0], new ParsePosition(0)).getTime());
-                b.putLong("end", simpleDateFormat.parse(strings[1], new ParsePosition(0)).getTime());
+                b.putSerializable("positionItems", positionItems);
+                if (positionItems.size() > 1) {
+                    b.putLong("start", simpleDateFormat.parse(startTime, new ParsePosition(0)).getTime());
+                    b.putLong("end", simpleDateFormat.parse(endTime, new ParsePosition(0)).getTime());
+                } else {
+                    DeleteView myLinearLayout = (DeleteView) timeContent.getChildAt(0);
+                    String[] strings = myLinearLayout.getContent().split("  ----  ");
+                    b.putLong("start", simpleDateFormat.parse(strings[0], new ParsePosition(0)).getTime());
+                    b.putLong("end", simpleDateFormat.parse(strings[1], new ParsePosition(0)).getTime());
+                }
+
                 Intent data = new Intent();
+                data.putExtras(b);
                 setResult(RESULT_OK, data);
                 finish();
                 return true;
@@ -98,30 +112,14 @@ public class AddDataContrastActivity extends BaseActivity {
                         aType[i] = mTypeList.get(i).getTitle();
                     }
 
-                    new AlertDialog.Builder(AddDataContrastActivity.this).setTitle("选择监测因素").setSingleChoiceItems(aType, 0, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            MyLinearLayout myLinearLayout = (MyLinearLayout) view;
-                            myLinearLayout.setContent(aType[which]);
-                            mTypeList.get(which).setChecked(true);
-                            title = mTypeList.get(which).getTitle();
-                            dialog.dismiss();
-                        }
-                    }).create().show();
-
-
+                    showDialogType(view);
                 }
             });
         } else {
-            new AlertDialog.Builder(AddDataContrastActivity.this).setTitle("选择监测因素").setSingleChoiceItems(aType, 0, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    MyLinearLayout myLinearLayout = (MyLinearLayout) view;
-                    myLinearLayout.setContent(aType[which]);
-                    mTypeList.get(which).setChecked(true);
-                    dialog.dismiss();
-                }
-            }).create().show();
+            for (SimpleItem item : mTypeList) {
+                item.setChecked(false);
+            }
+            showDialogType(view);
         }
     }
 
@@ -137,7 +135,11 @@ public class AddDataContrastActivity extends BaseActivity {
                             aLocation = new String[monitorPositions.size()];
                             int i = 0;
                             for (MonitorPosition position : monitorPositions) {
-                                mLocationList.add(new SimpleItem(position.getId(), position.getName(), false));
+                                SimpleItem simpleItem = new SimpleItem(position.getId(), position.getName(), false);
+                                simpleItem.setCode(position.code);
+                                simpleItem.setColor(Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+
+                                mLocationList.add(simpleItem);
                                 aLocation[i++] = position.getName();
                             }
                             showDialogPosition(view);
@@ -147,6 +149,21 @@ public class AddDataContrastActivity extends BaseActivity {
             }
         }
     }
+
+    private void showDialogType(final View view) {
+        new AlertDialog.Builder(AddDataContrastActivity.this).setTitle("选择监测因素").setSingleChoiceItems(aType, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                MyLinearLayout myLinearLayout = (MyLinearLayout) view;
+                myLinearLayout.setContent(aType[which]);
+                mTypeList.get(which).setChecked(true);
+                title = mTypeList.get(which).getTitle();
+                mLocationList.clear();
+                dialog.dismiss();
+            }
+        }).create().show();
+    }
+
 
     private void showDialogPosition(final View view) {
         final boolean[] aTypeChecked = new boolean[mLocationList.size()];
@@ -165,6 +182,7 @@ public class AddDataContrastActivity extends BaseActivity {
                     if (aTypeChecked[i]) {
                         checked++;
                         sb.append(aLocation[i]).append("  ");
+                        positionItems.add(mLocationList.get(i));
                     }
                 }
                 MyLinearLayout myLinearLayout = (MyLinearLayout) view;
@@ -190,6 +208,7 @@ public class AddDataContrastActivity extends BaseActivity {
 
     public StringBuilder chooseTime(final MyLinearLayout myLinearLayout) {
         final StringBuilder sb = new StringBuilder();
+        Date date = new Date(System.currentTimeMillis());
 
         new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -207,16 +226,21 @@ public class AddDataContrastActivity extends BaseActivity {
                         sb.append(":");
                         sb.append(minute < 10 ? "0" + minute : minute);
                         myLinearLayout.setContent(sb.toString());
+                        if (myLinearLayout.getId() == R.id.start_time)
+                            startTime = sb.toString();
+                        else
+                            endTime = sb.toString();
                     }
                 }, 0, 0, true).show();
             }
-        }, 2016, 0, 1).show();
+        }, 2016, date.getMonth(), date.getDay()).show();
 
         return sb;
     }
 
     public void addTime(View view) {
         final StringBuilder sb = new StringBuilder();
+        Date date = new Date(System.currentTimeMillis());
 
         new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -257,7 +281,7 @@ public class AddDataContrastActivity extends BaseActivity {
                     }
                 }, 0, 0, true).show();
             }
-        }, 2016, 0, 1).show();
+        }, 2016, date.getMonth(), date.getDay()).show();
         showToastMsg("请选择开始时间");
     }
 }
