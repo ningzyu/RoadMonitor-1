@@ -1,5 +1,6 @@
 package com.sxhxjy.roadmonitor.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.gesture.GestureStore;
@@ -17,8 +18,10 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.sxhxjy.roadmonitor.R;
+import com.sxhxjy.roadmonitor.base.BaseActivity;
 import com.sxhxjy.roadmonitor.entity.RealTimeData;
 import com.sxhxjy.roadmonitor.ui.main.ChartFullscreenActivity;
 import com.sxhxjy.roadmonitor.ui.main.MainActivity;
@@ -78,12 +81,18 @@ public class LineChartView extends View {
     public String yAxisName;
 
     private NumberFormat numberFormat = NumberFormat.getInstance();
+    private String emptyHint = "暂无数据";
+
 
     private boolean isBeingTouched = false;
     private float touchedX = -1;
     private GestureDetector gestureDetector;
+    private static boolean doubleTapHinted;
+    private boolean chartInFullscreen;
+
 
     public static LineChartView lineChartView;
+    private boolean mIsBeingDraged;
 
 
     public LineChartView(final Context context, AttributeSet attrs) {
@@ -91,6 +100,11 @@ public class LineChartView extends View {
         gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTap(MotionEvent e) {
+                if (chartInFullscreen) {
+                    ((Activity) context).finish();
+                    return true;
+                }
+
                 Intent intent = new Intent(context, ChartFullscreenActivity.class);
                 lineChartView = LineChartView.this;
                 context.startActivity(intent);
@@ -136,7 +150,6 @@ public class LineChartView extends View {
         if (myLines.isEmpty()) {
             mPaint.setTextSize(70);
             mPaint.setColor(Color.GRAY);
-            String emptyHint = "暂无数据";
             float width = mPaint.measureText(emptyHint);
             canvas.drawText(emptyHint, getMeasuredWidth() / 2 - width / 2, getMeasuredHeight() / 2, mPaint);
             return;
@@ -162,6 +175,7 @@ public class LineChartView extends View {
 
         float minDistance = getMeasuredWidth();
         MyPoint minPoint = null;
+
         for (MyLine line : myLines) {
             for (MyPoint myPoint : line.points) {
                 firstPointX = nextPointX;
@@ -206,17 +220,26 @@ public class LineChartView extends View {
             float y = -(float) (((double) (minPoint.value - yStart)) / (yEnd - yStart) * yAxisLength);
             canvas.drawPoint(x, y, mPaint);
 
-            mPaint.setTextSize(20);
+            mPaint.setTextSize(24);
             mPaint.setColor(Color.MAGENTA);
-            mPaint.setStrokeWidth(2);
-//            if ()
-            canvas.drawText(yAxisName + ":" + minPoint.value, x + OFFSET, y - OFFSET, mPaint);
+            mPaint.setStrokeWidth(1);
+            int offsetX = 50;
+            int offsetY = 50;
+            if (x > xAxisLength / 2)
+                offsetX = - offsetX * 5;
+            if (- y > yAxisLength / 2)
+                offsetY = - offsetY;
+
+            date.setTime(minPoint.time);
+            canvas.drawText(yAxisName + ": " + minPoint.value, x + offsetX, y - offsetY, mPaint);
+            canvas.drawText(dateFormat.format(date), x + offsetX, y - offsetY + 40, mPaint);
+
         }
 
 
         // draw x
         mPaint.setTextSize(20);
-        mPaint.setColor(getResources().getColor(R.color.default_color));
+        mPaint.setColor(getResources().getColor(R.color.default_text_color));
         mPaint.setTextAlign(Paint.Align.CENTER);
         for (int j = 0; j <= X_SPLIT_TO; j++) {
             long x = xStart + (long) ((xEnd - xStart) / X_SPLIT_TO * j);
@@ -230,7 +253,7 @@ public class LineChartView extends View {
         }
 
         // draw y
-        mPaint.setColor(getResources().getColor(R.color.default_color));
+        mPaint.setColor(getResources().getColor(R.color.default_text_color));
         mPaint.setStrokeWidth(2);
         canvas.drawLine(0, 0, 0, - yAxisLength, mPaint);
         canvas.drawLine(0, 0, xAxisLength, 0, mPaint);
@@ -249,7 +272,9 @@ public class LineChartView extends View {
             canvas.drawLine(0, yInView, OFFSET_SCALE, yInView, mPaint);
         }
 
-        mPaint.setTextAlign(Paint.Align.LEFT); // yAxisName
+        // draw yAxisName
+        mPaint.setTextAlign(Paint.Align.LEFT);
+        mPaint.setStrokeWidth(1);
         canvas.drawText(yAxisName, - OFFSET_SCALE * 3, -yAxisLength - OFFSET / 2, mPaint);
 
         // draw alert line
@@ -286,20 +311,36 @@ public class LineChartView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        getParent().requestDisallowInterceptTouchEvent(true);
         gestureDetector.onTouchEvent(event);
+
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 isBeingTouched = true;
+                if (!doubleTapHinted) {
+                    Toast.makeText(getContext(), "可双击放大", Toast.LENGTH_SHORT).show();
+                    doubleTapHinted = true;
+                }
                 getParent().requestDisallowInterceptTouchEvent(true);
+                touchedX = event.getX() - OFFSET - 10; // in canvas
+                break;
 
             case MotionEvent.ACTION_MOVE:
                 touchedX = event.getX() - OFFSET - 10; // in canvas
+
+                if (!mIsBeingDraged && event.getHistorySize() > 0 &&
+                        Math.abs(event.getX() - event.getHistoricalX(event.getHistorySize() - 1))
+                                < Math.abs(event.getY() -event.getHistoricalY(event.getHistorySize() - 1))) {
+                    getParent().requestDisallowInterceptTouchEvent(false);
+                } else {
+                    mIsBeingDraged = true;
+                }
+
                 break;
 
             default:
                 isBeingTouched = false;
+                mIsBeingDraged = false;
 
                 break;
         }
@@ -354,6 +395,14 @@ public class LineChartView extends View {
 
     public void setMyLines(ArrayList<MyLine> myLines) {
         this.myLines = myLines;
+    }
+
+    public boolean isChartInFullscreen() {
+        return chartInFullscreen;
+    }
+
+    public void setChartInFullscreen(boolean chartInFullscreen) {
+        this.chartInFullscreen = chartInFullscreen;
     }
 
     private Comparator<MyPoint> comparatorX =  new Comparator<MyPoint>() {
