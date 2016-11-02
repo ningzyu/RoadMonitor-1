@@ -15,6 +15,7 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -109,6 +110,16 @@ public class LineChartView extends View {
                 lineChartView = LineChartView.this;
                 context.startActivity(intent);
                 return super.onDoubleTap(e);
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                if (!mIsBeingDraged && Math.abs(distanceY) - Math.abs(distanceX) > 0) {
+                    getParent().requestDisallowInterceptTouchEvent(false);
+                } else {
+                    mIsBeingDraged = true;
+                }
+                return true;
             }
         });
 
@@ -327,15 +338,6 @@ public class LineChartView extends View {
 
             case MotionEvent.ACTION_MOVE:
                 touchedX = event.getX() - OFFSET - 10; // in canvas
-
-                if (!mIsBeingDraged && event.getHistorySize() > 0 &&
-                        Math.abs(event.getX() - event.getHistoricalX(event.getHistorySize() - 1))
-                                < Math.abs(event.getY() -event.getHistoricalY(event.getHistorySize() - 1))) {
-                    getParent().requestDisallowInterceptTouchEvent(false);
-                } else {
-                    mIsBeingDraged = true;
-                }
-
                 break;
 
             default:
