@@ -51,7 +51,7 @@ public class DataAnalysisFragment extends BaseFragment {
     private TextView tv1,tv2,tv3,tv4,tv5;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
     private Random random = new Random();
-
+    private LinearLayout layout_2,layout_3,layout_4;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,13 +70,11 @@ public class DataAnalysisFragment extends BaseFragment {
                 if (item.getItemId() == R.id.data_contrast) {//数据对比
                     Intent intent = new Intent(getActivity(), AddDataContrastActivity.class);
                     startActivityForResult(intent, 1000);
-                    tv3.setVisibility(View.GONE);
-                    tv4.setVisibility(View.GONE);
+
                 } else if (item.getItemId() == R.id.data_correlation) {//数据关联
                     Intent intent = new Intent(getActivity(), AddDataCorrelationActivity.class);
                     startActivityForResult(intent, 1001);
-                    tv3.setVisibility(View.VISIBLE);
-                    tv4.setVisibility(View.VISIBLE);
+
                 }
                 return true;
             }
@@ -118,7 +116,6 @@ public class DataAnalysisFragment extends BaseFragment {
                         }
                         long start= data.getLongExtra("start", 0);
                         long end= data.getLongExtra("end", 0);
-                        tv1.setText(data.getStringExtra("title"));
                         tv2.setText(str);
                         tv5.setText(sdf.format(new Date(start))+"---"+sdf.format(new Date(end)));
 
@@ -138,7 +135,7 @@ public class DataAnalysisFragment extends BaseFragment {
                         lineChartView.getLines().clear();
                         String str="";
                         for (String s : times) {
-                            String[] strings = s.split("  ----  ");
+                            String[] strings = s.split("---");
                             getMessage(getHttpService().getRealTimeData(positionItems.get(0).getCode(), sdf.parse(strings[0], new ParsePosition(0)).getTime(), sdf.parse(strings[1], new ParsePosition(0)).getTime()), new MySubscriber<List<RealTimeData>>() {
                                 @Override
                                 protected void onMyNext(List<RealTimeData> realTimeDatas) {
@@ -152,19 +149,20 @@ public class DataAnalysisFragment extends BaseFragment {
                                 str=str+"\n"+s.toString();
                             }
                         }
-                        tv1.setText(data.getStringExtra("title"));
                         tv2.setText(positionItems.get(0).getTitle());
                         tv5.setText(str);
                     }
 
                     @Override
                     public void onFinish() {
-
                     }
                 };
-                // TODO
-                mTimer.start();
             }
+            // TODO
+            tv1.setText(data.getStringExtra("title"));
+            layout_3.setVisibility(View.GONE);
+            layout_4.setVisibility(View.GONE);
+            mTimer.start();
         }
 
         // data correlation
@@ -200,6 +198,8 @@ public class DataAnalysisFragment extends BaseFragment {
                 public void onFinish() {
                 }
             };
+            layout_3.setVisibility(View.VISIBLE);
+            layout_4.setVisibility(View.VISIBLE);
             long start= data.getLongExtra("start", 0);
             long end= data.getLongExtra("end", 0);
             String title1="";
@@ -232,5 +232,7 @@ public class DataAnalysisFragment extends BaseFragment {
         tv3= (TextView) v.findViewById(R.id.tv3_data);
         tv4= (TextView) v.findViewById(R.id.tv4_data);
         tv5= (TextView) v.findViewById(R.id.tv5_data);
+        layout_3= (LinearLayout) v.findViewById(R.id.layout_3);
+        layout_4= (LinearLayout) v.findViewById(R.id.layout_4);
     }
 }
