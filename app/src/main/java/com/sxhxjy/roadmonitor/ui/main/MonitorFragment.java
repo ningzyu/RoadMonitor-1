@@ -66,9 +66,6 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     private String codeId;
     private String timeId = "0";
 
-    // when init is
-    private boolean init = true;
-
     private ArrayList<RealTimeData> mRealTimes = new ArrayList<>();
 
     // filter item clicked
@@ -190,7 +187,6 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                init = false; // we clicked, init should be false
                 for (FilterTreeAdapter.Group group : filterTreeAdapter.mGroups) {
                     for (SimpleItem simpleItem : group.getList()) {
                         simpleItem.setChecked(false);
@@ -215,7 +211,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
             simpleItem.setColor(Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
         }
 
-        mTimer = new CountDownTimer(30000, 10000) {
+        mTimer = new CountDownTimer(9000, 3000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mRealTimes.clear();
@@ -292,9 +288,9 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                     SimpleItem simpleItem = new SimpleItem(position.getId(), position.getName(), i++ == 0);
                     simpleItem.setCode(position.code);
                     mListLeft.add(simpleItem);
+                    if (simpleItem.isChecked()) mFilterTitleLeft.setText(simpleItem.getTitle());
 
-                    if (init)   // if init, we get chart data
-                        getChartData();
+                    getChartData();
 
                 }
             }

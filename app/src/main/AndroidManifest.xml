@@ -41,6 +41,10 @@
         <activity android:name=".ui.main.AddDataCorrelationActivity"/>
         <activity android:name=".ui.main.AlertDetailActivity"/>
         <activity android:name=".ui.main.RegisterActivity"/>
+        <activity android:name=".ui.main.ChartFullscreenActivity" android:screenOrientation="landscape">
+
+
+        </activity>
 
         <activity android:name=".view.TakePictureActivity"/>
 

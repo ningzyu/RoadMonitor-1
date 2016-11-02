@@ -176,10 +176,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:text="一级阈值"
-                    android:paddingLeft="20dp"
+                    android:paddingLeft="28dp"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
-                    android:paddingRight="20dp"
+                    android:paddingRight="28dp"
                     android:background="@color/colorPrimaryTranslucent"
                     android:textColor="@color/colorPrimaryDark"
                     android:layout_height="wrap_content" />
@@ -219,10 +219,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:text="二级阈值"
-                    android:paddingLeft="20dp"
+                    android:paddingLeft="28dp"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
-                    android:paddingRight="20dp"
+                    android:paddingRight="28dp"
                     android:background="@color/colorPrimaryTranslucent"
                     android:textColor="@color/colorPrimaryDark"
                     android:layout_height="wrap_content" />
@@ -262,10 +262,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:text="三级阈值"
-                    android:paddingLeft="20dp"
+                    android:paddingLeft="28dp"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
-                    android:paddingRight="20dp"
+                    android:paddingRight="28dp"
                     android:background="@color/colorPrimaryTranslucent"
                     android:textColor="@color/colorPrimaryDark"
                     android:layout_height="wrap_content" />
@@ -305,10 +305,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:text="四级阈值"
-                    android:paddingLeft="20dp"
+                    android:paddingLeft="28dp"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
-                    android:paddingRight="20dp"
+                    android:paddingRight="28dp"
                     android:background="@color/colorPrimaryTranslucent"
                     android:textColor="@color/colorPrimaryDark"
                     android:layout_height="wrap_content" />

@@ -15,6 +15,7 @@ import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.adapter.HomelistAdapter;
 import com.sxhxjy.roadmonitor.base.BaseFragment;
 import com.sxhxjy.roadmonitor.base.CacheManager;
+import com.sxhxjy.roadmonitor.base.MyApplication;
 import com.sxhxjy.roadmonitor.entity.LoginData;
 import com.sxhxjy.roadmonitor.view.HorizontalListView;
 import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
@@ -50,7 +51,7 @@ public class HomeFragment extends BaseFragment{
      */
     private MapView mapview;
     //    private TextView tv0,tv1,tv2,tv3;
-    private String path="http://192.168.1.172:8088/ClearPro/web/points/findAppRootPoint?groupId=4028812c57b6993b0157b6aca4410004";
+    private String path= MyApplication.BASE_URL + "ClearPro/web/points/findAppRootPoint?groupId=4028812c57b6993b0157b6aca4410004";
     private OkHttpClient okHttpClient;
     private Request request;
     private Call call;

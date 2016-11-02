@@ -37,7 +37,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     /**
      * 主页面
      */
-    private ViewPager mViewPager;
+    public ViewPager mViewPager;
     private static final int FRAGMENTS_IN_VIEW_PAGER = 5;
     private long firstTimeOfExit = 0;
     private List<Fragment> fragments = new ArrayList<>();

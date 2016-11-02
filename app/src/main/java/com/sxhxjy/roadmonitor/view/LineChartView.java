@@ -1,6 +1,9 @@
 package com.sxhxjy.roadmonitor.view;
 
 import android.content.Context;
+import android.content.Intent;
+import android.gesture.GestureStore;
+import android.gesture.GestureStroke;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -8,13 +11,19 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.RectF;
+import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.entity.RealTimeData;
+import com.sxhxjy.roadmonitor.ui.main.ChartFullscreenActivity;
+import com.sxhxjy.roadmonitor.ui.main.MainActivity;
 
+import java.io.Serializable;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,19 +71,33 @@ public class LineChartView extends View {
 
     private PathEffect mPathEffect = new DashPathEffect(new float[] {8, 8}, 0);
 
-    private List<MyLine> myLines = new ArrayList<>();
+    private ArrayList<MyLine> myLines = new ArrayList<>();
 
 
     private RectF rectF = new RectF();
-    private String yAxisName;
+    public String yAxisName;
 
     private NumberFormat numberFormat = NumberFormat.getInstance();
 
+    private boolean isBeingTouched = false;
+    private float touchedX = -1;
+    private GestureDetector gestureDetector;
+
+    public static LineChartView lineChartView;
 
 
-
-    public LineChartView(Context context, AttributeSet attrs) {
+    public LineChartView(final Context context, AttributeSet attrs) {
         super(context, attrs);
+        gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                Intent intent = new Intent(context, ChartFullscreenActivity.class);
+                lineChartView = LineChartView.this;
+                context.startActivity(intent);
+                return super.onDoubleTap(e);
+            }
+        });
+
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setDither(true);
         mPath.setFillType(Path.FillType.WINDING);
@@ -113,7 +136,7 @@ public class LineChartView extends View {
         if (myLines.isEmpty()) {
             mPaint.setTextSize(70);
             mPaint.setColor(Color.GRAY);
-            String emptyHint = "请选择数据源";
+            String emptyHint = "暂无数据";
             float width = mPaint.measureText(emptyHint);
             canvas.drawText(emptyHint, getMeasuredWidth() / 2 - width / 2, getMeasuredHeight() / 2, mPaint);
             return;
@@ -130,19 +153,15 @@ public class LineChartView extends View {
             xStart = Math.min(Collections.min(line.points, comparatorX).time, xStart);
             yEnd = Math.max(Collections.max(line.points, comparatorY).value, yEnd);
             yStart = Math.min(Collections.min(line.points, comparatorY).value, yStart);
-//            yStart = 0;
         }
 
-
-
-
-
-
-        mPaint.setTextSize(20);
 
         // draw point and line
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        float minDistance = getMeasuredWidth();
+        MyPoint minPoint = null;
         for (MyLine line : myLines) {
             for (MyPoint myPoint : line.points) {
                 firstPointX = nextPointX;
@@ -153,8 +172,11 @@ public class LineChartView extends View {
                 mPaint.setColor(line.color);
                 mPaint.setStrokeWidth(4);
 
-                if (line.points.indexOf(myPoint) != 0) // do not draw line when draw first point !
+                // draw line
+                if (line.points.indexOf(myPoint) != 0) {// do not draw line when draw first point !
+                    // first point is bad because of equals last next point
                     canvas.drawLine(firstPointX, firstPointY, nextPointX, nextPointY, mPaint);
+                }
 
                 mPaint.setStrokeWidth(8);
 
@@ -162,12 +184,38 @@ public class LineChartView extends View {
                     mPaint.setColor(getResources().getColor(android.R.color.holo_red_light));
                 }
 
+                // draw point
                 canvas.drawPoint(nextPointX, nextPointY, mPaint);
 
+                // calculate min
+                if (isBeingTouched) {
+                    float d = Math.abs(touchedX - nextPointX);
+                    if (d < minDistance) {
+                        minDistance = d;
+                        minPoint = myPoint;
+                    }
+                }
             }
         }
 
+        // draw point info
+        if (isBeingTouched && minPoint != null) {
+            mPaint.setColor(getResources().getColor(R.color.colorPrimary));
+            mPaint.setStrokeWidth(14);
+            float x = (float) (((double) (minPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
+            float y = -(float) (((double) (minPoint.value - yStart)) / (yEnd - yStart) * yAxisLength);
+            canvas.drawPoint(x, y, mPaint);
+
+            mPaint.setTextSize(20);
+            mPaint.setColor(Color.MAGENTA);
+            mPaint.setStrokeWidth(2);
+//            if ()
+            canvas.drawText(yAxisName + ":" + minPoint.value, x + OFFSET, y - OFFSET, mPaint);
+        }
+
+
         // draw x
+        mPaint.setTextSize(20);
         mPaint.setColor(getResources().getColor(R.color.default_color));
         mPaint.setTextAlign(Paint.Align.CENTER);
         for (int j = 0; j <= X_SPLIT_TO; j++) {
@@ -238,20 +286,35 @@ public class LineChartView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        getParent().requestDisallowInterceptTouchEvent(true);
+        gestureDetector.onTouchEvent(event);
 
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                isBeingTouched = true;
+                getParent().requestDisallowInterceptTouchEvent(true);
 
+            case MotionEvent.ACTION_MOVE:
+                touchedX = event.getX() - OFFSET - 10; // in canvas
+                break;
 
+            default:
+                isBeingTouched = false;
+
+                break;
+        }
+        invalidate();
         return true;
     }
 
-    public void addPoints(List<MyPoint> points, String s, int color) {
+    public void addPoints(ArrayList<MyPoint> points, String s, int color) {
         myLines.add(new MyLine(s, points, color)); // TODO cost memory
         invalidate();
     }
 
-    public  List<MyPoint> convert(List<RealTimeData> list) {
+    public  ArrayList<MyPoint> convert(List<RealTimeData> list) {
 
-        List<MyPoint> points = new ArrayList<>();
+        ArrayList<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
             if (points.size() == POINTS_COUNT)
                 points.remove(0);
@@ -261,9 +324,9 @@ public class LineChartView extends View {
         return points;
     }
 
-    public  List<MyPoint> convertY(List<RealTimeData> list) {
+    public  ArrayList<MyPoint> convertY(List<RealTimeData> list) {
 
-        List<MyPoint> points = new ArrayList<>();
+        ArrayList<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
             if (points.size() == POINTS_COUNT)
                 points.remove(0);
@@ -273,9 +336,9 @@ public class LineChartView extends View {
         return points;
     }
 
-    public  List<MyPoint> convertZ(List<RealTimeData> list) {
+    public  ArrayList<MyPoint> convertZ(List<RealTimeData> list) {
 
-        List<MyPoint> points = new ArrayList<>();
+        ArrayList<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
             if (points.size() == POINTS_COUNT)
                 points.remove(0);
@@ -285,8 +348,12 @@ public class LineChartView extends View {
         return points;
     }
 
-    public List<MyLine> getLines() {
+    public ArrayList<MyLine> getLines() {
         return myLines;
+    }
+
+    public void setMyLines(ArrayList<MyLine> myLines) {
+        this.myLines = myLines;
     }
 
     private Comparator<MyPoint> comparatorX =  new Comparator<MyPoint>() {
@@ -310,7 +377,7 @@ public class LineChartView extends View {
     };
 
 
-    public static class MyPoint {
+    public static class MyPoint implements Serializable {
         MyPoint(long time, float value) {
             this.time = time;
             this.value = value;
@@ -321,8 +388,8 @@ public class LineChartView extends View {
 
     }
 
-    public static class MyLine {
-        MyLine(String name, List<MyPoint> points, int color) {
+    public static class MyLine implements Serializable {
+        MyLine(String name, ArrayList<MyPoint> points, int color) {
             this.name = name;
             this.points = points;
             this.color = color;
@@ -330,6 +397,6 @@ public class LineChartView extends View {
 
         String name;
         int color;
-        List<MyPoint> points;
+        ArrayList<MyPoint> points;
     }
 }
