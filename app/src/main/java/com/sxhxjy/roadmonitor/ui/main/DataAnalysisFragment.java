@@ -147,13 +147,12 @@ public class DataAnalysisFragment extends BaseFragment {
                             if (str.equals("")){
                                 str+=time;
                             }else {
-                                str=str+"\n"+s.toString();
+                                str=str+"\n"+time;
                             }
                         }
                         tv2.setText(positionItems.get(0).getTitle());
                         tv5.setText(str);
                     }
-
                     @Override
                     public void onFinish() {
                     }
@@ -165,7 +164,6 @@ public class DataAnalysisFragment extends BaseFragment {
             layout_4.setVisibility(View.GONE);
             mTimer.start();
         }
-
         // data correlation
 
         if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
