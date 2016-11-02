@@ -97,7 +97,6 @@ public class HomeFragment extends BaseFragment{
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String result=response.body().string();//拿到json数据
-                Log.i("aaaaaa",result);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

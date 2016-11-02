@@ -135,7 +135,7 @@ public class DataAnalysisFragment extends BaseFragment {
                         lineChartView.getLines().clear();
                         String str="";
                         for (String s : times) {
-                            String[] strings = s.split("---");
+                            String[] strings = s.split(" ---- ");
                             getMessage(getHttpService().getRealTimeData(positionItems.get(0).getCode(), sdf.parse(strings[0], new ParsePosition(0)).getTime(), sdf.parse(strings[1], new ParsePosition(0)).getTime()), new MySubscriber<List<RealTimeData>>() {
                                 @Override
                                 protected void onMyNext(List<RealTimeData> realTimeDatas) {
@@ -143,8 +143,9 @@ public class DataAnalysisFragment extends BaseFragment {
                                     lineChartView.addPoints(lineChartView.convert(realTimeDatas), positionItems.get(0).getTitle(), Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
                                 }
                             });
+                            String time=strings[0]+"---"+strings[1];
                             if (str.equals("")){
-                                str+=s.toString();
+                                str+=time;
                             }else {
                                 str=str+"\n"+s.toString();
                             }
