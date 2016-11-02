@@ -70,13 +70,13 @@ public class DataAnalysisFragment extends BaseFragment {
                 if (item.getItemId() == R.id.data_contrast) {//数据对比
                     Intent intent = new Intent(getActivity(), AddDataContrastActivity.class);
                     startActivityForResult(intent, 1000);
-//                    layout_correlation.setVisibility(View.GONE);
-//                    layout_contrast.setVisibility(View.VISIBLE);
+                    tv3.setVisibility(View.GONE);
+                    tv4.setVisibility(View.GONE);
                 } else if (item.getItemId() == R.id.data_correlation) {//数据关联
                     Intent intent = new Intent(getActivity(), AddDataCorrelationActivity.class);
                     startActivityForResult(intent, 1001);
-//                    layout_contrast.setVisibility(View.GONE);
-//                    layout_correlation.setVisibility(View.VISIBLE);
+                    tv3.setVisibility(View.VISIBLE);
+                    tv4.setVisibility(View.VISIBLE);
                 }
                 return true;
             }
@@ -113,11 +113,12 @@ public class DataAnalysisFragment extends BaseFragment {
                             if (str.equals("")){
                                 str+=item.getTitle();
                             }else {
-                                str=str+"\n"+item.getTitle();
+                                str=str+","+item.getTitle();
                             }
                         }
                         long start= data.getLongExtra("start", 0);
                         long end= data.getLongExtra("end", 0);
+                        tv1.setText(data.getStringExtra("title"));
                         tv2.setText(str);
                         tv5.setText(sdf.format(new Date(start))+"---"+sdf.format(new Date(end)));
 
@@ -151,7 +152,8 @@ public class DataAnalysisFragment extends BaseFragment {
                                 str=str+"\n"+s.toString();
                             }
                         }
-
+                        tv1.setText(data.getStringExtra("title"));
+                        tv2.setText(positionItems.get(0).getTitle());
                         tv5.setText(str);
                     }
 
