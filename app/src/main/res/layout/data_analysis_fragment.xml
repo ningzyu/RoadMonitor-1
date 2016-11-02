@@ -11,31 +11,35 @@
         android:layout_marginBottom="20dp"
         android:layout_marginTop="70dp"
         android:id="@+id/chart"
-        android:layout_above="@+id/lll"
+        android:layout_above="@+id/layout_correlation"
         android:layout_height="match_parent" />
 
+
+    <!--数据关联-->
     <LinearLayout
-        android:id="@+id/lll"
+        android:id="@+id/layout_correlation"
+
         android:layout_alignParentBottom="true"
         android:paddingBottom="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/colorPrimaryDark"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
-
             android:background="@color/white"
             android:layout_height="wrap_content">
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"/>
+
             <TextView
                 android:layout_width="130dp"
                 android:text="监测因素"
@@ -45,7 +49,9 @@
                 android:paddingRight="20dp"
                 android:background="@color/colorPrimaryTranslucent"
                 android:textColor="@color/colorPrimaryDark"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:id="@+id/textView8" />
+
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
@@ -234,11 +240,9 @@
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"/>
         </LinearLayout>
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/colorPrimary"/>
-
     </LinearLayout>
 </RelativeLayout>
