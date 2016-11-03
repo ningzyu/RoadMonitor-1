@@ -20,7 +20,7 @@ public abstract class MySubscriber<T> extends Subscriber<T> {
 
     @Override
     public void onError(Throwable e) {
-        Toast.makeText(MyApplication.getMyApplication(), "请检查你的网络连接!", Toast.LENGTH_LONG).show();
+//        Toast.makeText(MyApplication.getMyApplication(), "请检查你的网络连接!", Toast.LENGTH_LONG).show();
         Log.e("retrofit", e.toString());
     }
 

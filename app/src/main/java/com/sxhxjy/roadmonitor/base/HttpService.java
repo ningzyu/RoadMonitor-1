@@ -71,7 +71,7 @@ public interface HttpService {
     Observable<HttpResponse<LoginData>> login(@Query("account") String username, @Query("password") String password);
 
     @GET("sensorData/dataList")
-    Observable<HttpResponse<List<RealTimeData>>> getRealTimeData(@Query("code") String positionID, @Query("beforeTime") long start, @Query("afterTime") long end);
+    Observable<HttpResponse<List<RealTimeData>>> getRealTimeData(@Query("code") String positionID, @Query("beforeTime") long start, @Query("afterTime") long end, @Query("timeState") int timeState);
 
 
     @GET("points/pointDetail")
@@ -106,7 +106,7 @@ public interface HttpService {
     Observable<HttpResponse<List<AlertData>>> getAlertDataDetail(@Query("stationId") String stationId, @Query("stime") String startTime, @Query("etime") String endTime);
 
     @GET("alarmUnionData/pageList")
-    Observable<HttpResponse<List<AlertData>>> getAlertDataList(@Query("stationId") String stationId, @Query("orgId") String gid, @Query("level") String level,@Query("cStype") String type, @Query("beforeTime") long beforeTime, @Query("afterTime") long afterTime);
+    Observable<HttpResponse<List<AlertData>>> getAlertDataList(@Query("stationId") String stationId, @Query("orgId") String gid, @Query("level") String level,@Query("cStype") String type, @Query("beforeTime") long beforeTime, @Query("afterTime") long afterTime, @Query("timeState") int timeState);
 
     /////////////////////////////////////////////////////////////////////////
     ////  home

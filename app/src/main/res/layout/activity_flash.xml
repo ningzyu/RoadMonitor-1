@@ -4,15 +4,9 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text=" 路网健康监测信息平台"
-        android:id="@+id/textView"
-        android:textSize="30dp"
-        android:textColor="#fff"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="133dp" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:src="@mipmap/flash"
+        android:scaleType="centerCrop"
+        android:layout_height="match_parent" />
 </RelativeLayout>

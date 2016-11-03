@@ -102,6 +102,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                     simpleItem.setChecked(false);
                 }
                 mAdapter.getListData().get(p).setChecked(true);
+                timeId = mAdapter.getListData().get(p).getId();
                 mFilterList.setVisibility(View.GONE);
                 getChartData();
             }
@@ -144,7 +145,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         mFilterTitleLeft = (TextView) view.findViewById(R.id.filter_left);
         mFilterTitleRight = (TextView) view.findViewById(R.id.filter_right);
 
-        mListRight.add(new SimpleItem("0", "最近一天", false));
+        mListRight.add(new SimpleItem("0", "最近一天", true));
         mListRight.add(new SimpleItem("1", "最近一周", false));
         mListRight.add(new SimpleItem("2", "最近一月", false));
 
@@ -217,6 +218,12 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
             simpleItem.setColor(Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
         }
 
+        if (mChartsContainer.getChildAt(1) != null)
+            mChartsContainer.removeView(mChartsContainer.getChildAt(1));
+
+        if (mChartsContainer.getChildAt(2) != null)
+            mChartsContainer.removeView(mChartsContainer.getChildAt(2));
+
         mTimer = new CountDownTimer(9000, 3000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -233,7 +240,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                             interval = 1000;
                         final long finalInterval = interval;
 
-                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis(), System.currentTimeMillis() + 1000 * 3600 *24), new MySubscriber<List<RealTimeData>>() {
+                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis(), System.currentTimeMillis() + 1000 * 3600 *24, Integer.parseInt(timeId)), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
                                 mRealTimes.addAll(realTimeDatas);

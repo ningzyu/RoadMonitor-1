@@ -51,7 +51,7 @@ public class HomeFragment extends BaseFragment{
      */
     private MapView mapview;
     //    private TextView tv0,tv1,tv2,tv3;
-    private String path= MyApplication.BASE_URL + "ClearPro/web/points/findAppRootPoint?groupId=4028812c57b6993b0157b6aca4410004";
+    private String path= MyApplication.BASE_URL + "points/findAppRootPoint?groupId=4028812c57b6993b0157b6aca4410004";
     private OkHttpClient okHttpClient;
     private Request request;
     private Call call;

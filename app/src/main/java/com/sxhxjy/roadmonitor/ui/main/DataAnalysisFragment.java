@@ -52,6 +52,8 @@ public class DataAnalysisFragment extends BaseFragment {
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
     private Random random = new Random();
     private LinearLayout layout_2,layout_3,layout_4;
+    private LinearLayout mChartsContainer;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,11 +82,48 @@ public class DataAnalysisFragment extends BaseFragment {
             }
         });
 
+        mChartsContainer = (LinearLayout) getView().findViewById(R.id.charts_container);
+        mChartsContainer.getChildAt(0).findViewById(R.id.param_info).setVisibility(View.GONE);
+
+
+
+    }
+
+    private void addToChart(List<RealTimeData> realTimeDatas, SimpleItem simpleItem) {
+        if (mChartsContainer.getChildAt(0) == null)
+            getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
+        LineChartView lineChartView0 = (LineChartView) mChartsContainer.getChildAt(0).findViewById(R.id.chart);
+        mChartsContainer.getChildAt(0).findViewById(R.id.param_info).setVisibility(View.GONE);
+        lineChartView0.addPoints(lineChartView0.convert(realTimeDatas), simpleItem.getTitle(), simpleItem.getColor());
+
+
+        if (realTimeDatas.get(0).getTypeCode() != 1) {
+            if (mChartsContainer.getChildAt(1) == null)
+                getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
+            LineChartView lineChartView1 = (LineChartView) mChartsContainer.getChildAt(1).findViewById(R.id.chart);
+            mChartsContainer.getChildAt(1).findViewById(R.id.param_info).setVisibility(View.GONE);
+            lineChartView1.addPoints(lineChartView1.convertY(realTimeDatas), simpleItem.getTitle() + " y", simpleItem.getColor());
+
+
+        }
+        if (realTimeDatas.get(0).getTypeCode() == 2) {
+            if (mChartsContainer.getChildAt(2) == null)
+                getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
+            LineChartView lineChartView2 = (LineChartView) mChartsContainer.getChildAt(2).findViewById(R.id.chart);
+            mChartsContainer.getChildAt(2).findViewById(R.id.param_info).setVisibility(View.GONE);
+            lineChartView2.addPoints(lineChartView2.convertZ(realTimeDatas), simpleItem.getTitle() + " z", simpleItem.getColor());
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (mChartsContainer.getChildAt(1) != null)
+            mChartsContainer.removeView(mChartsContainer.getChildAt(1));
+
+        if (mChartsContainer.getChildAt(2) != null)
+            mChartsContainer.removeView(mChartsContainer.getChildAt(2));
 
         // data contrast
         if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {
@@ -101,11 +140,10 @@ public class DataAnalysisFragment extends BaseFragment {
                         lineChartView.getLines().clear();
                         String str="";
                         for (final SimpleItem item : positionItems) {
-                            getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
+                            getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis()), 3), new MySubscriber<List<RealTimeData>>() {
                                 @Override
                                 protected void onMyNext(List<RealTimeData> realTimeDatas) {
-                                    LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
-                                    lineChartView.addPoints(lineChartView.convert(realTimeDatas), item.getTitle(), item.getColor());
+                                    addToChart(realTimeDatas, item);
                                 }
                             });
                             if (str.equals("")){
@@ -129,17 +167,15 @@ public class DataAnalysisFragment extends BaseFragment {
                 mTimer.start();
             } else {//多时间
                 final ArrayList<String> times = (ArrayList<String>) data.getSerializableExtra("times");
-                mTimer = new CountDownTimer(100000, 10000) {
+                mTimer = new CountDownTimer(9000, 3000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         lineChartView.getLines().clear();
                         String str="";
-                        for (String s : times) {
-                            String[] strings = s.split(" ---- ");
 
                         for (final String s : times) {
                             String[] strings = s.split("  ----  ");
-                            getMessage(getHttpService().getRealTimeData(positionItems.get(0).getCode(), sdf.parse(strings[0], new ParsePosition(0)).getTime(), sdf.parse(strings[1], new ParsePosition(0)).getTime()), new MySubscriber<List<RealTimeData>>() {
+                            getMessage(getHttpService().getRealTimeData(positionItems.get(0).getCode(), sdf.parse(strings[0], new ParsePosition(0)).getTime(), sdf.parse(strings[1], new ParsePosition(0)).getTime(), 3), new MySubscriber<List<RealTimeData>>() {
                                 @Override
                                 protected void onMyNext(List<RealTimeData> realTimeDatas) {
                                     LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
@@ -180,18 +216,18 @@ public class DataAnalysisFragment extends BaseFragment {
                 public void onTick(long millisUntilFinished) {
                     lineChartView.getLines().clear();
                     for (final SimpleItem item : positionItems) {
-                        getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
+                        getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis()), 3), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
-                                lineChartView.addPoints(lineChartView.convert(realTimeDatas), item.getTitle(), item.getColor());
+                                addToChart(realTimeDatas, item);
                             }
                         });
                     }
                     for (final SimpleItem item : positionItemsCorrelation) {
-                        getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
+                        getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis()), 3), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
-                                lineChartView.addPoints(lineChartView.convert(realTimeDatas), item.getTitle(), item.getColor());
+                                addToChart(realTimeDatas, item);
                             }
                         });
                     }

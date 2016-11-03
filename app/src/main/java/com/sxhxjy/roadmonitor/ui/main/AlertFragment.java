@@ -89,10 +89,9 @@ public class AlertFragment extends BaseListFragment<AlertData> {
                 beforeTime=afterTime-time;
             }
         }
-        return getHttpService().getAlertDataList(
+        return getHttpService().getAlertDataList(null,
                 MyApplication.getMyApplication().getSharedPreference().getString("stationId", ""),
-                MyApplication.getMyApplication().getSharedPreference().getString("gid", ""),
-                level,cStype,beforeTime,afterTime
+                level,cStype,beforeTime,afterTime, 2
      );
     }
     @Override

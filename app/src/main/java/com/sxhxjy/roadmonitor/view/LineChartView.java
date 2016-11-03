@@ -3,8 +3,6 @@ package com.sxhxjy.roadmonitor.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.gesture.GestureStore;
-import android.gesture.GestureStroke;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -12,20 +10,15 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.RectF;
-import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
 import com.sxhxjy.roadmonitor.R;
-import com.sxhxjy.roadmonitor.base.BaseActivity;
 import com.sxhxjy.roadmonitor.entity.RealTimeData;
 import com.sxhxjy.roadmonitor.ui.main.ChartFullscreenActivity;
-import com.sxhxjy.roadmonitor.ui.main.MainActivity;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
@@ -45,7 +38,7 @@ import java.util.Random;
  */
 public class LineChartView extends View {
     private static final int DELAY = 1000;
-    private static final int POINTS_COUNT = 24;
+    private static final int POINTS_COUNT = 50;
     private static final int OFFSET = 60;
     private static final int OFFSET_LEGEND = 70;
     private static final int LEGEND_WIDTH= 70;
@@ -65,10 +58,6 @@ public class LineChartView extends View {
     private long BASE_TIME = System.currentTimeMillis();
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
     private Date date = new Date();
-
-    private int[] colors = {Color.BLUE, Color.GREEN, Color.YELLOW, Color.CYAN};
-
-
 
     private Paint mPaint;
     private Path mPath = new Path();
@@ -93,7 +82,7 @@ public class LineChartView extends View {
 
 
     public static LineChartView lineChartView;
-    private boolean mIsBeingDraged;
+    private boolean mIsBeingDragged;
 
 
     public LineChartView(final Context context, AttributeSet attrs) {
@@ -114,10 +103,10 @@ public class LineChartView extends View {
 
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                if (!mIsBeingDraged && Math.abs(distanceY) - Math.abs(distanceX) > 0) {
+                if (!mIsBeingDragged && Math.abs(distanceY) - Math.abs(distanceX) > 0) {
                     getParent().requestDisallowInterceptTouchEvent(false);
                 } else {
-                    mIsBeingDraged = true;
+                    mIsBeingDragged = true;
                 }
                 return true;
             }
@@ -342,7 +331,7 @@ public class LineChartView extends View {
 
             default:
                 isBeingTouched = false;
-                mIsBeingDraged = false;
+                mIsBeingDragged = false;
 
                 break;
         }
