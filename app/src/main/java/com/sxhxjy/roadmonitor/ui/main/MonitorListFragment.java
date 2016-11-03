@@ -59,9 +59,7 @@ public class MonitorListFragment extends BaseListFragment<Monitor> {
                 startActivityForResult(intent, StationListActivity.REQUEST_CODE);
             }
         });
-
     }
-
     @Override
     protected String getCacheKey() {
         return null;
