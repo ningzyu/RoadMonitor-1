@@ -137,10 +137,8 @@ public class AlertFragment extends BaseListFragment<AlertData> {
                     mFilterList.setVisibility(View.VISIBLE);
                 else
                     mFilterList.setVisibility(View.GONE);
-
             }
         });
-
         mFilterList = (RecyclerView) getView().findViewById(R.id.filter_list);
         mFilterList.setLayoutManager(new LinearLayoutManager(getActivity()));
         mAdapter = new SimpleListAdapter(this, mListLeft);
@@ -163,8 +161,6 @@ public class AlertFragment extends BaseListFragment<AlertData> {
                 }
             }
         });
-
-
         mToolbar.inflateMenu(R.menu.filter_right);
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -173,20 +169,13 @@ public class AlertFragment extends BaseListFragment<AlertData> {
                 return true;
             }
         });
-
         myPopupWindow = new MyPopupWindow((BaseActivity) getActivity(), R.layout.popup_window_right);
-
         ExpandableListView expandableListView = (ExpandableListView) myPopupWindow.getContentView().findViewById(R.id.expandable_list_view);
         Button confirm = (Button) myPopupWindow.getContentView().findViewById(R.id.confirm);
-
-
         groups = new ArrayList<>();
         final List<SimpleItem> mList0 = new ArrayList<>();
-
         final List<SimpleItem> mList1 = new ArrayList<>();
-
         final List<SimpleItem> mList2 = new ArrayList<>();
-
         //抽屉
         FilterTreeAdapter.Group group0 = new FilterTreeAdapter.Group(mList0, "告警等级");
         FilterTreeAdapter.Group group1 = new FilterTreeAdapter.Group(mList1, "设备类型");
@@ -194,7 +183,6 @@ public class AlertFragment extends BaseListFragment<AlertData> {
         groups.add(group0);
         groups.add(group1);
         groups.add(group2);
-
         //为抽屉中每个列表循环添加列表项
         getMessage(getHttpService().getAlertTree(), new MySubscriber<AlertTree>() {
             @Override

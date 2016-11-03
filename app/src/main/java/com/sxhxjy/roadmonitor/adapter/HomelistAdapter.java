@@ -4,7 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sxhxjy.roadmonitor.R;
@@ -20,7 +22,9 @@ public class HomelistAdapter extends BaseAdapter {
     private ArrayList<Map<String,Object>> list;//数据源
     private int resource;//自定义样式
     private LayoutInflater inflater;//布局填充器
+    private Context context;
     public HomelistAdapter(Context context, ArrayList<Map<String,Object>> list, int resource){
+        this.context=context;
         this.list=list;
         this.resource=resource;
         inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -52,6 +56,10 @@ public class HomelistAdapter extends BaseAdapter {
             vh=new ViewHolder();
             convertView=inflater.inflate(resource,null);
             vh.name=(TextView)convertView.findViewById(R.id.tv_home_item);
+            vh.home_list_item= (LinearLayout) convertView.findViewById(R.id.home_list_item);
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            int width = wm.getDefaultDisplay().getWidth();
+            vh.home_list_item.setMinimumWidth(width/3);
             convertView.setTag(vh);
         }else{
             vh=(ViewHolder)convertView.getTag();
@@ -63,5 +71,6 @@ public class HomelistAdapter extends BaseAdapter {
     //內部类优化--定义属性
     class ViewHolder{
         TextView name;
+        LinearLayout home_list_item;
     }
 }

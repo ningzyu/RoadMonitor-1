@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -49,7 +51,7 @@ public class DataAnalysisFragment extends BaseFragment {
     private TextView tv1,tv2,tv3,tv4,tv5;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
     private Random random = new Random();
-
+    private LinearLayout layout_2,layout_3,layout_4;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,12 +67,14 @@ public class DataAnalysisFragment extends BaseFragment {
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.data_contrast) {
+                if (item.getItemId() == R.id.data_contrast) {//数据对比
                     Intent intent = new Intent(getActivity(), AddDataContrastActivity.class);
                     startActivityForResult(intent, 1000);
-                } else if (item.getItemId() == R.id.data_correlation) {
+
+                } else if (item.getItemId() == R.id.data_correlation) {//数据关联
                     Intent intent = new Intent(getActivity(), AddDataCorrelationActivity.class);
                     startActivityForResult(intent, 1001);
+
                 }
                 return true;
             }
@@ -90,12 +94,12 @@ public class DataAnalysisFragment extends BaseFragment {
             lineChartView.getLines().clear();
             final ArrayList<SimpleItem> positionItems = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItems");
 
-            if (positionItems.size() > 1) {
+            if (positionItems.size() > 1) {//多位置
                 mTimer = new CountDownTimer(100000, 10000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         lineChartView.getLines().clear();
-
+                        String str="";
                         for (final SimpleItem item : positionItems) {
                             getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis())), new MySubscriber<List<RealTimeData>>() {
                                 @Override
@@ -104,7 +108,16 @@ public class DataAnalysisFragment extends BaseFragment {
                                     lineChartView.addPoints(lineChartView.convert(realTimeDatas), item.getTitle(), item.getColor());
                                 }
                             });
+                            if (str.equals("")){
+                                str+=item.getTitle();
+                            }else {
+                                str=str+","+item.getTitle();
+                            }
                         }
+                        long start= data.getLongExtra("start", 0);
+                        long end= data.getLongExtra("end", 0);
+                        tv2.setText(str);
+                        tv5.setText(sdf.format(new Date(start))+"---"+sdf.format(new Date(end)));
 
                     }
 
@@ -114,13 +127,15 @@ public class DataAnalysisFragment extends BaseFragment {
                     }
                 };
                 mTimer.start();
-            } else {
+            } else {//多时间
                 final ArrayList<String> times = (ArrayList<String>) data.getSerializableExtra("times");
-
                 mTimer = new CountDownTimer(100000, 10000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         lineChartView.getLines().clear();
+                        String str="";
+                        for (String s : times) {
+                            String[] strings = s.split(" ---- ");
 
                         for (final String s : times) {
                             String[] strings = s.split("  ----  ");
@@ -131,23 +146,27 @@ public class DataAnalysisFragment extends BaseFragment {
                                     lineChartView.addPoints(lineChartView.convert(realTimeDatas), s, Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
                                 }
                             });
+                            String time=strings[0]+"---"+strings[1];
+                            if (str.equals("")){
+                                str+=time;
+                            }else {
+                                str=str+"\n"+time;
+                            }
                         }
+                        tv2.setText(positionItems.get(0).getTitle());
+                        tv5.setText(str);
                     }
-
                     @Override
                     public void onFinish() {
-
                     }
                 };
-                // TODO
-
-
-
-
-                mTimer.start();
             }
+            // TODO
+            tv1.setText(data.getStringExtra("title"));
+            layout_3.setVisibility(View.GONE);
+            layout_4.setVisibility(View.GONE);
+            mTimer.start();
         }
-
         // data correlation
 
         if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
@@ -181,12 +200,30 @@ public class DataAnalysisFragment extends BaseFragment {
                 public void onFinish() {
                 }
             };
+            layout_3.setVisibility(View.VISIBLE);
+            layout_4.setVisibility(View.VISIBLE);
             long start= data.getLongExtra("start", 0);
             long end= data.getLongExtra("end", 0);
+            String title1="";
+            String title2="";
             tv1.setText(data.getStringExtra("title"));
-            tv2.setText(positionItems.get(0).getTitle());
+            for (SimpleItem sim:positionItems){
+                if (title1.equals("")){
+                    title1+=sim.getTitle();
+                }else {
+                    title1=title1+","+sim.getTitle();
+                }
+            }
+            tv2.setText(title1);
             tv3.setText(data.getStringExtra("titleCorrelation"));
-            tv4.setText(positionItemsCorrelation.get(0).getTitle());
+            for (SimpleItem sim:positionItemsCorrelation){
+                if (title2.equals("")){
+                    title2+=sim.getTitle();
+                }else {
+                    title2=title2+","+sim.getTitle();
+                }
+            }
+            tv4.setText(title2);
             tv5.setText(sdf.format(new Date(start))+"---"+sdf.format(new Date(end)));
             mTimer.start();
         }
@@ -197,5 +234,7 @@ public class DataAnalysisFragment extends BaseFragment {
         tv3= (TextView) v.findViewById(R.id.tv3_data);
         tv4= (TextView) v.findViewById(R.id.tv4_data);
         tv5= (TextView) v.findViewById(R.id.tv5_data);
+        layout_3= (LinearLayout) v.findViewById(R.id.layout_3);
+        layout_4= (LinearLayout) v.findViewById(R.id.layout_4);
     }
 }

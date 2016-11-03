@@ -352,7 +352,6 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
                     if (mOnItemSelected != null) {
                         mOnItemSelected.onItemSelected(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId(mLeftViewIndex + 1 + i));
-
                     }
 
                     break;
@@ -362,9 +361,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             }
 
             return true;
-
         }
-
         @Override
         public void onLongPress(MotionEvent e) {
             int childCount = getChildCount();
@@ -373,17 +370,11 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
                 if (isEventWithinView(e, child)) {
                     if (mOnItemLongClicked != null) {
                         mOnItemLongClicked.onItemLongClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId(mLeftViewIndex + 1 + i));
-
                     }
-
                     break;
-
                 }
-
             }
-
         }
-
         private boolean isEventWithinView(MotionEvent e, View child) {
             Rect viewRect = new Rect();
             int[] childPosition = new int[2];
