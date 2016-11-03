@@ -27,10 +27,12 @@ public class ChartFullscreenActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chart_full_screen_activity);
 
-        ArrayList<LineChartView.MyLine> lines = LineChartView.lineChartView.getLines();
         LineChartView lineChartView = (LineChartView) findViewById(R.id.chart);
-        lineChartView.setMyLines(lines);
+        lineChartView.setMyLines(LineChartView.lineChartView.getLines());
+        lineChartView.setMyLinesRight(LineChartView.lineChartView.getLinesRight());
+
         lineChartView.yAxisName = LineChartView.lineChartView.yAxisName;
+        lineChartView.yAxisNameRight = LineChartView.lineChartView.yAxisNameRight;
         lineChartView.setChartInFullscreen(true);
         lineChartView.invalidate();
         if (!hinted) {

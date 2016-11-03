@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import static android.R.attr.x;
+
 /**
  * 2016/9/19
  *
@@ -38,8 +40,8 @@ import java.util.Random;
  */
 public class LineChartView extends View {
     private static final int DELAY = 1000;
-    private static final int POINTS_COUNT = 50;
-    private static final int OFFSET = 60;
+    private static final int POINTS_COUNT = 20;
+    private static final int OFFSET = 65;
     private static final int OFFSET_LEGEND = 70;
     private static final int LEGEND_WIDTH= 70;
     private static final int LEGEND_HEIGHT = 35;
@@ -48,11 +50,12 @@ public class LineChartView extends View {
     private static final float SPLIT_TO = 5;
     private static final float X_SPLIT_TO = 5;
 
-    private static final int ALERT_VALUE = 1000;
+    private static final int ALERT_VALUE = 100000000;
     private Random mRandom = new Random(47);
     private int xAxisLength, yAxisLength;
     private long xStart, xEnd;
     private float yStart, yEnd;
+    private float yStartRight, yEndRight;
     private float firstPointX, nextPointX, firstPointY, nextPointY;
 
     private long BASE_TIME = System.currentTimeMillis();
@@ -65,10 +68,12 @@ public class LineChartView extends View {
     private PathEffect mPathEffect = new DashPathEffect(new float[] {8, 8}, 0);
 
     private ArrayList<MyLine> myLines = new ArrayList<>();
+    private ArrayList<MyLine> myLinesRight = new ArrayList<>();
 
 
     private RectF rectF = new RectF();
     public String yAxisName;
+    public String yAxisNameRight;
 
     private NumberFormat numberFormat = NumberFormat.getInstance();
     private String emptyHint = "暂无数据";
@@ -103,6 +108,7 @@ public class LineChartView extends View {
 
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                // resolve conflict
                 if (!mIsBeingDragged && Math.abs(distanceY) - Math.abs(distanceX) > 0) {
                     getParent().requestDisallowInterceptTouchEvent(false);
                 } else {
@@ -147,7 +153,7 @@ public class LineChartView extends View {
         super.onDraw(canvas);
         canvas.drawColor(getResources().getColor(R.color.white));
 
-        if (myLines.isEmpty()) {
+        if (myLines.isEmpty() && myLinesRight.isEmpty()) {
             mPaint.setTextSize(70);
             mPaint.setColor(Color.GRAY);
             float width = mPaint.measureText(emptyHint);
@@ -168,6 +174,17 @@ public class LineChartView extends View {
             yStart = Math.min(Collections.min(line.points, comparatorY).value, yStart);
         }
 
+        // *RIGHT*
+        yEndRight = -10000f;
+        for (MyLine line : myLinesRight) {
+            xEnd = Math.max(Collections.max(line.points, comparatorX).time, xEnd);
+            xStart = Math.min(Collections.min(line.points, comparatorX).time, xStart);
+            yEndRight = Math.max(Collections.max(line.points, comparatorY).value, yEndRight);
+            yStartRight = Math.min(Collections.min(line.points, comparatorY).value, yStartRight);
+        }
+
+
+
 
         // draw point and line
         mPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -175,6 +192,7 @@ public class LineChartView extends View {
 
         float minDistance = getMeasuredWidth();
         MyPoint minPoint = null;
+        boolean isRight = false;
 
         for (MyLine line : myLines) {
             for (MyPoint myPoint : line.points) {
@@ -212,12 +230,56 @@ public class LineChartView extends View {
             }
         }
 
+        //       *RIGHT*
+        for (MyLine line : myLinesRight) {
+            for (MyPoint myPoint : line.points) {
+                firstPointX = nextPointX;
+                firstPointY = nextPointY;
+                nextPointX = (float) (((double) (myPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
+                nextPointY = -(float) (((double) (myPoint.value - yStartRight)) / (yEndRight - yStartRight) * yAxisLength);
+
+                mPaint.setColor(line.color);
+                mPaint.setStrokeWidth(4);
+
+                // draw line
+                if (line.points.indexOf(myPoint) != 0) {// do not draw line when draw first point !
+                    // first point is bad because of equals last next point
+                    canvas.drawLine(firstPointX, firstPointY, nextPointX, nextPointY, mPaint);
+                }
+
+                mPaint.setStrokeWidth(8);
+
+                if (myPoint.value > ALERT_VALUE) {
+                    mPaint.setColor(getResources().getColor(android.R.color.holo_red_light));
+                }
+
+                // draw point
+                canvas.drawPoint(nextPointX, nextPointY, mPaint);
+
+                // calculate min
+                if (isBeingTouched) {
+                    float d = Math.abs(touchedX - nextPointX);
+                    if (d < minDistance) {
+                        minDistance = d;
+                        minPoint = myPoint;
+                        isRight = true;
+                    }
+                }
+            }
+        }
+
         // draw point info
         if (isBeingTouched && minPoint != null) {
             mPaint.setColor(getResources().getColor(R.color.colorPrimary));
             mPaint.setStrokeWidth(14);
-            float x = (float) (((double) (minPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
-            float y = -(float) (((double) (minPoint.value - yStart)) / (yEnd - yStart) * yAxisLength);
+            float x, y;
+            if (!isRight) {
+                x = (float) (((double) (minPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
+                y = -(float) (((double) (minPoint.value - yStart)) / (yEnd - yStart) * yAxisLength);
+            } else {
+                x = (float) (((double) (minPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
+                y = -(float) (((double) (minPoint.value - yStartRight)) / (yEndRight - yStartRight) * yAxisLength);
+            }
             canvas.drawPoint(x, y, mPaint);
 
             mPaint.setTextSize(24);
@@ -231,7 +293,11 @@ public class LineChartView extends View {
                 offsetY = - offsetY;
 
             date.setTime(minPoint.time);
-            canvas.drawText(yAxisName + ": " + minPoint.value, x + offsetX, y - offsetY, mPaint);
+            if (!isRight) {
+                canvas.drawText(yAxisName + ": " + minPoint.value, x + offsetX, y - offsetY, mPaint);
+            } else {
+                canvas.drawText(yAxisNameRight + ": " + minPoint.value, x + offsetX, y - offsetY, mPaint);
+            }
             canvas.drawText(dateFormat.format(date), x + offsetX, y - offsetY + 40, mPaint);
 
         }
@@ -252,30 +318,64 @@ public class LineChartView extends View {
             mPaint.setStrokeWidth(2);
         }
 
+        canvas.drawLine(0, 0, xAxisLength, 0, mPaint); // x axis
+
         // draw y
-        mPaint.setColor(getResources().getColor(R.color.default_text_color));
-        mPaint.setStrokeWidth(2);
-        canvas.drawLine(0, 0, 0, - yAxisLength, mPaint);
-        canvas.drawLine(0, 0, xAxisLength, 0, mPaint);
-
-        mPaint.setTextAlign(Paint.Align.RIGHT);
-        canvas.drawText(yStart + "", - OFFSET_SCALE, 0, mPaint);
-
-        for (int j = 0; j < SPLIT_TO; j++) {
-            float y = yStart + (yEnd - yStart) / SPLIT_TO * (j + 1);
-            float yInView = (y - yStart) / (yEnd - yStart) * yAxisLength;
-            yInView = -yInView; // reverse
-
-            mPaint.setStrokeWidth(1);
-            canvas.drawText(numberFormat.format(y) + "", - OFFSET_SCALE, yInView, mPaint);
+        if (!myLines.isEmpty()) {
+            mPaint.setColor(getResources().getColor(R.color.default_text_color));
             mPaint.setStrokeWidth(2);
-            canvas.drawLine(0, yInView, OFFSET_SCALE, yInView, mPaint);
+            canvas.drawLine(0, 0, 0, -yAxisLength, mPaint);
+
+            mPaint.setTextAlign(Paint.Align.RIGHT);
+            canvas.drawText(yStart + "", -OFFSET_SCALE, 0, mPaint);
+
+            for (int j = 0; j < SPLIT_TO; j++) {
+                float y = yStart + (yEnd - yStart) / SPLIT_TO * (j + 1);
+                float yInView = (y - yStart) / (yEnd - yStart) * yAxisLength;
+                yInView = -yInView; // reverse
+
+                mPaint.setStrokeWidth(1);
+                canvas.drawText(numberFormat.format(y) + "", -OFFSET_SCALE, yInView, mPaint);
+                mPaint.setStrokeWidth(2);
+                canvas.drawLine(0, yInView, OFFSET_SCALE, yInView, mPaint);
+            }
+        }
+
+        // *RIGHT*
+
+        if (!myLinesRight.isEmpty()) {
+            mPaint.setColor(getResources().getColor(R.color.default_text_color));
+            mPaint.setStrokeWidth(2);
+            canvas.drawLine(xAxisLength, 0, xAxisLength, - yAxisLength, mPaint);
+
+            mPaint.setTextAlign(Paint.Align.RIGHT);
+            canvas.drawText(yStart + "", - OFFSET_SCALE, 0, mPaint);
+
+            for (int j = 0; j < SPLIT_TO; j++) {
+                float y = yStartRight + (yEndRight - yStartRight) / SPLIT_TO * (j + 1);
+                float yInView = (y - yStartRight) / (yEndRight - yStartRight) * yAxisLength;
+                yInView = -yInView; // reverse
+
+                mPaint.setStrokeWidth(1);
+                canvas.drawText(numberFormat.format(y) + "", xAxisLength + OFFSET_SCALE, yInView, mPaint);
+                mPaint.setStrokeWidth(2);
+                canvas.drawLine(xAxisLength, yInView, xAxisLength - OFFSET_SCALE, yInView, mPaint);
+            }
         }
 
         // draw yAxisName
-        mPaint.setTextAlign(Paint.Align.LEFT);
-        mPaint.setStrokeWidth(1);
-        canvas.drawText(yAxisName, - OFFSET_SCALE * 3, -yAxisLength - OFFSET / 2, mPaint);
+        if (!myLines.isEmpty()) {
+            mPaint.setTextAlign(Paint.Align.LEFT);
+            mPaint.setStrokeWidth(1);
+            canvas.drawText(yAxisName, -OFFSET_SCALE * 3, -yAxisLength - OFFSET / 2, mPaint);
+        }
+
+        // *RIGHT*
+        if (!myLinesRight.isEmpty()) {
+            mPaint.setTextAlign(Paint.Align.LEFT);
+            mPaint.setStrokeWidth(1);
+            canvas.drawText(yAxisNameRight, xAxisLength - OFFSET_SCALE * 3, -yAxisLength - OFFSET / 2, mPaint);
+        }
 
         // draw alert line
         mPaint.setColor(getResources().getColor(android.R.color.holo_red_light));
@@ -295,6 +395,20 @@ public class LineChartView extends View {
         rectF.setEmpty();
         mPaint.setTextSize(30);
         for (MyLine myLine : myLines) {
+            mPaint.setColor(myLine.color);
+            rectF.top = OFFSET;
+            rectF.bottom = rectF.top + OFFSET_LEGEND / 2 - 20;
+            rectF.right = rectF.left + OFFSET_LEGEND;
+            canvas.drawRoundRect(rectF, 2, 2, mPaint);
+            rectF.left += rectF.width() + OFFSET_LEGEND * 4;
+            mPaint.setColor(getResources().getColor(R.color.default_text_color));
+            mPaint.setStrokeWidth(0.1f);
+            mPaint.setTextAlign(Paint.Align.LEFT);
+            canvas.drawText(myLine.name, rectF.right + 15, rectF.bottom, mPaint);
+        }
+
+        // *RIGHT*
+        for (MyLine myLine : myLinesRight) {
             mPaint.setColor(myLine.color);
             rectF.top = OFFSET;
             rectF.bottom = rectF.top + OFFSET_LEGEND / 2 - 20;
@@ -339,12 +453,16 @@ public class LineChartView extends View {
         return true;
     }
 
-    public void addPoints(ArrayList<MyPoint> points, String s, int color) {
-        myLines.add(new MyLine(s, points, color)); // TODO cost memory
+    public void addPoints(ArrayList<MyPoint> points, String s, int color, boolean isRight) {
+        if (!isRight)
+            myLines.add(new MyLine(s, points, color)); // TODO cost memory
+        else
+            myLinesRight.add(new MyLine(s, points, color)); // TODO cost memory
+
         invalidate();
     }
 
-    public  ArrayList<MyPoint> convert(List<RealTimeData> list) {
+    public ArrayList<MyPoint> convert(List<RealTimeData> list, boolean isRight) {
 
         ArrayList<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
@@ -352,11 +470,14 @@ public class LineChartView extends View {
                 points.remove(0);
             points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getX()));
         }
-        yAxisName = list.get(0).getXColName() + "/ " + list.get(0).getTypeUnit();
+        if (!isRight)
+             yAxisName = list.get(0).getXColName() + "/ " + list.get(0).getTypeUnit();
+        else
+             yAxisNameRight = list.get(0).getXColName() + "/ " + list.get(0).getTypeUnit();
         return points;
     }
 
-    public  ArrayList<MyPoint> convertY(List<RealTimeData> list) {
+    public  ArrayList<MyPoint> convertY(List<RealTimeData> list, boolean isRight) {
 
         ArrayList<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
@@ -364,11 +485,13 @@ public class LineChartView extends View {
                 points.remove(0);
             points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getY()));
         }
-        yAxisName = list.get(0).getYColName() + "/ " + list.get(0).getTypeUnit();
-        return points;
+        if (!isRight)
+            yAxisName = list.get(0).getYColName() + "/ " + list.get(0).getTypeUnit();
+        else
+            yAxisNameRight = list.get(0).getYColName() + "/ " + list.get(0).getTypeUnit();        return points;
     }
 
-    public  ArrayList<MyPoint> convertZ(List<RealTimeData> list) {
+    public  ArrayList<MyPoint> convertZ(List<RealTimeData> list, boolean isRight) {
 
         ArrayList<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
@@ -376,16 +499,26 @@ public class LineChartView extends View {
                 points.remove(0);
             points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getZ()));
         }
-        yAxisName = list.get(0).getZColName() + "/ " + list.get(0).getTypeUnit();
-        return points;
+        if (!isRight)
+            yAxisName = list.get(0).getZColName() + "/ " + list.get(0).getTypeUnit();
+        else
+            yAxisNameRight = list.get(0).getZColName() + "/ " + list.get(0).getTypeUnit();        return points;
     }
 
     public ArrayList<MyLine> getLines() {
         return myLines;
     }
 
+    public ArrayList<MyLine> getLinesRight() {
+        return myLinesRight;
+    }
+
     public void setMyLines(ArrayList<MyLine> myLines) {
         this.myLines = myLines;
+    }
+
+    public void setMyLinesRight(ArrayList<MyLine> myLines) {
+        this.myLinesRight = myLines;
     }
 
     public boolean isChartInFullscreen() {
