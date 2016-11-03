@@ -54,6 +54,7 @@ public class LineChartView extends View {
     private Random mRandom = new Random(47);
     private int xAxisLength, yAxisLength;
     private long xStart, xEnd;
+    private long xStartRight, xEndRight;
     private float yStart, yEnd;
     private float yStartRight, yEndRight;
     private float firstPointX, nextPointX, firstPointY, nextPointY;
@@ -175,14 +176,19 @@ public class LineChartView extends View {
         }
 
         // *RIGHT*
+        xStartRight = System.currentTimeMillis() + 1000*3600*60;
         yEndRight = -10000f;
         for (MyLine line : myLinesRight) {
-            xEnd = Math.max(Collections.max(line.points, comparatorX).time, xEnd);
-            xStart = Math.min(Collections.min(line.points, comparatorX).time, xStart);
+            xEndRight = Math.max(Collections.max(line.points, comparatorX).time, xEndRight);
+            xStartRight = Math.min(Collections.min(line.points, comparatorX).time, xStartRight);
             yEndRight = Math.max(Collections.max(line.points, comparatorY).value, yEndRight);
             yStartRight = Math.min(Collections.min(line.points, comparatorY).value, yStartRight);
         }
 
+        if (!myLinesRight.isEmpty()) {
+            xEnd = Math.max(xEnd, xEndRight);
+            xStart = Math.min(xStart, xStartRight);
+        }
 
 
 
@@ -374,7 +380,7 @@ public class LineChartView extends View {
         if (!myLinesRight.isEmpty()) {
             mPaint.setTextAlign(Paint.Align.LEFT);
             mPaint.setStrokeWidth(1);
-            canvas.drawText(yAxisNameRight, xAxisLength - OFFSET_SCALE * 3, -yAxisLength - OFFSET / 2, mPaint);
+            canvas.drawText(yAxisNameRight, xAxisLength - OFFSET_SCALE * 6, -yAxisLength - OFFSET / 2, mPaint);
         }
 
         // draw alert line
