@@ -173,7 +173,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
             }
         });
 
-        if (groupsOfFilterTree.isEmpty()) getTypeTree();
+        if (groupsOfFilterTree.isEmpty()) getTypeTree(); // getTypeTree
 
         myPopupWindow = new MyPopupWindow((BaseActivity) getActivity(), R.layout.popup_window_right);
 
@@ -200,6 +200,12 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 return true;
             }
         });
+
+        if (mChartsContainer.getChildCount() == 0) {
+            getView().findViewById(R.id.empty).setVisibility(View.VISIBLE);
+        } else {
+            getView().findViewById(R.id.empty).setVisibility(View.GONE);
+        }
     }
 
     private void getChartData() {
