@@ -97,7 +97,7 @@ public class DataAnalysisFragment extends BaseFragment {
         lineChartView0.addPoints(lineChartView0.convert(realTimeDatas, isRight), simpleItem.getTitle(), simpleItem.getColor(), isRight);
 
 
-        if (realTimeDatas.get(0).getTypeCode() != 1) {
+        if (realTimeDatas.get(0).getTypeCode() != 1 || mChartsContainer.getChildAt(1) != null) {
             if (mChartsContainer.getChildAt(1) == null)
                 getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
             LineChartView lineChartView1 = (LineChartView) mChartsContainer.getChildAt(1).findViewById(R.id.chart);
@@ -106,7 +106,7 @@ public class DataAnalysisFragment extends BaseFragment {
 
 
         }
-        if (realTimeDatas.get(0).getTypeCode() == 2) {
+        if (realTimeDatas.get(0).getTypeCode() == 2 || mChartsContainer.getChildAt(2) != null) {
             if (mChartsContainer.getChildAt(2) == null)
                 getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
             LineChartView lineChartView2 = (LineChartView) mChartsContainer.getChildAt(2).findViewById(R.id.chart);

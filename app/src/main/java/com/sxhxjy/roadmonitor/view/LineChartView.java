@@ -166,6 +166,7 @@ public class LineChartView extends View {
 
 
         xStart = System.currentTimeMillis() + 1000*3600*60;
+        xEnd = 0; // init !!!!!!!!
         yEnd = -10000f;
 
         for (MyLine line : myLines) {
@@ -177,6 +178,7 @@ public class LineChartView extends View {
 
         // *RIGHT*
         xStartRight = System.currentTimeMillis() + 1000*3600*60;
+        xEndRight = 0;
         yEndRight = -10000f;
         for (MyLine line : myLinesRight) {
             xEndRight = Math.max(Collections.max(line.points, comparatorX).time, xEndRight);
