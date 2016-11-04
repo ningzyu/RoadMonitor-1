@@ -40,7 +40,7 @@ import static android.R.attr.x;
  */
 public class LineChartView extends View {
     private static final int DELAY = 1000;
-    private static final int POINTS_COUNT = 20;
+    private static final int POINTS_COUNT = 50;
     private static final int OFFSET = 65;
     private static final int OFFSET_LEGEND = 70;
     private static final int LEGEND_WIDTH= 70;

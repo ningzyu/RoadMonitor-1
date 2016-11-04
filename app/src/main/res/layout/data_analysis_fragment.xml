@@ -221,7 +221,6 @@
                         android:text="时间"
                         android:paddingLeft="20dp"
                         android:paddingTop="3dp"
-                        android:paddingBottom="3dp"
                         android:gravity="center_vertical"
                         android:background="@color/colorPrimaryTranslucent"
                         android:textColor="@color/colorPrimaryDark"

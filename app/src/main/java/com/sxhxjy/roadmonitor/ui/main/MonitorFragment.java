@@ -391,6 +391,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
             mTextViewCenter.setText(data.getStringExtra("stationName"));
             cacheStation(stationId, data.getStringExtra("stationName"));
             groupsOfFilterTree.clear();
+            getTypeTree();
         }
     }
 
