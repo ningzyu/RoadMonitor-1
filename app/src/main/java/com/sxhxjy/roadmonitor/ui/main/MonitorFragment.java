@@ -269,10 +269,12 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
 
                             @Override
                             public void onCompleted() {
-                                if (mChartsContainer.getChildCount() == 0) {
-                                    getView().findViewById(R.id.empty).setVisibility(View.VISIBLE);
-                                } else {
-                                    getView().findViewById(R.id.empty).setVisibility(View.GONE);
+                                if (getView().findViewById(R.id.empty) != null) {
+                                    if (mChartsContainer.getChildCount() == 0) {
+                                        getView().findViewById(R.id.empty).setVisibility(View.VISIBLE);
+                                    } else {
+                                        getView().findViewById(R.id.empty).setVisibility(View.GONE);
+                                    }
                                 }
                             }
                         });

@@ -195,6 +195,7 @@ public class PullRefreshLoadLayout extends LinearLayout implements NestedScrolli
     public void refreshEnd() {
         mValueAnimator.setIntValues(getScrollY(), 0);
         mValueAnimator.start();
+        mRefreshing = false;
     }
 
     public void refreshBegin() {

@@ -42,7 +42,7 @@ public class LineChartView extends View {
     private static final int DELAY = 1000;
     private static final int POINTS_COUNT = 50;
     private static final int OFFSET = 65;
-    private static final int OFFSET_LEGEND = 70;
+    private static final int OFFSET_LEGEND = 80;
     private static final int LEGEND_WIDTH= 70;
     private static final int LEGEND_HEIGHT = 35;
 
@@ -399,34 +399,42 @@ public class LineChartView extends View {
 
         // draw legend
         rectF.setEmpty();
+        rectF.top = OFFSET;
         mPaint.setTextSize(30);
         for (MyLine myLine : myLines) {
-            mPaint.setColor(myLine.color);
-            rectF.top = OFFSET;
-            rectF.bottom = rectF.top + OFFSET_LEGEND / 2 - 20;
-            rectF.right = rectF.left + OFFSET_LEGEND;
-            canvas.drawRoundRect(rectF, 2, 2, mPaint);
-            rectF.left += rectF.width() + OFFSET_LEGEND * 4;
-            mPaint.setColor(getResources().getColor(R.color.default_text_color));
-            mPaint.setStrokeWidth(0.1f);
-            mPaint.setTextAlign(Paint.Align.LEFT);
-            canvas.drawText(myLine.name, rectF.right + 15, rectF.bottom, mPaint);
+            drawLegend(canvas, myLine, rectF);
         }
 
         // *RIGHT*
         for (MyLine myLine : myLinesRight) {
-            mPaint.setColor(myLine.color);
-            rectF.top = OFFSET;
+            drawLegend(canvas, myLine, rectF);
+        }
+
+    }
+
+    private void drawLegend(Canvas canvas, MyLine myLine, RectF rectF) {
+        mPaint.setColor(myLine.color);
+        if (rectF.left + OFFSET_LEGEND+ mPaint.measureText(myLine.name) + 30 > xAxisLength) {
+            rectF.top += OFFSET_LEGEND / 2;
+            rectF.left = 0;
             rectF.bottom = rectF.top + OFFSET_LEGEND / 2 - 20;
             rectF.right = rectF.left + OFFSET_LEGEND;
             canvas.drawRoundRect(rectF, 2, 2, mPaint);
-            rectF.left += rectF.width() + OFFSET_LEGEND * 4;
             mPaint.setColor(getResources().getColor(R.color.default_text_color));
             mPaint.setStrokeWidth(0.1f);
             mPaint.setTextAlign(Paint.Align.LEFT);
             canvas.drawText(myLine.name, rectF.right + 15, rectF.bottom, mPaint);
+            rectF.left += rectF.width() + mPaint.measureText(myLine.name) + 30;
+        } else {
+            rectF.right = rectF.left + OFFSET_LEGEND;
+            rectF.bottom = rectF.top + OFFSET_LEGEND / 2 - 20;
+            canvas.drawRoundRect(rectF, 2, 2, mPaint);
+            mPaint.setColor(getResources().getColor(R.color.default_text_color));
+            mPaint.setStrokeWidth(0.1f);
+            mPaint.setTextAlign(Paint.Align.LEFT);
+            canvas.drawText(myLine.name, rectF.right + 15, rectF.bottom, mPaint);
+            rectF.left += rectF.width() + mPaint.measureText(myLine.name) + 30;
         }
-
     }
 
     @Override

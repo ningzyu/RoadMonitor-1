@@ -63,6 +63,11 @@ public class AddDataCorrelationActivity extends BaseActivity {
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                if (positionItems.isEmpty() || positionItemsCorrelation.isEmpty() || startTime == null || endTime == null) {
+                    showToastMsg("请完善分析条件");
+                    return false;
+                }
+
                 //Bundle传值
                 Bundle b = new Bundle();
                 b.putSerializable("positionItems", positionItems);

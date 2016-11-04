@@ -19,6 +19,7 @@ import com.sxhxjy.roadmonitor.base.MySubscriber;
 import com.sxhxjy.roadmonitor.base.UserManager;
 import com.sxhxjy.roadmonitor.entity.AlertData;
 import com.sxhxjy.roadmonitor.ui.main.AlertDetailActivity;
+import com.sxhxjy.roadmonitor.ui.main.AlertFragment;
 import com.sxhxjy.roadmonitor.util.ActivityUtil;
 
 import java.text.SimpleDateFormat;
@@ -65,9 +66,11 @@ public class AlertListAdapter extends RecyclerView.Adapter<AlertListAdapter.View
             holder.isConfirmed.setBackgroundDrawable(mFragment.getResources().getDrawable(R.drawable.round_rectangle_keycolor_stroke));
         }
         holder.level.setText(mList.get(position).getLevel());
+        holder.desc.setText(mList.get(position).getType());
         holder.location.setText(mList.get(position).getAlarmContent());
         holder.reason.setText(mList.get(position).getGenerationReason());
         holder.date.setText(sdf.format(new Date(mList.get(position).getStime())) + "--" + sdf.format(new Date(mList.get(position).getEtime())));
+        holder.code.setText(mList.get(position).getStationName());
 
     }
 
@@ -111,8 +114,7 @@ public class AlertListAdapter extends RecyclerView.Adapter<AlertListAdapter.View
                         @Override
                         public void onNext(Object o) {
                             mFragment.showToastMsg("确定警告信息成功！");
-                            mList.get(p).setConfirmInfo("");
-                            notifyDataSetChanged();
+                            ((AlertFragment) mFragment).onRefresh();
                         }
 
                         @Override
@@ -147,7 +149,7 @@ public class AlertListAdapter extends RecyclerView.Adapter<AlertListAdapter.View
 
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView reason, location, date, status, num, isConfirmed, level;
+        TextView reason, location, date, status, num, isConfirmed, level, desc, code;
         ImageView avatar;
 
         public ViewHolder(View itemView) {
@@ -159,6 +161,8 @@ public class AlertListAdapter extends RecyclerView.Adapter<AlertListAdapter.View
             num = (TextView) itemView.findViewById(R.id.num);
             isConfirmed = (TextView) itemView.findViewById(R.id.is_confirmed);
             level = (TextView) itemView.findViewById(R.id.level);
+            desc = (TextView) itemView.findViewById(R.id.desc);
+            code = (TextView) itemView.findViewById(R.id.code);
         }
     }
 }

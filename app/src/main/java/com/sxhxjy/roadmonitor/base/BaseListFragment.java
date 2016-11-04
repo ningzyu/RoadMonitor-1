@@ -180,9 +180,7 @@ public abstract class BaseListFragment<I> extends BaseFragment implements SwipeR
     }
 
     public void getMessage() {
-dismissNetworkErrorLayout();
-            mPullRefreshLoadLayout.refreshEnd();
-            mPullRefreshLoadLayout.loadMoreEnd();
+        dismissNetworkErrorLayout();
 
         if (getObservable() != null) {
             getObservable().subscribeOn(Schedulers.io())
@@ -196,13 +194,14 @@ dismissNetworkErrorLayout();
 
                         @Override
                         public void onCompleted() {
+                            mPullRefreshLoadLayout.refreshEnd();
+                            mPullRefreshLoadLayout.loadMoreEnd();
                         }
 
                         @Override
                         public void onError(Throwable e) {
                             Log.e("retrofit", e.toString());
-                            mPullRefreshLoadLayout.refreshEnd();
-                            mPullRefreshLoadLayout.loadMoreEnd();
+
                             showToastMsg("请检查您的网络连接");
                             showListViewOrEmptyView();
                         }
@@ -213,8 +212,7 @@ dismissNetworkErrorLayout();
                             mList.addAll(es);
                             showListViewOrEmptyView();
                             mAdapter.notifyDataSetChanged();
-                            mPullRefreshLoadLayout.refreshEnd();
-                            mPullRefreshLoadLayout.loadMoreEnd();
+
                         }
                     });
         }

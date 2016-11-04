@@ -67,6 +67,23 @@ public class AddDataContrastActivity extends BaseActivity {
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+
+                if (positionItems.isEmpty()) {
+                    showToastMsg("请完善分析条件");
+                    return false;
+                } else if (positionItems.size() > 1) {
+                    if (startTime == null || endTime == null)      {
+                        showToastMsg("请完善分析条件");
+                        return false;
+                    }
+
+                } else {
+                    if (timeContent.getChildCount() == 0) {
+                        showToastMsg("请完善分析条件");
+                        return false;
+                    }
+                }
+
                 Bundle b = new Bundle();
 
                 b.putString("title", title);
