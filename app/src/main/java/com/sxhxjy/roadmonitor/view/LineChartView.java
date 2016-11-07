@@ -11,8 +11,10 @@ import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.Toast;
 
@@ -31,8 +33,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-import static android.R.attr.x;
-
 /**
  * 2016/9/19
  *
@@ -40,7 +40,7 @@ import static android.R.attr.x;
  */
 public class LineChartView extends View {
     private static final int DELAY = 1000;
-    private static final int POINTS_COUNT = 50;
+    private static int pointCount = 10;
     private static final int OFFSET = 65;
     private static final int OFFSET_LEGEND = 80;
     private static final int LEGEND_WIDTH= 70;
@@ -71,6 +71,8 @@ public class LineChartView extends View {
     private ArrayList<MyLine> myLines = new ArrayList<>();
     private ArrayList<MyLine> myLinesRight = new ArrayList<>();
 
+    private int offset = 0;
+
 
     private RectF rectF = new RectF();
     public String yAxisName;
@@ -83,6 +85,7 @@ public class LineChartView extends View {
     private boolean isBeingTouched = false;
     private float touchedX = -1;
     private GestureDetector gestureDetector;
+    private ScaleGestureDetector scaleGestureDetector;
     private static boolean doubleTapHinted;
     private boolean chartInFullscreen;
 
@@ -109,15 +112,41 @@ public class LineChartView extends View {
 
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                // resolve conflict
-                if (!mIsBeingDragged && Math.abs(distanceY) - Math.abs(distanceX) > 0) {
-                    getParent().requestDisallowInterceptTouchEvent(false);
+                if (!isBeingTouched) {
+
+                    offset = offset - ( int) distanceX / 20;
+                    Log.e("test", "dx: "+distanceX);
+                    if (offset < 0)
+                            offset = 0;
                 } else {
-                    mIsBeingDragged = true;
+
+                    // resolve conflict
+                    if (!mIsBeingDragged && Math.abs(distanceY) - Math.abs(distanceX) > 0) {
+                        getParent().requestDisallowInterceptTouchEvent(false);
+                    } else {
+                        mIsBeingDragged = true;
+                    }
                 }
                 return true;
             }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                super.onLongPress(e);
+                isBeingTouched = true;
+                invalidate();
+            }
         });
+
+        scaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                pointCount = (int) (pointCount + (detector.getScaleFactor() - 1) * 80);
+                if (pointCount < 10) pointCount = 10;
+                return super.onScale(detector);
+            }
+        });
+
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setDither(true);
@@ -128,7 +157,7 @@ public class LineChartView extends View {
         /*new CountDownTimer(1000000, DELAY) {
             @Override
             public void onTick(long millisUntilFinished) {
-                if (mList.size() == POINTS_COUNT)
+                if (mList.size() == pointCount)
                     mList.remove(0);
                 mList.add(new MyPoint(System.currentTimeMillis(), mRandom.nextInt(100)));
 
@@ -167,18 +196,21 @@ public class LineChartView extends View {
 
         xStart = System.currentTimeMillis() + 1000*3600*60;
         xEnd = 0; // init !!!!!!!!
+        yStart = 0;
         yEnd = -10000f;
 
         for (MyLine line : myLines) {
-            xEnd = Math.max(Collections.max(line.points, comparatorX).time, xEnd);
-            xStart = Math.min(Collections.min(line.points, comparatorX).time, xStart);
-            yEnd = Math.max(Collections.max(line.points, comparatorY).value, yEnd);
-            yStart = Math.min(Collections.min(line.points, comparatorY).value, yStart);
+            if (line.points.size() - offset - pointCount < 0) continue;
+            xEnd = Math.max(Collections.max(line.points.subList(line.points.size() - offset - pointCount, line.points.size() - offset), comparatorX).time, xEnd);
+            xStart = Math.min(Collections.min(line.points.subList(line.points.size() - offset - pointCount, line.points.size() - offset), comparatorX).time, xStart);
+            yEnd = Math.max(Collections.max(line.points.subList(line.points.size() - offset - pointCount, line.points.size() - offset), comparatorY).value, yEnd);
+            yStart = Math.min(Collections.min(line.points.subList(line.points.size() - offset - pointCount, line.points.size() - offset), comparatorY).value, yStart);
         }
 
         // *RIGHT*
         xStartRight = System.currentTimeMillis() + 1000*3600*60;
         xEndRight = 0;
+        yStart = 0;
         yEndRight = -10000f;
         for (MyLine line : myLinesRight) {
             xEndRight = Math.max(Collections.max(line.points, comparatorX).time, xEndRight);
@@ -204,6 +236,12 @@ public class LineChartView extends View {
 
         for (MyLine line : myLines) {
             for (MyPoint myPoint : line.points) {
+                if (line.points.indexOf(myPoint) > line.points.size() - offset || line.points.indexOf(myPoint) < line.points.size() - offset - pointCount)
+                    continue;
+
+                if (line.points.size() - offset - pointCount < 0) continue;
+
+
                 firstPointX = nextPointX;
                 firstPointY = nextPointY;
                 nextPointX = (float) (((double) (myPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
@@ -241,6 +279,8 @@ public class LineChartView extends View {
         //       *RIGHT*
         for (MyLine line : myLinesRight) {
             for (MyPoint myPoint : line.points) {
+                if (line.points.indexOf(myPoint) > line.points.size() - 1 - offset || line.points.indexOf(myPoint) < line.points.size() - 1 - offset - pointCount)
+                    continue;
                 firstPointX = nextPointX;
                 firstPointY = nextPointY;
                 nextPointX = (float) (((double) (myPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
@@ -442,11 +482,11 @@ public class LineChartView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         gestureDetector.onTouchEvent(event);
+        scaleGestureDetector.onTouchEvent(event);
 
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                isBeingTouched = true;
                 if (!doubleTapHinted) {
                     Toast.makeText(getContext(), "可双击放大", Toast.LENGTH_SHORT).show();
                     doubleTapHinted = true;
@@ -482,8 +522,6 @@ public class LineChartView extends View {
 
         ArrayList<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
-            if (points.size() == POINTS_COUNT)
-                points.remove(0);
             points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getX()));
         }
         if (!isRight)
@@ -497,8 +535,6 @@ public class LineChartView extends View {
 
         ArrayList<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
-            if (points.size() == POINTS_COUNT)
-                points.remove(0);
             points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getY()));
         }
         if (!isRight)
@@ -511,8 +547,6 @@ public class LineChartView extends View {
 
         ArrayList<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
-            if (points.size() == POINTS_COUNT)
-                points.remove(0);
             points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getZ()));
         }
         if (!isRight)

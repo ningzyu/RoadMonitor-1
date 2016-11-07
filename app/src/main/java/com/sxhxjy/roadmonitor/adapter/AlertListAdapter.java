@@ -110,7 +110,7 @@ public class AlertListAdapter extends RecyclerView.Adapter<AlertListAdapter.View
                     setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mFragment.getMessage(mFragment.getHttpService().confirmAlertMsg(mList.get(p).getId(), UserManager.getUID(), ((EditText) alertDialog.findViewById(R.id.editText)).getText().toString(), mList.get(p).getStime()+"", mList.get(p).getEtime()+""), new MySubscriber<Object>() {
+                    mFragment.getMessage(mFragment.getHttpService().confirmAlertMsg(mList.get(p).getId(), UserManager.getUID(), ((EditText) alertDialog.findViewById(R.id.editText)).getText().toString(), mList.get(p).getStime()+"", mList.get(p).getEtime()+"", mList.get(p).getLevel(), mList.get(p).getType(), mList.get(p).getGenerationReason(), mList.get(p).getAlarmContent()), new MySubscriber<Object>() {
                         @Override
                         public void onNext(Object o) {
                             mFragment.showToastMsg("确定警告信息成功！");

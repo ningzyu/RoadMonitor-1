@@ -89,9 +89,13 @@ public interface HttpService {
     @GET("stations/stationDetail")
     Observable<HttpResponse<ParamInfo>> getParamInfo(@Query("id") String id);
 
+    //告警的id : alarmId ；确认人id（登陆用户的id） : userId；确认信息 : confirmMsg；告警产生时间：stime；告警的最后时间：etime；等级id：levelId；类型id：typeId；可能原因：generationReason；告警内容：alarmContent（新增参数）
+
+
     @FormUrlEncoded
     @POST("alarm/confirmAlarmInfo")
-    Observable<HttpResponse<Object>> confirmAlertMsg(@Field("alarmId") String alarmId, @Field("userId") String userId, @Field("confirmMsg") String confirmMsg, @Field("stime") String startTime, @Field("etime") String endTime);
+    Observable<HttpResponse<Object>> confirmAlertMsg(@Field("alarmId") String alarmId, @Field("userId") String userId, @Field("confirmMsg") String confirmMsg,
+                                                     @Field("stime") String startTime, @Field("etime") String endTime, @Field("levelId") String levelId, @Field("typeId") String typeId, @Field("generationReason") String generareason, @Field("alarmContent") String alarmCon);
 
     @FormUrlEncoded
     @POST("user/editPwd")
