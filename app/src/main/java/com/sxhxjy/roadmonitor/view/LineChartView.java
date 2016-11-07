@@ -40,7 +40,7 @@ import java.util.Random;
  */
 public class LineChartView extends View {
     private static final int DELAY = 1000;
-    private static int pointCount = 10;
+    private static int pointCount = 20;
     private static final int OFFSET = 65;
     private static final int OFFSET_LEGEND = 80;
     private static final int LEGEND_WIDTH= 70;
@@ -72,6 +72,8 @@ public class LineChartView extends View {
     private ArrayList<MyLine> myLinesRight = new ArrayList<>();
 
     private int offset = 0;
+
+    private long globalIndex = 0;
 
 
     private RectF rectF = new RectF();
@@ -112,19 +114,28 @@ public class LineChartView extends View {
 
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                if (!isBeingTouched) {
-
-                    offset = offset - ( int) distanceX / 20;
-                    Log.e("test", "dx: "+distanceX);
-                    if (offset < 0)
-                            offset = 0;
+                // resolve conflict
+                if (!mIsBeingDragged && Math.abs(distanceY) - Math.abs(distanceX) > 0) {
+                    getParent().requestDisallowInterceptTouchEvent(false);
                 } else {
+                    mIsBeingDragged = true;
+                }
 
-                    // resolve conflict
-                    if (!mIsBeingDragged && Math.abs(distanceY) - Math.abs(distanceX) > 0) {
-                        getParent().requestDisallowInterceptTouchEvent(false);
-                    } else {
-                        mIsBeingDragged = true;
+
+                if (!isBeingTouched) {
+                    if (++globalIndex % 2 == 0) { // reduce called times
+                        if (distanceX > 5)
+                            distanceX = 1;
+                        else if (distanceX < -5)
+                            distanceX = -1;
+                        else distanceX = 0;
+
+                        offset = offset - (int) distanceX;
+                        Log.e("test", "dx: " + distanceX + "offset:" + offset);
+                        if (offset < 0)
+                            offset = 0;
+                        if (offset > myLines.get(0).points.size() - pointCount)
+                            offset = myLines.get(0).points.size() - pointCount;
                     }
                 }
                 return true;
@@ -141,8 +152,16 @@ public class LineChartView extends View {
         scaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
             @Override
             public boolean onScale(ScaleGestureDetector detector) {
-                pointCount = (int) (pointCount + (detector.getScaleFactor() - 1) * 80);
+//                offset = detector.getFocusX() / xAxisLength * myLines.get(0).points.size();
+                offset = -5;
+                if (offset < 0)
+                    offset = 0;
+                if (offset > myLines.get(0).points.size() - pointCount) offset = myLines.get(0).points.size() - pointCount;
+
+                pointCount = (int) (pointCount + (1 - detector.getScaleFactor()) * 5);
                 if (pointCount < 10) pointCount = 10;
+                if (pointCount > myLines.get(0).points.size()) pointCount = myLines.get(0).points.size();
+                Log.e("test", "p count: " + pointCount + "factor: " + detector.getScaleFactor());
                 return super.onScale(detector);
             }
         });
@@ -210,7 +229,7 @@ public class LineChartView extends View {
         // *RIGHT*
         xStartRight = System.currentTimeMillis() + 1000*3600*60;
         xEndRight = 0;
-        yStart = 0;
+        yStartRight = 0;
         yEndRight = -10000f;
         for (MyLine line : myLinesRight) {
             xEndRight = Math.max(Collections.max(line.points, comparatorX).time, xEndRight);
@@ -251,7 +270,7 @@ public class LineChartView extends View {
                 mPaint.setStrokeWidth(4);
 
                 // draw line
-                if (line.points.indexOf(myPoint) != 0) {// do not draw line when draw first point !
+                if (line.points.indexOf(myPoint) != line.points.size() - offset - pointCount) {// do not draw line when draw first point !
                     // first point is bad because of equals last next point
                     canvas.drawLine(firstPointX, firstPointY, nextPointX, nextPointY, mPaint);
                 }
@@ -522,7 +541,7 @@ public class LineChartView extends View {
 
         ArrayList<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
-            points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getX()));
+            points.add(0, new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getX()));
         }
         if (!isRight)
              yAxisName = list.get(0).getXColName() + "/ " + list.get(0).getTypeUnit();
@@ -535,7 +554,7 @@ public class LineChartView extends View {
 
         ArrayList<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
-            points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getY()));
+            points.add(0, new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getY()));
         }
         if (!isRight)
             yAxisName = list.get(0).getYColName() + "/ " + list.get(0).getTypeUnit();
@@ -547,7 +566,7 @@ public class LineChartView extends View {
 
         ArrayList<MyPoint> points = new ArrayList<>();
         for (RealTimeData realTimeData : list) {
-            points.add(new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getZ()));
+            points.add(0, new MyPoint(realTimeData.getSaveTime(), (float) realTimeData.getZ()));
         }
         if (!isRight)
             yAxisName = list.get(0).getZColName() + "/ " + list.get(0).getTypeUnit();

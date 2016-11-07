@@ -84,9 +84,6 @@ public class DataAnalysisFragment extends BaseFragment {
 
         mChartsContainer = (LinearLayout) getView().findViewById(R.id.charts_container);
         mChartsContainer.getChildAt(0).findViewById(R.id.param_info).setVisibility(View.GONE);
-
-
-
     }
 
     private void addToChart(List<RealTimeData> realTimeDatas, SimpleItem simpleItem, boolean isRight) {
@@ -136,9 +133,10 @@ public class DataAnalysisFragment extends BaseFragment {
             final ArrayList<SimpleItem> positionItems = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItems");
 
             if (positionItems.size() > 1) {//多位置
-                mTimer = new CountDownTimer(9000, 3000) {
+                mTimer = new CountDownTimer(11000, 10000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
+                        Log.e("count down ", "ticked"+ millisUntilFinished);
                         for (int j = 0; j < mChartsContainer.getChildCount(); j++) {
                             ((LineChartView) mChartsContainer.getChildAt(j).findViewById(R.id.chart)).getLines().clear();
                             ((LineChartView) mChartsContainer.getChildAt(j).findViewById(R.id.chart)).getLinesRight().clear();
@@ -173,7 +171,7 @@ public class DataAnalysisFragment extends BaseFragment {
                 mTimer.start();
             } else {//多时间
                 final ArrayList<String> times = (ArrayList<String>) data.getSerializableExtra("times");
-                mTimer = new CountDownTimer(9000, 3000) {
+                mTimer = new CountDownTimer(20000, 10000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         for (int j = 0; j < mChartsContainer.getChildCount(); j++) {
@@ -206,12 +204,12 @@ public class DataAnalysisFragment extends BaseFragment {
                     public void onFinish() {
                     }
                 };
+                mTimer.start();
             }
-            // TODO
             tv1.setText(data.getStringExtra("title"));
             layout_3.setVisibility(View.GONE);
             layout_4.setVisibility(View.GONE);
-            mTimer.start();
+
         }
         // data correlation
 
@@ -220,7 +218,7 @@ public class DataAnalysisFragment extends BaseFragment {
             final ArrayList<SimpleItem> positionItemsCorrelation = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItemsCorrelation");
             if (mTimer != null)
                 mTimer.cancel();
-            mTimer = new CountDownTimer(9000, 3000) {
+            mTimer = new CountDownTimer(20000, 10000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     for (int j = 0; j < mChartsContainer.getChildCount(); j++) {

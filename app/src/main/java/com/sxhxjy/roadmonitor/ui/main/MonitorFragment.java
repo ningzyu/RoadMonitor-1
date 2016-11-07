@@ -224,7 +224,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         if (mChartsContainer.getChildAt(2) != null)
             mChartsContainer.removeView(mChartsContainer.getChildAt(2));
 
-        mTimer = new CountDownTimer(9000, 3000) {
+        mTimer = new CountDownTimer(20000, 10000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mRealTimes.clear();
@@ -240,7 +240,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                             interval = 1000;
                         final long finalInterval = interval;
 
-                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis(), System.currentTimeMillis() + 1000 * 3600 *24, Integer.parseInt(timeId)), new MySubscriber<List<RealTimeData>>() {
+                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis(), System.currentTimeMillis() + 1000 * 3600 *100, Integer.parseInt(timeId)), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
                                 mRealTimes.addAll(realTimeDatas);
