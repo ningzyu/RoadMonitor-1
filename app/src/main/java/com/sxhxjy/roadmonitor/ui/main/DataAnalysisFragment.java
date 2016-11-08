@@ -99,7 +99,7 @@ public class DataAnalysisFragment extends BaseFragment {
                 getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
             LineChartView lineChartView1 = (LineChartView) mChartsContainer.getChildAt(1).findViewById(R.id.chart);
             mChartsContainer.getChildAt(1).findViewById(R.id.param_info).setVisibility(View.GONE);
-            lineChartView1.addPoints(lineChartView1.convertY(realTimeDatas, isRight), simpleItem.getTitle() + " y", simpleItem.getColor(), isRight);
+            lineChartView1.addPoints(lineChartView1.convertY(realTimeDatas, isRight), simpleItem.getTitle(), simpleItem.getColor(), isRight);
 
 
         }
@@ -108,7 +108,7 @@ public class DataAnalysisFragment extends BaseFragment {
                 getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
             LineChartView lineChartView2 = (LineChartView) mChartsContainer.getChildAt(2).findViewById(R.id.chart);
             mChartsContainer.getChildAt(2).findViewById(R.id.param_info).setVisibility(View.GONE);
-            lineChartView2.addPoints(lineChartView2.convertZ(realTimeDatas, isRight), simpleItem.getTitle() + " z", simpleItem.getColor(), isRight);
+            lineChartView2.addPoints(lineChartView2.convertZ(realTimeDatas, isRight), simpleItem.getTitle(), simpleItem.getColor(), isRight);
         }
 
         // TODO: 2016/11/4

@@ -216,7 +216,7 @@ public class LineChartView extends View {
         canvas.translate(OFFSET + 10, getMeasuredHeight() - OFFSET - OFFSET_LEGEND);
 
 
-        xStart = System.currentTimeMillis() + 1000*3600*60;
+        xStart = System.currentTimeMillis() * 2; // big enough
         xEnd = 0; // init !!!!!!!!
         yStart = 0;
         yEnd = -10000f;
@@ -230,15 +230,15 @@ public class LineChartView extends View {
         }
 
         // *RIGHT*
-        xStartRight = System.currentTimeMillis() + 1000*3600*60;
+        xStartRight = System.currentTimeMillis() * 2;
         xEndRight = 0;
         yStartRight = 0;
         yEndRight = -10000f;
         for (MyLine line : myLinesRight) {
-            xEndRight = Math.max(Collections.max(line.points, comparatorX).time, xEndRight);
-            xStartRight = Math.min(Collections.min(line.points, comparatorX).time, xStartRight);
-            yEndRight = Math.max(Collections.max(line.points, comparatorY).value, yEndRight);
-            yStartRight = Math.min(Collections.min(line.points, comparatorY).value, yStartRight);
+            xEndRight = Math.max(Collections.max(line.points.subList(line.points.size() - offset - pointCount, line.points.size() - offset), comparatorX).time, xEndRight);
+            xStartRight = Math.min(Collections.min(line.points.subList(line.points.size() - offset - pointCount, line.points.size() - offset), comparatorX).time, xStartRight);
+            yEndRight = Math.max(Collections.max(line.points.subList(line.points.size() - offset - pointCount, line.points.size() - offset), comparatorY).value, yEndRight);
+            yStartRight = Math.min(Collections.min(line.points.subList(line.points.size() - offset - pointCount, line.points.size() - offset), comparatorY).value, yStartRight);
         }
 
         if (!myLinesRight.isEmpty()) {
@@ -385,7 +385,7 @@ public class LineChartView extends View {
             float xInView = (x - xStart) * 1f / (xEnd - xStart) * xAxisLength;
             date.setTime(x);
             mPaint.setStrokeWidth(1);
-            canvas.drawText(date.getHours() + ": 00", xInView, OFFSET_SCALE * 4, mPaint);
+            canvas.drawText(date.getHours() + ": " + date.getMinutes(), xInView, OFFSET_SCALE * 4, mPaint);
             mPaint.setStrokeWidth(2);
             canvas.drawLine(xInView, 0, xInView, -OFFSET_SCALE, mPaint);
             mPaint.setStrokeWidth(2);
@@ -508,7 +508,8 @@ public class LineChartView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         if (!myLines.isEmpty()) {
             gestureDetector.onTouchEvent(event);
-            scaleGestureDetector.onTouchEvent(event);
+            if (event.getPointerCount() >=2)
+                scaleGestureDetector.onTouchEvent(event);
         }
 
 

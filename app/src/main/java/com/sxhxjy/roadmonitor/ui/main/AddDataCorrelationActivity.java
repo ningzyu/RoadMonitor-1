@@ -225,7 +225,7 @@ public class AddDataCorrelationActivity extends BaseActivity {
                     }
                 }, 0, 0, true).show();
             }
-        }, 2016, date.getMonth(), date.getDay()).show();
+        }, 2016, date.getMonth(), date.getDate()).show();
 
     }
 }

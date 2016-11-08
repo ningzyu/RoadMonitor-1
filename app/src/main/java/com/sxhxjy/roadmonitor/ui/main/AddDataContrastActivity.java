@@ -28,6 +28,7 @@ import com.sxhxjy.roadmonitor.view.MyLinearLayout;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -255,7 +256,7 @@ public class AddDataContrastActivity extends BaseActivity {
                     }
                 }, 0, 0, true).show();
             }
-        }, 2016, date.getMonth(), date.getDay()).show();
+        }, 2016, date.getMonth(), date.getDate()).show();
 
         return sb;
     }
@@ -298,12 +299,12 @@ public class AddDataContrastActivity extends BaseActivity {
                                         timeContent.addView(new DeleteView(AddDataContrastActivity.this, sb.toString(), timeContent));                              }
                                 }, 0, 0, true).show();
                             }
-                        }, 2016, date.getMonth(), date.getDay()).show();
+                        }, 2016, date.getMonth(), date.getDate()).show();
                         showToastMsg("请选择结束时间");
                     }
                 }, 0, 0, true).show();
             }
-        }, 2016, date.getMonth(), date.getDay()).show();
+        }, 2016, date.getMonth(), date.getDate()).show();
         showToastMsg("请选择开始时间");
     }
 }

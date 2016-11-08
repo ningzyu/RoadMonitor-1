@@ -41,9 +41,12 @@ import com.sxhxjy.roadmonitor.view.DeleteView;
 import com.sxhxjy.roadmonitor.view.LineChartView;
 import com.sxhxjy.roadmonitor.view.MyPopupWindow;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -71,6 +74,8 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     private Random random = new Random(47);
     private String codeId;
     private String timeId = "0";
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
+
 
     private ArrayList<RealTimeData> mRealTimes = new ArrayList<>();
 
@@ -113,7 +118,8 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 mAdapter.getListData().get(p).setChecked(true);
                 timeId = mAdapter.getListData().get(p).getId();
                 mFilterList.setVisibility(View.GONE);
-                getChartData();
+                if (p != 3)
+                    getChartData();
             }
 
 
@@ -247,12 +253,19 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 for (final SimpleItem simpleItem : mListLeft) {
                     if (simpleItem.isChecked()) {
                         codeId = simpleItem.getId();
+                        String[] strings = null;
+                        long start = System.currentTimeMillis();
+                        long end = System.currentTimeMillis() + 1000 * 3600 * 24;
 
-//                        if (timeId.equals("3"))
+                        if (timeId.equals("3")) {
+                            strings = mListRight.get(3).getTitle().split("  ---- \n ");
+                            start = sdf.parse(strings[0], new ParsePosition(0)).getTime();
+                            end = sdf.parse(strings[1], new ParsePosition(0)).getTime();
+                        }
 
 
 
-                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis(), System.currentTimeMillis() + 1000 * 3600 *100, Integer.parseInt(timeId)), new MySubscriber<List<RealTimeData>>() {
+                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), start, end, Integer.parseInt(timeId)), new MySubscriber<List<RealTimeData>>() {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
                                 mRealTimes.addAll(realTimeDatas);
@@ -267,7 +280,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                     if (mChartsContainer.getChildAt(1) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView1 = (LineChartView) mChartsContainer.getChildAt(1).findViewById(R.id.chart);
-                                    lineChartView1.addPoints(lineChartView1.convertY(realTimeDatas, false), simpleItem.getTitle() + " y", simpleItem.getColor(), false);
+                                    lineChartView1.addPoints(lineChartView1.convertY(realTimeDatas, false), simpleItem.getTitle(), simpleItem.getColor(), false);
 
 
                                 }
@@ -275,10 +288,11 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                     if (mChartsContainer.getChildAt(2) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView2 = (LineChartView) mChartsContainer.getChildAt(2).findViewById(R.id.chart);
-                                    lineChartView2.addPoints(lineChartView2.convertZ(realTimeDatas, false), simpleItem.getTitle() + " z", simpleItem.getColor(), false);
+                                    lineChartView2.addPoints(lineChartView2.convertZ(realTimeDatas, false), simpleItem.getTitle(), simpleItem.getColor(), false);
                                 }
 
                                 if (!paramsGeted) {
+                                    paramsGeted = true;
                                     getParamInfo();
                                 }
                             }
@@ -360,7 +374,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         getMessage(getHttpService().getParamInfo(codeId), new MySubscriber<ParamInfo>() {
             @Override
             protected void onMyNext(ParamInfo paramInfo) {
-                paramsGeted = true;
+
 
                  if (mChartsContainer.getChildAt(0) != null) {
                      View view = mChartsContainer.getChildAt(0);
@@ -498,15 +512,16 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                         sb.append(":");
                                         sb.append(minute < 10 ? "0" + minute : minute);
                                         adapter.getListData().get(3).setTitle(sb.toString());
+                                        getChartData();
                                     }
                                 }, 0, 0, true).show();
                             }
-                        }, 2016, date.getMonth(), date.getDay()).show();
+                        }, 2016, date.getMonth(), date.getDate()).show();
                         showToastMsg("请选择结束时间");
                     }
                 }, 0, 0, true).show();
             }
-        }, 2016, date.getMonth(), date.getDay()).show();
+        }, 2016, date.getMonth(), date.getDate()).show();
         showToastMsg("请选择开始时间");
     }
 }
