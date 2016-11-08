@@ -1,6 +1,8 @@
 package com.sxhxjy.roadmonitor.ui.main;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,10 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.adapter.FilterTreeAdapter;
@@ -33,10 +37,12 @@ import com.sxhxjy.roadmonitor.entity.MonitorTypeTree;
 import com.sxhxjy.roadmonitor.entity.RealTimeData;
 import com.sxhxjy.roadmonitor.entity.SimpleItem;
 import com.sxhxjy.roadmonitor.util.ActivityUtil;
+import com.sxhxjy.roadmonitor.view.DeleteView;
 import com.sxhxjy.roadmonitor.view.LineChartView;
 import com.sxhxjy.roadmonitor.view.MyPopupWindow;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -101,6 +107,9 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 for (SimpleItem simpleItem : mAdapter.getListData()) {
                     simpleItem.setChecked(false);
                 }
+                if (p == 3) {// pick time
+                    addTime(mAdapter);
+                }
                 mAdapter.getListData().get(p).setChecked(true);
                 timeId = mAdapter.getListData().get(p).getId();
                 mFilterList.setVisibility(View.GONE);
@@ -117,6 +126,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     };
     private LinearLayout mChartsContainer;
     private String positionId;
+    private boolean paramsGeted;
 
     @Nullable
     @Override
@@ -148,6 +158,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         mListRight.add(new SimpleItem("0", "最近一天", true));
         mListRight.add(new SimpleItem("1", "最近一周", false));
         mListRight.add(new SimpleItem("2", "最近一月", false));
+        mListRight.add(new SimpleItem("3", "其它", false));
 
         mFilterTitleLeft.setOnClickListener(this);
         mFilterTitleRight.setOnClickListener(this);
@@ -228,6 +239,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
             @Override
             public void onTick(long millisUntilFinished) {
                 mRealTimes.clear();
+                paramsGeted = false;
 
                 for (int j = 0; j < mChartsContainer.getChildCount(); j++) {
                     ((LineChartView) mChartsContainer.getChildAt(j).findViewById(R.id.chart)).getLines().clear();
@@ -235,10 +247,10 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 for (final SimpleItem simpleItem : mListLeft) {
                     if (simpleItem.isChecked()) {
                         codeId = simpleItem.getId();
-                        long interval = 100000;
-                        if (timeId.equals("0"))
-                            interval = 1000;
-                        final long finalInterval = interval;
+
+//                        if (timeId.equals("3"))
+
+
 
                         getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), System.currentTimeMillis(), System.currentTimeMillis() + 1000 * 3600 *100, Integer.parseInt(timeId)), new MySubscriber<List<RealTimeData>>() {
                             @Override
@@ -265,6 +277,10 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                     LineChartView lineChartView2 = (LineChartView) mChartsContainer.getChildAt(2).findViewById(R.id.chart);
                                     lineChartView2.addPoints(lineChartView2.convertZ(realTimeDatas, false), simpleItem.getTitle() + " z", simpleItem.getColor(), false);
                                 }
+
+                                if (!paramsGeted) {
+                                    getParamInfo();
+                                }
                             }
 
                             @Override
@@ -281,7 +297,6 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                     }
                 }
 
-                getParamInfo();
 
             }
 
@@ -345,6 +360,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         getMessage(getHttpService().getParamInfo(codeId), new MySubscriber<ParamInfo>() {
             @Override
             protected void onMyNext(ParamInfo paramInfo) {
+                paramsGeted = true;
 
                  if (mChartsContainer.getChildAt(0) != null) {
                      View view = mChartsContainer.getChildAt(0);
@@ -444,5 +460,53 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     public void cacheStation(String stationId, String stationName) {
         MyApplication.getMyApplication().getSharedPreference().edit().putString("stationId", stationId).apply();
         MyApplication.getMyApplication().getSharedPreference().edit().putString("stationName", stationName).apply();
+    }
+
+    public void addTime(final SimpleListAdapter adapter) {
+        final StringBuilder sb = new StringBuilder();
+        final Date date = new Date(System.currentTimeMillis());
+
+        new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                sb.append(year);
+                sb.append("-");
+                sb.append(monthOfYear + 1);
+                sb.append("-");
+                sb.append(dayOfMonth);
+                sb.append("  ");
+                new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        sb.append(hourOfDay < 10 ? "0" + hourOfDay : hourOfDay);
+                        sb.append(":");
+                        sb.append(minute < 10 ? "0" + minute : minute);
+                        sb.append("  ---- \n ");
+                        new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                sb.append(year);
+                                sb.append("-");
+                                sb.append(monthOfYear + 1);
+                                sb.append("-");
+                                sb.append(dayOfMonth);
+                                sb.append("  ");
+                                new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                        sb.append(hourOfDay < 10 ? "0" + hourOfDay : hourOfDay);
+                                        sb.append(":");
+                                        sb.append(minute < 10 ? "0" + minute : minute);
+                                        adapter.getListData().get(3).setTitle(sb.toString());
+                                    }
+                                }, 0, 0, true).show();
+                            }
+                        }, 2016, date.getMonth(), date.getDay()).show();
+                        showToastMsg("请选择结束时间");
+                    }
+                }, 0, 0, true).show();
+            }
+        }, 2016, date.getMonth(), date.getDay()).show();
+        showToastMsg("请选择开始时间");
     }
 }

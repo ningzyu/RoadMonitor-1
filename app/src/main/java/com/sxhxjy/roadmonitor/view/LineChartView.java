@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.RectF;
+import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -145,6 +146,8 @@ public class LineChartView extends View {
             public void onLongPress(MotionEvent e) {
                 super.onLongPress(e);
                 isBeingTouched = true;
+                Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                vibrator.vibrate(50);
                 invalidate();
             }
         });
@@ -298,8 +301,11 @@ public class LineChartView extends View {
         //       *RIGHT*
         for (MyLine line : myLinesRight) {
             for (MyPoint myPoint : line.points) {
-                if (line.points.indexOf(myPoint) > line.points.size() - 1 - offset || line.points.indexOf(myPoint) < line.points.size() - 1 - offset - pointCount)
+                if (line.points.indexOf(myPoint) > line.points.size() - offset || line.points.indexOf(myPoint) < line.points.size() - offset - pointCount)
                     continue;
+
+                if (line.points.size() - offset - pointCount < 0) continue;
+
                 firstPointX = nextPointX;
                 firstPointY = nextPointY;
                 nextPointX = (float) (((double) (myPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
@@ -309,7 +315,7 @@ public class LineChartView extends View {
                 mPaint.setStrokeWidth(4);
 
                 // draw line
-                if (line.points.indexOf(myPoint) != 0) {// do not draw line when draw first point !
+                if (line.points.indexOf(myPoint) != line.points.size() - offset - pointCount) {// do not draw line when draw first point !
                     // first point is bad because of equals last next point
                     canvas.drawLine(firstPointX, firstPointY, nextPointX, nextPointY, mPaint);
                 }
@@ -500,8 +506,10 @@ public class LineChartView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        gestureDetector.onTouchEvent(event);
-        scaleGestureDetector.onTouchEvent(event);
+        if (!myLines.isEmpty()) {
+            gestureDetector.onTouchEvent(event);
+            scaleGestureDetector.onTouchEvent(event);
+        }
 
 
         switch (event.getAction()) {
