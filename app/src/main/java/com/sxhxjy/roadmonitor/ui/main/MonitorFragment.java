@@ -170,6 +170,12 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         mFilterTitleRight.setOnClickListener(this);
 
         mFilterList = (RecyclerView) view.findViewById(R.id.filter_list);
+        mFilterList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFilterList.setVisibility(View.GONE);
+            }
+        });
         mFilterList.setLayoutManager(new LinearLayoutManager(getActivity()));
         mAdapter = new SimpleListAdapter(this, mListLeft);
         mFilterList.setAdapter(mAdapter);
