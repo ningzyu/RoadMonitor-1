@@ -49,7 +49,7 @@ public class LineChartView extends View {
 
     private static final float OFFSET_SCALE = 8;
     private static final float SPLIT_TO = 5;
-    private static final float X_SPLIT_TO = 5;
+    private static float xSplitTo = 5;
 
     private static final int ALERT_VALUE = 100000000;
     private Random mRandom = new Random(47);
@@ -380,12 +380,85 @@ public class LineChartView extends View {
         mPaint.setTextSize(20);
         mPaint.setColor(getResources().getColor(R.color.default_text_color));
         mPaint.setTextAlign(Paint.Align.CENTER);
-        for (int j = 0; j <= X_SPLIT_TO; j++) {
-            long x = xStart + (long) ((xEnd - xStart) / X_SPLIT_TO * j);
+
+
+        long xStartNew = 0;
+        long xEndNew = 0;
+        int drawBy = 0;
+
+        if ((xEnd - xStart) <= 1000 * 3600 * 48) { // draw hour
+            date.setTime(xStart);
+            date.setHours(date.getHours() + 1);
+            int startHour = date.getHours();
+            date.setMinutes(0);
+            date.setSeconds(0);
+            xStartNew = date.getTime();
+
+            date.setTime(xEnd);
+            date.setHours(date.getHours());
+            date.setMinutes(0);
+            date.setSeconds(0);
+            xEndNew = date.getTime();
+
+            xSplitTo = date.getHours() - startHour;
+            int dx = date.getHours() - startHour;
+            if (xSplitTo < 0) {
+                xSplitTo += 24;
+                dx += 24;
+            }
+
+            if (xSplitTo > 10) {
+                xSplitTo = 5;
+                while (dx % xSplitTo != 0)
+                    xSplitTo++;
+            }
+
+
+        } else if (xEnd - xStart <= 1000 * 3600 * 24 * 10) { // draw day
+            drawBy = 1;
+
+            date.setTime(xStart);
+            date.setDate(date.getDate() + 1);
+            int startDay = date.getDate();
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            xStartNew = date.getTime();
+
+            date.setTime(xEnd);
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            xEndNew = date.getTime();
+
+            xSplitTo = date.getDate() - startDay;
+            int dx = date.getDate() - startDay;
+            if (xSplitTo < 0) {
+                xSplitTo += 24;
+                dx += 24;
+            }
+
+            if (xSplitTo > 10) {
+                xSplitTo = 5;
+                while (dx % xSplitTo != 0)
+                    xSplitTo++;
+            }
+
+        } else { // draw week
+            drawBy = 2;
+
+
+        }
+
+        for (int j = 0; j <= xSplitTo; j++) {
+            long x = xStartNew + (long) ((xEndNew - xStartNew) / xSplitTo * j);
             float xInView = (x - xStart) * 1f / (xEnd - xStart) * xAxisLength;
             date.setTime(x);
             mPaint.setStrokeWidth(1);
-            canvas.drawText(date.getHours() + ": " + date.getMinutes(), xInView, OFFSET_SCALE * 4, mPaint);
+            if (drawBy == 0)
+                canvas.drawText(date.getHours() + ": 00", xInView, OFFSET_SCALE * 4, mPaint);
+            else if (drawBy == 1)
+                canvas.drawText((date.getMonth()+1) + "-" + date.getDate(), xInView, OFFSET_SCALE * 4, mPaint);
             mPaint.setStrokeWidth(2);
             canvas.drawLine(xInView, 0, xInView, -OFFSET_SCALE, mPaint);
             mPaint.setStrokeWidth(2);
@@ -507,11 +580,13 @@ public class LineChartView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!myLines.isEmpty()) {
-            gestureDetector.onTouchEvent(event);
-            if (event.getPointerCount() >=2)
+            try {
+                gestureDetector.onTouchEvent(event);
                 scaleGestureDetector.onTouchEvent(event);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
         }
-
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
