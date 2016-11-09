@@ -95,6 +95,7 @@ public class LineChartView extends View {
 
     public static LineChartView lineChartView;
     private boolean mIsBeingDragged;
+    public boolean mIsSimpleDraw = false;
 
 
     public LineChartView(final Context context, AttributeSet attrs) {
@@ -132,7 +133,7 @@ public class LineChartView extends View {
                         else distanceX = 0;
 
                         offset = offset - (int) distanceX;
-                        Log.e("test", "dx: " + distanceX + "offset:" + offset);
+//                        Log.e("test", "dx: " + distanceX + "offset:" + offset);
                         if (offset < 0)
                             offset = 0;
                         if (offset > myLines.get(0).points.size() - pointCount)
@@ -163,7 +164,7 @@ public class LineChartView extends View {
 
                 pointCount = (int) (pointCount + (1 - detector.getScaleFactor()) * 5);
                 if (pointCount < 10) pointCount = 10;
-                if (pointCount > myLines.get(0).points.size()) pointCount = myLines.get(0).points.size();
+                if (pointCount > myLines.get(0).points.size()) pointCount = myLines.get(0).points.size() - 5;
                 Log.e("test", "p count: " + pointCount + "factor: " + detector.getScaleFactor());
                 return super.onScale(detector);
             }
@@ -254,6 +255,7 @@ public class LineChartView extends View {
 
         float minDistance = getMeasuredWidth();
         MyPoint minPoint = null;
+        float simpleMinX = 0;
         boolean isRight = false;
 
         for (MyLine line : myLines) {
@@ -266,7 +268,12 @@ public class LineChartView extends View {
 
                 firstPointX = nextPointX;
                 firstPointY = nextPointY;
-                nextPointX = (float) (((double) (myPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
+
+                if (mIsSimpleDraw) // Simple draw x
+                    nextPointX = (line.points.indexOf(myPoint) - (line.points.size() - offset - pointCount)) * xAxisLength / pointCount;
+                else
+                    nextPointX = (float) (((double) (myPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
+
                 nextPointY = -(float) (((double) (myPoint.value - yStart)) / (yEnd - yStart) * yAxisLength);
 
                 mPaint.setColor(line.color);
@@ -293,6 +300,7 @@ public class LineChartView extends View {
                     if (d < minDistance) {
                         minDistance = d;
                         minPoint = myPoint;
+                        if (mIsSimpleDraw) simpleMinX = nextPointX;
                     }
                 }
             }
@@ -347,7 +355,11 @@ public class LineChartView extends View {
             mPaint.setStrokeWidth(14);
             float x, y;
             if (!isRight) {
-                x = (float) (((double) (minPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
+                if (!mIsSimpleDraw)
+                    x = (float) (((double) (minPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
+                else
+                    x= simpleMinX;
+
                 y = -(float) (((double) (minPoint.value - yStart)) / (yEnd - yStart) * yAxisLength);
             } else {
                 x = (float) (((double) (minPoint.time - xStart)) / (xEnd - xStart) * xAxisLength);
@@ -414,7 +426,7 @@ public class LineChartView extends View {
             }
 
 
-        } else if (xEnd - xStart <= 1000 * 3600 * 24 * 10) { // draw day
+        } else  { // draw day
             drawBy = 1;
 
             date.setTime(xStart);
@@ -444,21 +456,23 @@ public class LineChartView extends View {
                     xSplitTo++;
             }
 
-        } else { // draw week
+        } /*else { // draw week
             drawBy = 2;
 
 
-        }
+        }*/
 
         for (int j = 0; j <= xSplitTo; j++) {
             long x = xStartNew + (long) ((xEndNew - xStartNew) / xSplitTo * j);
             float xInView = (x - xStart) * 1f / (xEnd - xStart) * xAxisLength;
             date.setTime(x);
             mPaint.setStrokeWidth(1);
-            if (drawBy == 0)
-                canvas.drawText(date.getHours() + ": 00", xInView, OFFSET_SCALE * 4, mPaint);
-            else if (drawBy == 1)
-                canvas.drawText((date.getMonth()+1) + "-" + date.getDate(), xInView, OFFSET_SCALE * 4, mPaint);
+            if (!mIsSimpleDraw) {
+                if (drawBy == 0)
+                    canvas.drawText(date.getHours() + ": 00", xInView, OFFSET_SCALE * 4, mPaint);
+                else
+                    canvas.drawText((date.getMonth() + 1) + "-" + date.getDate(), xInView, OFFSET_SCALE * 4, mPaint);
+            }
             mPaint.setStrokeWidth(2);
             canvas.drawLine(xInView, 0, xInView, -OFFSET_SCALE, mPaint);
             mPaint.setStrokeWidth(2);

@@ -9,6 +9,7 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -252,5 +253,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
     public void changePassword(View view) {
         ActivityUtil.startActivityForResult(this, RegisterActivity.class);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        try {
+            return super.dispatchTouchEvent(ev); // Fix pointer index out of range
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }

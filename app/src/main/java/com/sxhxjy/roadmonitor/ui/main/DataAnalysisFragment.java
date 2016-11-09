@@ -124,19 +124,21 @@ public class DataAnalysisFragment extends BaseFragment {
         if (mChartsContainer.getChildAt(2) != null)
             mChartsContainer.removeView(mChartsContainer.getChildAt(2));
 
+        final LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
+        lineChartView.getLines().clear();
+        lineChartView.mIsSimpleDraw = false;
+
         // data contrast
         if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {
             if (mTimer != null)
                 mTimer.cancel();
-            final LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
-            lineChartView.getLines().clear();
+
             final ArrayList<SimpleItem> positionItems = (ArrayList<SimpleItem>) data.getSerializableExtra("positionItems");
 
             if (positionItems.size() > 1) {//多位置
                 mTimer = new CountDownTimer(11000, 10000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
-                        Log.e("count down ", "ticked"+ millisUntilFinished);
                         for (int j = 0; j < mChartsContainer.getChildCount(); j++) {
                             ((LineChartView) mChartsContainer.getChildAt(j).findViewById(R.id.chart)).getLines().clear();
                             ((LineChartView) mChartsContainer.getChildAt(j).findViewById(R.id.chart)).getLinesRight().clear();
@@ -186,8 +188,39 @@ public class DataAnalysisFragment extends BaseFragment {
                             getMessage(getHttpService().getRealTimeData(positionItems.get(0).getCode(), sdf.parse(strings[0], new ParsePosition(0)).getTime(), sdf.parse(strings[1], new ParsePosition(0)).getTime(), 3), new MySubscriber<List<RealTimeData>>() {
                                 @Override
                                 protected void onMyNext(List<RealTimeData> realTimeDatas) {
-                                    LineChartView lineChartView = (LineChartView) getView().findViewById(R.id.chart);
-                                    lineChartView.addPoints(lineChartView.convert(realTimeDatas, false), s, Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)), false);
+
+                                    if (mChartsContainer.getChildAt(0) == null)
+                                        getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
+                                    LineChartView lineChartView0 = (LineChartView) mChartsContainer.getChildAt(0).findViewById(R.id.chart);
+                                    mChartsContainer.getChildAt(0).findViewById(R.id.param_info).setVisibility(View.GONE);
+                                    lineChartView0.mIsSimpleDraw = true;
+                                    lineChartView0.addPoints(lineChartView0.convert(realTimeDatas, false), s, Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)), false);
+
+
+                                    if (realTimeDatas.get(0).getTypeCode() != 1) {
+                                        if (mChartsContainer.getChildAt(1) == null)
+                                            getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
+                                        LineChartView lineChartView1 = (LineChartView) mChartsContainer.getChildAt(1).findViewById(R.id.chart);
+                                        mChartsContainer.getChildAt(1).findViewById(R.id.param_info).setVisibility(View.GONE);
+                                        lineChartView1.mIsSimpleDraw = true;
+
+                                        lineChartView1.addPoints(lineChartView1.convertY(realTimeDatas, false), s, Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)), false);
+
+
+                                    }
+                                    if (realTimeDatas.get(0).getTypeCode() == 2) {
+                                        if (mChartsContainer.getChildAt(2) == null)
+                                            getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
+                                        LineChartView lineChartView2 = (LineChartView) mChartsContainer.getChildAt(2).findViewById(R.id.chart);
+                                        mChartsContainer.getChildAt(2).findViewById(R.id.param_info).setVisibility(View.GONE);
+                                        lineChartView2.mIsSimpleDraw = true;
+
+                                        lineChartView2.addPoints(lineChartView2.convertZ(realTimeDatas, false), s, Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)), false);
+                                    }
+
+
+
+
                                 }
                             });
                             String time=strings[0]+"---"+strings[1];
