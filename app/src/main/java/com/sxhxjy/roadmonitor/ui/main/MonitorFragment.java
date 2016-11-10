@@ -406,16 +406,18 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
             }
         });
     }
+    //首页点击修改主题
     public void changeMonitor(int position){
         for (FilterTreeAdapter.Group group : filterTreeAdapter.mGroups) {
             for (SimpleItem simpleItem : group.getList()) {
                 simpleItem.setChecked(false);
             }
         }
-            groupsOfFilterTree.get(position).getList().get(0).setChecked(true);
-            getLocation(position, 0);
-            mAdapter.notifyDataSetChanged();
-
+            if (groupsOfFilterTree.get(position).getList().size()>0){
+                groupsOfFilterTree.get(position).getList().get(0).setChecked(true);
+                getLocation(position, 0);
+                mAdapter.notifyDataSetChanged();
+            }
     }
     private void getParamInfo() {
         getMessage(getHttpService().getParamInfo(codeId), new MySubscriber<ParamInfo>() {
