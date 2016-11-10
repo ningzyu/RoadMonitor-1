@@ -49,8 +49,6 @@
 
         </activity>
 
-        <activity android:name=".view.TakePictureActivity"/>
-
     </application>
 
 </manifest>
