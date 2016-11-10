@@ -45,7 +45,7 @@ public class AlertDetailListAdapter extends RecyclerView.Adapter<AlertDetailList
         holder.itemView.setTag(position);
         holder.location.setText(mList.get(position).getStationName());
         holder.content.setText(mList.get(position).getAlarmContent());
-        holder.date.setText(simpleDateFormat.format(new Date(mList.get(position).getGenerationTime())));
+        holder.date.setText(simpleDateFormat.format(new Date(mList.get(position).generationTime)));
     }
 
     @Override

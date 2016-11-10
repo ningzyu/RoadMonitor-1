@@ -202,7 +202,6 @@ public abstract class BaseListFragment<I> extends BaseFragment implements SwipeR
                         public void onError(Throwable e) {
                             Log.e("retrofit", e.toString());
 
-                            showToastMsg("请检查您的网络连接");
                             showListViewOrEmptyView();
                         }
 

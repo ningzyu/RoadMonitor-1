@@ -111,10 +111,10 @@ public interface HttpService {
     //监测点id：stationId；告警列表的产生时间：stime；告警列表的最后时间：etime；等级id：levelId；类型id：typeId；可能原因：generationReason；告警内容：alarmContent；确认人id：userId；确认信息：confirmMsg；确认时间：confirmTime（新增参数）
 
     @GET("alarm/findByStationId")
-    Observable<HttpResponse<List<AlertData>>> getAlertDataDetail(@Query("stationId") String stationId, @Query("stime") String startTime, @Query("etime") String endTime);
-
+    Observable<HttpResponse<List<AlertData>>> getAlertDataDetail(@Query("stationId") String alarmId, @Query("userId") String userId, @Query("confirmMsg") String confirmMsg,
+                                                                 @Query("stime") String startTime, @Query("etime") String endTime, @Query("levelId") String levelId, @Query("typeId") String typeId, @Query("generationReason") String generareason, @Query("alarmContent") String alarmCon, @Query("confirmTime") long confirmTime, @Query("confirmInfo") String confirmInfo);
     @GET("alarmUnionData/pageList")
-    Observable<HttpResponse<List<AlertData>>> getAlertDataList(@Query("stationId") String stationId, @Query("orgId") String gid, @Query("level") String level,@Query("cStype") String type, @Query("beforeTime") long beforeTime, @Query("afterTime") long afterTime, @Query("timeState") int timeState);
+    Observable<HttpResponse<List<AlertData>>> getAlertDataList(@Query("stationId") String stationId, @Query("orgId") String gid, @Query("level") String level,@Query("cStype") String type, @Query("beforeTime") long beforeTime, @Query("afterTime") long afterTime, @Query("timeState") String timeState, @Query("state") String stateCode);
 
     /////////////////////////////////////////////////////////////////////////
     ////  home

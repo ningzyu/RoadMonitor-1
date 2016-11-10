@@ -47,7 +47,7 @@ public class AlertFragment extends BaseListFragment<AlertData> {
     private RecyclerView mFilterList;//下拉列表控件
     private MyPopupWindow myPopupWindow;//弹出窗口
     private FilterTreeAdapter filterTreeAdapter;//抽屉中下拉类表适配器
-    private String level,cStype;
+    private String level,cStype, timeCode, state;
     private  long afterTime,beforeTime;
     @Override
     public Observable<HttpResponse<List<AlertData>>> getObservable() {
@@ -65,17 +65,16 @@ public class AlertFragment extends BaseListFragment<AlertData> {
             }
         }
 
+        for (SimpleItem s:f3.getList()){
+            if (s.isChecked()==true){
+                state=s.getCode();
+            }
+        }
+
         for (SimpleItem s:mListRight){
             long time = 0;
-            if (s.isChecked()==true){
-                String title=s.getTitle();
-                if (title.equals("最近一天")){
-                    time=86400000;
-                }else if (title.equals("最近一周")){
-                    time=86400000*7;
-                }else if (title.equals("最近一月")){
-                    time=86400000*30;
-                }
+            if (s.isChecked()){
+                timeCode = s.getId();
                 afterTime= System.currentTimeMillis();
                 beforeTime=afterTime-time;
             }
@@ -85,8 +84,8 @@ public class AlertFragment extends BaseListFragment<AlertData> {
 
         return getHttpService().getAlertDataList(null,
                 MyApplication.getMyApplication().getSharedPreference().getString("stationId", ""),
-                level,cStype,beforeTime,afterTime, 2
-     );
+                level,cStype,beforeTime,afterTime, timeCode
+     , state);
     }
 
     public int level(String level){
@@ -120,9 +119,9 @@ public class AlertFragment extends BaseListFragment<AlertData> {
         mListLeft.add(new SimpleItem("", "由高到低", false));
         mListLeft.add(new SimpleItem("", "由低到高", false));
 
-        mListRight.add(new SimpleItem("", "最近一天", false));
-        mListRight.add(new SimpleItem("", "最近一周", false));
-        mListRight.add(new SimpleItem("", "最近一月", false));
+        mListRight.add(new SimpleItem(0+"", "最近一天", false));
+        mListRight.add(new SimpleItem(1+"", "最近一周", false));
+        mListRight.add(new SimpleItem(2+"", "最近一月", false));
         //等级列表标题点击事件
         mFilterTitleLeft.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,6 +190,7 @@ public class AlertFragment extends BaseListFragment<AlertData> {
 
                 } else {
                     mFilterTitleRight.setText(mSimpleListAdapter.getListData().get(p).getTitle());
+                    onRefresh();
                 }
             }
         });
@@ -229,7 +229,9 @@ public class AlertFragment extends BaseListFragment<AlertData> {
                     mList1.add(new SimpleItem(alarmTypeBean.getId(), alarmTypeBean.getValue(), false));
                 }
                 for (AlertTree.AlarmStateBean alarmStateBean : alertTree.getAlarmState()) {
-                    mList2.add(new SimpleItem(alarmStateBean.getId(), alarmStateBean.getValue(), false));
+                    SimpleItem simpleItem = new SimpleItem(alarmStateBean.getId(), alarmStateBean.getValue(), false);
+                    simpleItem.setCode(alarmStateBean.getCode());
+                    mList2.add(simpleItem);
                 }
             }
         });
