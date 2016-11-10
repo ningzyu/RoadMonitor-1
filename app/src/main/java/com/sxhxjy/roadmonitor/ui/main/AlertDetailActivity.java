@@ -47,7 +47,7 @@ public class AlertDetailActivity extends BaseActivity {
         @Override
         public Observable<HttpResponse<List<AlertData>>> getObservable() {
             AlertData alertData = (AlertData) getArguments().getSerializable("data");
-            return getHttpService().getAlertDataDetail(alertData.getId(), UserManager.getUID(), alertData.getConfirmMsg(), alertData.getStime(), alertData.getEtime(), alertData.getLevelId(), alertData.getTypeId(), alertData.getGenerationReason(), alertData.getAlarmContent(), alertData.getConfirmTime(), alertData.getConfirmInfo());
+            return getHttpService().getAlertDataDetail(alertData.getId(), alertData.getUserId(), alertData.getConfirmMsg(), alertData.getStime(), alertData.getEtime(), alertData.getLevelId(), alertData.getTypeId(), alertData.getGenerationReason(), alertData.getAlarmContent(), alertData.getConfirmTime(), alertData.getConfirmInfo());
         }
 
         @Override
