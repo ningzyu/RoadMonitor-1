@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,7 +58,7 @@ import java.util.Random;
 
 public class MonitorFragment extends BaseFragment implements View.OnClickListener {
     /**
-     * 实时数据-fragment
+     * 检测项目fragment
      */
     public List<FilterTreeAdapter.Group> groupsOfFilterTree = new ArrayList<>();
     private String stationId;
@@ -137,6 +138,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.monitor_fragment, null);
     }
 
@@ -193,6 +195,10 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
 
         if (groupsOfFilterTree.isEmpty()) getTypeTree(); // getTypeTree
 
+/**
+ * 弹出窗口
+ */
+
         myPopupWindow = new MyPopupWindow((BaseActivity) getActivity(), R.layout.popup_window_right);
 
         ExpandableListView expandableListView = (ExpandableListView) myPopupWindow.getContentView().findViewById(R.id.expandable_list_view);
@@ -215,6 +221,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 myPopupWindow.dismiss();
                 filterTreeAdapter.notifyDataSetChanged();
                 getLocation(groupPosition, childPosition);
+
                 return true;
             }
         });
@@ -224,6 +231,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         } else {
             getView().findViewById(R.id.empty).setVisibility(View.GONE);
         }
+
     }
 
     private void getChartData() {
@@ -321,7 +329,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         };
         mTimer.start();
     }
-
+    //获得条件请求数据
     private void getLocation(int groupPosition, int childPosition) {
         getMessage(getHttpService().getPositions(filterTreeAdapter.mGroups.get(groupPosition).getList().get(childPosition).getId(), MyApplication.getMyApplication().getSharedPreference().getString("gid", "")), new MySubscriber<List<MonitorPosition>>() {
             @Override
@@ -366,10 +374,22 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                         }
                     }
                 }
+
+
+
             }
         });
     }
-
+    public void aaaa(){
+        if (((MainActivity)getActivity()).id!=null&&!((MainActivity)getActivity()).id.equals(""))
+        {
+            Log.i("adadada",((MainActivity)getActivity()).id);
+            int id=Integer.parseInt(((MainActivity)getActivity()).id);
+            groupsOfFilterTree.get(id).getList().get(0).setChecked(true);
+            getLocation(id, 0);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
     private void getParamInfo() {
         getMessage(getHttpService().getParamInfo(codeId), new MySubscriber<ParamInfo>() {
             @Override
@@ -408,9 +428,6 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                     ((TextView) view.findViewById(R.id.threshold3)).setText(paramInfo.getzThreeThreshold());
                     ((TextView) view.findViewById(R.id.threshold4)).setText(paramInfo.getzFourThreshold());
                 }
-
-
-
             }
         });
     }

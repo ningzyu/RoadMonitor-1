@@ -29,7 +29,7 @@ import rx.schedulers.Schedulers;
  *
  * @author Michael Zhao
  */
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     /** lots of fragments maybe use same dialog */
     private ProgressDialog mProgressDialog;
@@ -129,4 +129,6 @@ public class BaseActivity extends AppCompatActivity {
     public HttpService getHttpService() {
         return MyApplication.getMyApplication().getHttpService();
     }
+
+
 }

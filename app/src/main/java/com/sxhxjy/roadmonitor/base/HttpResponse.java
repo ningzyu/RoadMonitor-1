@@ -10,6 +10,7 @@ import java.util.List;
  * @author Michael Zhao
  */
 public class HttpResponse<T> {
+    //数据提交
     private int resultCode;
     private String resultMessage;
 

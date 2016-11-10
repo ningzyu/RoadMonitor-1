@@ -19,7 +19,6 @@ public class MyPopupWindow extends PopupWindow implements PopupWindow.OnDismissL
     /**
      * 弹出窗口
      */
-
     protected BaseActivity mActivity;
     protected View view;
 
@@ -38,8 +37,6 @@ public class MyPopupWindow extends PopupWindow implements PopupWindow.OnDismissL
         setContentView(view);
     }
 
-    public MyPopupWindow() {
-    }
 
     @Override
     public void onDismiss() {

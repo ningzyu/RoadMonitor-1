@@ -4,15 +4,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.base.BaseActivity;
@@ -44,6 +47,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     private LinearLayout bar0, bar1, bar2, bar3, bar4;
     private TextView textViewBar0, textViewBar1, textViewBar2, textViewBar3, textViewBar4;
     private ImageView imageViewBar0, imageViewBar1, imageViewBar2, imageViewBar3, imageViewBar4;
+    public String id;
 
     private PagerAdapter mPagerAdapter = new FragmentPagerAdapter(getFragmentManager()) {
         @Override
@@ -86,10 +90,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         mViewPager.setOffscreenPageLimit(FRAGMENTS_IN_VIEW_PAGER);
         mViewPager.addOnPageChangeListener(this);
         mViewPager.setAdapter(mPagerAdapter);
+        String i=getIntent().getStringExtra("name");
         selectedBar(0);
         fragments.get(0).setUserVisibleHint(true);
     }
-
 
     private void initView() {
         bar0 = (LinearLayout) findViewById(R.id.bar0);
@@ -117,9 +121,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
 
     }
-
-
-    private void selectedBar(int i) {
+    /**
+     * Fragment管理
+     * @param i
+     */
+    void selectedBar(int i) {
         resetBar();
         switch (i) {
             case 0:

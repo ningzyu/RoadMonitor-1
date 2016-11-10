@@ -89,11 +89,30 @@ public class AlertFragment extends BaseListFragment<AlertData> {
                 beforeTime=afterTime-time;
             }
         }
+
+
+
         return getHttpService().getAlertDataList(null,
                 MyApplication.getMyApplication().getSharedPreference().getString("stationId", ""),
                 level,cStype,beforeTime,afterTime, 2
      );
     }
+
+    public int   Level(String level){
+        int i=0;
+        if (level.equals("一级")){
+            i=1;
+        }else if (level.equals("二级")){
+            i=2;
+        }else if (level.equals("三级")){
+            i=3;
+        }else if (level.equals("四级")){
+            i=4;
+        }
+        return i;
+    }
+
+
     @Override
     protected Class<AlertData> getItemClass() {
         return AlertData.class;
@@ -155,6 +174,35 @@ public class AlertFragment extends BaseListFragment<AlertData> {
                 mFilterList.setVisibility(View.GONE);
                 if (mAdapter.getListData() == mListLeft) {
                     mFilterTitleLeft.setText(mAdapter.getListData().get(p).getTitle());
+
+                    for (SimpleItem s:mListLeft){
+                        if (s.isChecked()==true){
+                            String title=s.getTitle();
+                            if (title.equals("由高到低")){
+                                for (int i=0;i<mList.size();i++){
+                                    for (int l=0;l<mList.size();l++){
+                                        if (Level(mList.get(i).getLevel())>Level(mList.get(l).getLevel())){
+                                            AlertData temp = mList.get(i);
+                                            mList.set(i,mList.get(l));
+                                            mList.set(l,temp);
+                                        }
+                                    }
+                                }
+                            }else if (title.equals("由低到高")){
+                                for (int i=0;i<mList.size();i++){
+                                    for (int l=0;l<mList.size();l++){
+                                        if (Level(mList.get(i).getLevel())<Level(mList.get(l).getLevel())){
+                                            AlertData temp = mList.get(i);
+                                            mList.set(i,mList.get(l));
+                                            mList.set(l,temp);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    mAdapter.notifyDataSetChanged();
+
                 } else {
                     mFilterTitleRight.setText(mAdapter.getListData().get(p).getTitle());
                 }
@@ -234,4 +282,5 @@ public class AlertFragment extends BaseListFragment<AlertData> {
     protected RecyclerView.Adapter getAdapter() {
         return new AlertListAdapter(this, mList);
     }
+
 }

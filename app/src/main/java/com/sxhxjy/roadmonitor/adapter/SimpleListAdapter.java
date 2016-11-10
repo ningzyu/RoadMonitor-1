@@ -17,7 +17,6 @@ import java.util.List;
 
 /**
  * 2016/9/26
- *
  * @author Michael Zhao
  */
 public class SimpleListAdapter extends RecyclerView.Adapter<SimpleListAdapter.ViewHolder> {

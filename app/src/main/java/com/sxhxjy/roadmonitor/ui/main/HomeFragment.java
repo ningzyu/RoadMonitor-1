@@ -1,5 +1,7 @@
 package com.sxhxjy.roadmonitor.ui.main;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -50,7 +52,6 @@ public class HomeFragment extends BaseFragment{
      * 首页——fragment页
      */
     private MapView mapview;
-    //    private TextView tv0,tv1,tv2,tv3;
     private String path= MyApplication.BASE_URL + "points/findAppRootPoint?groupId=4028812c57b6993b0157b6aca4410004";
     private OkHttpClient okHttpClient;
     private Request request;
@@ -128,8 +129,9 @@ public class HomeFragment extends BaseFragment{
             lv_home.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Map<String,Object> map=list.get(position);
-                    Toast.makeText(getActivity(),map.get("id").toString(),Toast.LENGTH_SHORT).show();
+                    ((MainActivity)getActivity()).id=position+"";
+                    ((MainActivity)getActivity()).selectedBar(1);
+
                 }
             });
         } catch (JSONException e) {
@@ -140,6 +142,7 @@ public class HomeFragment extends BaseFragment{
         lv_home= (HorizontalListView) view.findViewById(R.id.list_home);
         mapview = (MapView) view.findViewById(R.id.map_view);
     }
+
     @Override
     public void onDestroy() {
         mapview.onDestroy();
