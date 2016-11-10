@@ -17,15 +17,30 @@
         tools:layout_editor_absoluteX="0dp">
     </ExpandableListView>
 
-
-    <Button
-        android:text="确定"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/confirm"
-        android:background="@android:color/holo_orange_light"
-        android:textColor="@android:color/white"
-         />
+        android:layout_height="wrap_content">
+        <Button
+            android:text="重置"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/reset"
+            android:background="@android:color/holo_orange_light"
+            android:textColor="@android:color/white"
+            />
+        <Button
+            android:text="确定"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/confirm"
+            android:background="@android:color/holo_orange_light"
+            android:textColor="@android:color/white"
+            />
+    </LinearLayout>
+
 
 
 </LinearLayout>
