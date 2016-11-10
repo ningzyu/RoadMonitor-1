@@ -157,6 +157,7 @@ public class AlertFragment extends BaseListFragment<AlertData> {
                 for (SimpleItem simpleItem : mSimpleListAdapter.getListData()) {
                     simpleItem.setChecked(false);
                 }
+                timeCode = null;
                 mAdapter.notifyDataSetChanged();
                 onRefresh();
             }
