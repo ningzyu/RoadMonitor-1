@@ -406,15 +406,16 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
             }
         });
     }
-    public void aaaa(){
-        if (((MainActivity)getActivity()).id!=null&&!((MainActivity)getActivity()).id.equals(""))
-        {
-            Log.i("adadada",((MainActivity)getActivity()).id);
-            int id=Integer.parseInt(((MainActivity)getActivity()).id);
-            groupsOfFilterTree.get(id).getList().get(0).setChecked(true);
-            getLocation(id, 0);
-            mAdapter.notifyDataSetChanged();
+    public void changeMonitor(int position){
+        for (FilterTreeAdapter.Group group : filterTreeAdapter.mGroups) {
+            for (SimpleItem simpleItem : group.getList()) {
+                simpleItem.setChecked(false);
+            }
         }
+            groupsOfFilterTree.get(position).getList().get(0).setChecked(true);
+            getLocation(position, 0);
+            mAdapter.notifyDataSetChanged();
+
     }
     private void getParamInfo() {
         getMessage(getHttpService().getParamInfo(codeId), new MySubscriber<ParamInfo>() {

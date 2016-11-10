@@ -1,16 +1,11 @@
 package com.sxhxjy.roadmonitor.ui.main;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.sxhxjy.roadmonitor.R;
@@ -129,7 +124,7 @@ public class HomeFragment extends BaseFragment{
             lv_home.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    ((MainActivity)getActivity()).id=position+"";
+                    ((MonitorFragment) ((MainActivity)getActivity()).fragments.get(1)).changeMonitor(position);
                     ((MainActivity)getActivity()).selectedBar(1);
 
                 }

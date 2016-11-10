@@ -27,7 +27,7 @@ import com.sxhxjy.roadmonitor.util.ActivityUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
+// wifi :     hxjy_jszx&
 /**
  * Main activity
  * <p>
@@ -47,7 +47,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     private LinearLayout bar0, bar1, bar2, bar3, bar4;
     private TextView textViewBar0, textViewBar1, textViewBar2, textViewBar3, textViewBar4;
     private ImageView imageViewBar0, imageViewBar1, imageViewBar2, imageViewBar3, imageViewBar4;
-    public String id;
 
     private PagerAdapter mPagerAdapter = new FragmentPagerAdapter(getFragmentManager()) {
         @Override

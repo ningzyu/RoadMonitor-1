@@ -1,42 +1,33 @@
 package com.sxhxjy.roadmonitor.ui.main;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.adapter.AlertListAdapter;
 import com.sxhxjy.roadmonitor.adapter.FilterTreeAdapter;
-import com.sxhxjy.roadmonitor.adapter.MonitorListAdapter;
 import com.sxhxjy.roadmonitor.adapter.SimpleListAdapter;
 import com.sxhxjy.roadmonitor.base.BaseActivity;
-import com.sxhxjy.roadmonitor.base.BaseFragment;
 import com.sxhxjy.roadmonitor.base.BaseListFragment;
 import com.sxhxjy.roadmonitor.base.HttpResponse;
 import com.sxhxjy.roadmonitor.base.MyApplication;
 import com.sxhxjy.roadmonitor.base.MySubscriber;
 import com.sxhxjy.roadmonitor.entity.AlertData;
 import com.sxhxjy.roadmonitor.entity.AlertTree;
-import com.sxhxjy.roadmonitor.entity.MonitorTypeTree;
 import com.sxhxjy.roadmonitor.entity.SimpleItem;
 import com.sxhxjy.roadmonitor.view.MyPopupWindow;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-import retrofit2.http.GET;
-import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -51,7 +42,7 @@ public class AlertFragment extends BaseListFragment<AlertData> {
     private List<SimpleItem> mListLeft = new ArrayList<>();//等级列表
     private List<SimpleItem> mListRight = new ArrayList<>();//时间列表
     private List<FilterTreeAdapter.Group> groups;//抽屉每组的集合
-    private SimpleListAdapter mAdapter;//下拉列表适配器
+    private SimpleListAdapter mSimpleListAdapter;//下拉列表适配器
     private TextView mFilterTitleLeft, mFilterTitleRight;//等级列表标题，时间列表标题
     private RecyclerView mFilterList;//下拉列表控件
     private MyPopupWindow myPopupWindow;//弹出窗口
@@ -98,7 +89,7 @@ public class AlertFragment extends BaseListFragment<AlertData> {
      );
     }
 
-    public int   Level(String level){
+    public int level(String level){
         int i=0;
         if (level.equals("一级")){
             i=1;
@@ -136,8 +127,8 @@ public class AlertFragment extends BaseListFragment<AlertData> {
         mFilterTitleLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAdapter.setListData(mListLeft);
-                mAdapter.notifyDataSetChanged();
+                mSimpleListAdapter.setListData(mListLeft);
+                mSimpleListAdapter.notifyDataSetChanged();
 
                 if (mFilterList.getVisibility() == View.GONE)
                     mFilterList.setVisibility(View.VISIBLE);
@@ -149,8 +140,8 @@ public class AlertFragment extends BaseListFragment<AlertData> {
         mFilterTitleRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAdapter.setListData(mListRight);
-                mAdapter.notifyDataSetChanged();
+                mSimpleListAdapter.setListData(mListRight);
+                mSimpleListAdapter.notifyDataSetChanged();
                 if (mFilterList.getVisibility() == View.GONE)
                     mFilterList.setVisibility(View.VISIBLE);
                 else
@@ -159,52 +150,47 @@ public class AlertFragment extends BaseListFragment<AlertData> {
         });
         mFilterList = (RecyclerView) getView().findViewById(R.id.filter_list);
         mFilterList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mAdapter = new SimpleListAdapter(this, mListLeft);
-        mFilterList.setAdapter(mAdapter);
-        mAdapter.setFilterList(mFilterList);
+        mSimpleListAdapter = new SimpleListAdapter(this, mListLeft);
+        mFilterList.setAdapter(mSimpleListAdapter);
+        mSimpleListAdapter.setFilterList(mFilterList);
         //列表项的点击事件
-        mAdapter.setListener(new View.OnClickListener() {
+        mSimpleListAdapter.setListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int p = (int) v.getTag();
-                for (SimpleItem simpleItem : mAdapter.getListData()) {
+                for (SimpleItem simpleItem : mSimpleListAdapter.getListData()) {
                     simpleItem.setChecked(false);
                 }
-                mAdapter.getListData().get(p).setChecked(true);
+                mSimpleListAdapter.getListData().get(p).setChecked(true);
                 mFilterList.setVisibility(View.GONE);
-                if (mAdapter.getListData() == mListLeft) {
-                    mFilterTitleLeft.setText(mAdapter.getListData().get(p).getTitle());
+                if (mSimpleListAdapter.getListData() == mListLeft) {
+                    mFilterTitleLeft.setText(mSimpleListAdapter.getListData().get(p).getTitle());
 
                     for (SimpleItem s:mListLeft){
-                        if (s.isChecked()==true){
+                        if (s.isChecked()) {
                             String title=s.getTitle();
                             if (title.equals("由高到低")){
-                                for (int i=0;i<mList.size();i++){
-                                    for (int l=0;l<mList.size();l++){
-                                        if (Level(mList.get(i).getLevel())>Level(mList.get(l).getLevel())){
-                                            AlertData temp = mList.get(i);
-                                            mList.set(i,mList.get(l));
-                                            mList.set(l,temp);
-                                        }
+                                Collections.sort(mList, new Comparator<AlertData>() {
+                                    @Override
+                                    public int compare(AlertData lhs, AlertData rhs) {
+                                        return level(rhs.getLevel()) - level(lhs.getLevel());
                                     }
-                                }
-                            }else if (title.equals("由低到高")){
-                                for (int i=0;i<mList.size();i++){
-                                    for (int l=0;l<mList.size();l++){
-                                        if (Level(mList.get(i).getLevel())<Level(mList.get(l).getLevel())){
-                                            AlertData temp = mList.get(i);
-                                            mList.set(i,mList.get(l));
-                                            mList.set(l,temp);
-                                        }
+                                });
+
+                            }else {
+                                Collections.sort(mList, new Comparator<AlertData>() {
+                                    @Override
+                                    public int compare(AlertData lhs, AlertData rhs) {
+                                        return level(lhs.getLevel()) - level(rhs.getLevel());
                                     }
-                                }
+                                });
                             }
                         }
                     }
                     mAdapter.notifyDataSetChanged();
 
                 } else {
-                    mFilterTitleRight.setText(mAdapter.getListData().get(p).getTitle());
+                    mFilterTitleRight.setText(mSimpleListAdapter.getListData().get(p).getTitle());
                 }
             }
         });
