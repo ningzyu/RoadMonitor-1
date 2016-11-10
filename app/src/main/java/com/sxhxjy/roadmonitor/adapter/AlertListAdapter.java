@@ -69,7 +69,7 @@ public class AlertListAdapter extends RecyclerView.Adapter<AlertListAdapter.View
         holder.desc.setText(mList.get(position).getType());
         holder.location.setText(mList.get(position).getAlarmContent());
         holder.reason.setText(mList.get(position).getGenerationReason());
-        holder.date.setText(sdf.format(new Date(mList.get(position).getStime())) + "--" + sdf.format(new Date(mList.get(position).getEtime())));
+        holder.date.setText(sdf.format(new Date(Long.parseLong(mList.get(position).getStime()))) + "--" + sdf.format(new Date(Long.parseLong(mList.get(position).getEtime()))));
         holder.code.setText(mList.get(position).getStationName());
 
     }
@@ -92,9 +92,7 @@ public class AlertListAdapter extends RecyclerView.Adapter<AlertListAdapter.View
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Bundle b = new Bundle();
-                    b.putString("start", mList.get(p).getStime()+"");
-                    b.putString("end", mList.get(p).getEtime()+"");
-                    b.putString("id", mList.get(p).getId());
+                    b.putSerializable("data", mList.get(p));
                     ActivityUtil.startActivityForResult(mFragment.getActivity(), AlertDetailActivity.class, b, 100);
                 }
             }).show();
@@ -110,7 +108,7 @@ public class AlertListAdapter extends RecyclerView.Adapter<AlertListAdapter.View
                     setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mFragment.getMessage(mFragment.getHttpService().confirmAlertMsg(mList.get(p).getId(), UserManager.getUID(), ((EditText) alertDialog.findViewById(R.id.editText)).getText().toString(), mList.get(p).getStime()+"", mList.get(p).getEtime()+"", mList.get(p).getLevel(), mList.get(p).getType(), mList.get(p).getGenerationReason(), mList.get(p).getAlarmContent()), new MySubscriber<Object>() {
+                    mFragment.getMessage(mFragment.getHttpService().confirmAlertMsg(mList.get(p).getId(), UserManager.getUID(), ((EditText) alertDialog.findViewById(R.id.editText)).getText().toString(), mList.get(p).getStime()+"", mList.get(p).getEtime()+"", mList.get(p).getLevelId(), mList.get(p).getTypeId(), mList.get(p).getGenerationReason(), mList.get(p).getAlarmContent()), new MySubscriber<Object>() {
                         @Override
                         public void onNext(Object o) {
                             mFragment.showToastMsg("确定警告信息成功！");

@@ -9,48 +9,40 @@ import java.io.Serializable;
  */
 public class AlertData implements Serializable{
 
-
     /**
-     * alarmContent : 传感器数据中断
-     * confirmInfo : 确认人:管理员;确认内容:a;确认时间:2016-10-18 16:07:05
-     * etime : 1476179548000
-     * generationReason : 传感器：传感器数据异常中断
-     * id : 4028812c57ad71b10157ade146e80006
-     * level : 一级
+     * alarmContent : 设备诊断异常
+     * confirmInfo : 确认人:乔景安;确认内容:已确认;确认时间:2016-11-08 13:58:57
+     * confirmMsg : 已确认
+     * confirmTime : 1478584737000
+     * etime : 1477713600000
+     * generationReason : null
+     * id : 4028770e57e5bf140157e620a2ca0004
+     * level : 二级
+     * levelId : 4028812c57a344a30157a374eb000005
      * num : 1
-     * stationName : 忻报高速边坡1
-     * stime : 1476179548000
+     * stationName : 传感器:BD-2-表面位移200米
+     * stime : 1477713600000
      * type : 传感器
-     *
-     *
-     * {
-     10-26 11:17:58.515 9783-9877/com.sxhxjy.roadmonitor D/OkHttp:     "alarmContent" : "传感器连接超时",
-     10-26 11:17:58.515 9783-9877/com.sxhxjy.roadmonitor D/OkHttp:     "generationTime" : 1476775261000,
-     10-26 11:17:58.515 9783-9877/com.sxhxjy.roadmonitor D/OkHttp:     "id" : "33",
-     10-26 11:17:58.515 9783-9877/com.sxhxjy.roadmonitor D/OkHttp:     "stationName" : "忻报高速边坡1"
-     10-26 11:17:58.515 9783-9877/com.sxhxjy.roadmonitor D/OkHttp:   }
+     * typeId : 4028812c57a344a30157a376908c0009
+     * userId : 4028770e57fafbe60157faff4cdd0000
      */
 
     private String alarmContent;
     private String confirmInfo;
-    private long etime;
+    private String confirmMsg;
+    private long confirmTime;
+    private String etime;
     private String generationReason;
     private String id;
     private String level;
+    private String levelId;
     private String num;
     private String stationName;
-    private long stime;
-    private long generationTime;
+    private String stime;
     private String type;
-
-
-    public long getGenerationTime() {
-        return generationTime;
-    }
-
-    public void setGenerationTime(long generationTime) {
-        this.generationTime = generationTime;
-    }
+    private String typeId;
+    private String userId;
+    public long generationTime;
 
     public String getAlarmContent() {
         return alarmContent;
@@ -68,11 +60,27 @@ public class AlertData implements Serializable{
         this.confirmInfo = confirmInfo;
     }
 
-    public long getEtime() {
+    public String getConfirmMsg() {
+        return confirmMsg;
+    }
+
+    public void setConfirmMsg(String confirmMsg) {
+        this.confirmMsg = confirmMsg;
+    }
+
+    public long getConfirmTime() {
+        return confirmTime;
+    }
+
+    public void setConfirmTime(long confirmTime) {
+        this.confirmTime = confirmTime;
+    }
+
+    public String getEtime() {
         return etime;
     }
 
-    public void setEtime(long etime) {
+    public void setEtime(String etime) {
         this.etime = etime;
     }
 
@@ -100,6 +108,14 @@ public class AlertData implements Serializable{
         this.level = level;
     }
 
+    public String getLevelId() {
+        return levelId;
+    }
+
+    public void setLevelId(String levelId) {
+        this.levelId = levelId;
+    }
+
     public String getNum() {
         return num;
     }
@@ -116,11 +132,11 @@ public class AlertData implements Serializable{
         this.stationName = stationName;
     }
 
-    public long getStime() {
+    public String getStime() {
         return stime;
     }
 
-    public void setStime(long stime) {
+    public void setStime(String stime) {
         this.stime = stime;
     }
 
@@ -130,5 +146,21 @@ public class AlertData implements Serializable{
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(String typeId) {
+        this.typeId = typeId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

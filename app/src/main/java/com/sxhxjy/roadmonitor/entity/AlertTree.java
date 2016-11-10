@@ -76,6 +76,15 @@ public class AlertTree {
     public static class AlarmStateBean {
         private String id;
         private String value;
+        private String code;
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
 
         public String getId() {
             return id;

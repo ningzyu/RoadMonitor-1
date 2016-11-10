@@ -14,6 +14,7 @@ import com.sxhxjy.roadmonitor.base.BaseActivity;
 import com.sxhxjy.roadmonitor.base.BaseListFragment;
 import com.sxhxjy.roadmonitor.base.HttpResponse;
 import com.sxhxjy.roadmonitor.base.MyApplication;
+import com.sxhxjy.roadmonitor.base.UserManager;
 import com.sxhxjy.roadmonitor.entity.AlertData;
 import com.sxhxjy.roadmonitor.entity.RealTimeData;
 
@@ -34,9 +35,7 @@ public class AlertDetailActivity extends BaseActivity {
         setContentView(R.layout.base_activity);
         Fragment fragment =  new AlertDetailFragment();
         Bundle b = new Bundle();
-        b.putString("start", getIntent().getStringExtra("start"));
-        b.putString("end", getIntent().getStringExtra("end"));
-        b.putString("id", getIntent().getStringExtra("id"));
+        b.putSerializable("data", getIntent().getSerializableExtra("data"));
         fragment.setArguments(b);
         getFragmentManager().beginTransaction()
                 .add(R.id.container, fragment).commit();
@@ -47,7 +46,8 @@ public class AlertDetailActivity extends BaseActivity {
 
         @Override
         public Observable<HttpResponse<List<AlertData>>> getObservable() {
-            return getHttpService().getAlertDataDetail(getArguments().getString("id"), getArguments().getString("start"), getArguments().getString("end"));
+            AlertData alertData = (AlertData) getArguments().getSerializable("data");
+            return getHttpService().getAlertDataDetail(alertData.getId(), UserManager.getUID(), alertData.getConfirmMsg(), alertData.getStime(), alertData.getEtime(), alertData.getLevelId(), alertData.getTypeId(), alertData.getGenerationReason(), alertData.getAlarmContent(), alertData.getConfirmTime(), alertData.getConfirmInfo());
         }
 
         @Override
