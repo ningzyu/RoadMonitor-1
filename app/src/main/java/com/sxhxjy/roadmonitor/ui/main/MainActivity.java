@@ -40,7 +40,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     public ViewPager mViewPager;
     private static final int FRAGMENTS_IN_VIEW_PAGER = 5;
     private long firstTimeOfExit = 0;
-    private List<Fragment> fragments = new ArrayList<>();
+    public List<Fragment> fragments = new ArrayList<>();
     private LinearLayout bar0, bar1, bar2, bar3, bar4;
     private TextView textViewBar0, textViewBar1, textViewBar2, textViewBar3, textViewBar4;
     private ImageView imageViewBar0, imageViewBar1, imageViewBar2, imageViewBar3, imageViewBar4;

@@ -2,6 +2,7 @@ package com.sxhxjy.roadmonitor.ui.main;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -53,6 +54,7 @@ public class DataAnalysisFragment extends BaseFragment {
     private Random random = new Random();
     private LinearLayout layout_2,layout_3,layout_4;
     private LinearLayout mChartsContainer;
+    private ProgressDialog progressDialog;
 
     @Nullable
     @Override
@@ -128,6 +130,14 @@ public class DataAnalysisFragment extends BaseFragment {
         lineChartView.getLines().clear();
         lineChartView.mIsSimpleDraw = false;
 
+        if (resultCode == Activity.RESULT_OK) {
+            if (progressDialog == null) {
+                progressDialog = new ProgressDialog(getActivity());
+                progressDialog.setMessage("正在获取数据...");
+                progressDialog.show();
+            }
+        }
+
         // data contrast
         if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {
             if (mTimer != null)
@@ -150,6 +160,15 @@ public class DataAnalysisFragment extends BaseFragment {
                                 @Override
                                 protected void onMyNext(List<RealTimeData> realTimeDatas) {
                                     addToChart(realTimeDatas, item, false);
+                                }
+
+                                @Override
+                                public void onCompleted() {
+                                    super.onCompleted();
+                                    if (progressDialog != null) {
+                                        progressDialog.dismiss();
+                                        progressDialog = null;
+                                    }
                                 }
                             });
                             if (str.equals("")){
@@ -222,6 +241,15 @@ public class DataAnalysisFragment extends BaseFragment {
 
 
                                 }
+
+                                @Override
+                                public void onCompleted() {
+                                    super.onCompleted();
+                                    if (progressDialog != null) {
+                                        progressDialog.dismiss();
+                                        progressDialog = null;
+                                    }
+                                }
                             });
                             String time=strings[0]+"---"+strings[1];
                             if (str.equals("")){
@@ -264,6 +292,15 @@ public class DataAnalysisFragment extends BaseFragment {
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
                                 addToChart(realTimeDatas, item, false);
                             }
+
+                            @Override
+                            public void onCompleted() {
+                                super.onCompleted();
+                                if (progressDialog != null) {
+                                    progressDialog.dismiss();
+                                    progressDialog = null;
+                                }
+                            }
                         });
                     }
                     for (final SimpleItem simpleItem : positionItemsCorrelation) {
@@ -271,6 +308,16 @@ public class DataAnalysisFragment extends BaseFragment {
                             @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
                                 addToChart(realTimeDatas, simpleItem, true);
+                            }
+
+                            @Override
+                            public void onCompleted() {
+                                super.onCompleted();
+                                if (progressDialog != null) {
+                                    progressDialog.dismiss();
+                                    progressDialog = null;
+                                }
+
                             }
                         });
                     }

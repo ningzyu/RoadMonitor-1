@@ -2,6 +2,7 @@ package com.sxhxjy.roadmonitor.ui.main;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -77,7 +78,9 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
 
 
-    private ArrayList<RealTimeData> mRealTimes = new ArrayList<>();
+    public ArrayList<RealTimeData> mRealTimes = new ArrayList<>();
+    public static MonitorFragment monitorFragment;
+    private ProgressDialog progressDialog;
 
     // filter item clicked
     private View.OnClickListener simpleListListener = new View.OnClickListener() {
@@ -146,6 +149,8 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         initToolBar(getView(), getArguments().getString("stationName"), false);
         stationId = getArguments().getString("stationId");
         cacheStation(stationId, getArguments().getString("stationName"));
+
+        monitorFragment = this; // *static*
 
         mTextViewCenter = (TextView) getView().findViewById(R.id.toolbar_title);
         mImageViewLeft = (ImageView) getView().findViewById(R.id.toolbar_left);
@@ -273,6 +278,16 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
 
                         getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), start, end, Integer.parseInt(timeId)), new MySubscriber<List<RealTimeData>>() {
                             @Override
+                            public void onStart() {
+                                super.onStart();
+                                if (progressDialog == null) {
+                                    progressDialog = new ProgressDialog(getActivity());
+                                    progressDialog.setMessage("正在获取数据...");
+                                    progressDialog.show();
+                                }
+                            }
+
+                            @Override
                             protected void onMyNext(List<RealTimeData> realTimeDatas) {
                                 mRealTimes.addAll(realTimeDatas);
 
@@ -311,6 +326,11 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                     } else {
                                         getView().findViewById(R.id.empty).setVisibility(View.GONE);
                                     }
+                                }
+
+                                if (progressDialog != null) {
+                                    progressDialog.dismiss();
+                                    progressDialog = null;
                                 }
                             }
                         });
@@ -442,9 +462,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 startActivityForResult(intent, StationListActivity.REQUEST_CODE);
                 break;
             case R.id.toolbar_left:
-                Bundle b = new Bundle();
-                b.putSerializable("data", mRealTimes);
-                ActivityUtil.startActivityForResult(getActivity(), RealTimeDataListActivity.class, b, 100);
+                ActivityUtil.startActivityForResult(getActivity(), RealTimeDataListActivity.class);
                 break;
 
             case R.id.filter_left:
