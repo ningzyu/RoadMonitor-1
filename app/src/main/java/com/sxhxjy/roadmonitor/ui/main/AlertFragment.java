@@ -43,7 +43,7 @@ public class AlertFragment extends BaseListFragment<AlertData> {
     private List<SimpleItem> mListRight = new ArrayList<>();//时间列表
     private List<FilterTreeAdapter.Group> groups;//抽屉每组的集合
     private SimpleListAdapter mSimpleListAdapter;//下拉列表适配器
-    private TextView mFilterTitleLeft, mFilterTitleRight;//等级列表标题，时间列表标题
+    private TextView mFilterTitleLeft, mFilterTitleRight,mFilterTitledefault;//等级列表标题，时间列表标题
     private RecyclerView mFilterList;//下拉列表控件
     private MyPopupWindow myPopupWindow;//弹出窗口
     private FilterTreeAdapter filterTreeAdapter;//抽屉中下拉类表适配器
@@ -115,6 +115,7 @@ public class AlertFragment extends BaseListFragment<AlertData> {
 
         mFilterTitleLeft = (TextView) getView().findViewById(R.id.filter_left);
         mFilterTitleRight = (TextView) getView().findViewById(R.id.filter_right);
+        mFilterTitledefault = (TextView) getView().findViewById(R.id.filter_default);
 
         mListLeft.add(new SimpleItem("", "由高到低", false));
         mListLeft.add(new SimpleItem("", "由低到高", false));
@@ -145,6 +146,19 @@ public class AlertFragment extends BaseListFragment<AlertData> {
                     mFilterList.setVisibility(View.VISIBLE);
                 else
                     mFilterList.setVisibility(View.GONE);
+            }
+        });
+        mFilterTitledefault.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFilterTitleLeft.setText("等级");
+                mFilterTitleRight.setText("时间");
+                mFilterList.setVisibility(View.GONE);
+                for (SimpleItem simpleItem : mSimpleListAdapter.getListData()) {
+                    simpleItem.setChecked(false);
+                }
+                mAdapter.notifyDataSetChanged();
+                onRefresh();
             }
         });
         mFilterList = (RecyclerView) getView().findViewById(R.id.filter_list);
@@ -205,6 +219,7 @@ public class AlertFragment extends BaseListFragment<AlertData> {
         myPopupWindow = new MyPopupWindow((BaseActivity) getActivity(), R.layout.popup_window_right);
         ExpandableListView expandableListView = (ExpandableListView) myPopupWindow.getContentView().findViewById(R.id.expandable_list_view);
         Button confirm = (Button) myPopupWindow.getContentView().findViewById(R.id.confirm);
+        Button reset = (Button) myPopupWindow.getContentView().findViewById(R.id.reset);
         groups = new ArrayList<>();
         final List<SimpleItem> mList0 = new ArrayList<>();
         final List<SimpleItem> mList1 = new ArrayList<>();
@@ -257,6 +272,19 @@ public class AlertFragment extends BaseListFragment<AlertData> {
             public void onClick(View v) {
                 onRefresh();
                 myPopupWindow.dismiss();
+            }
+        });
+        //抽屉重置按钮点击事件
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i=0;i<groups.size();i++){
+                    for (SimpleItem simpleItem : groups.get(i).getList()) {
+                        simpleItem.setChecked(false);
+                    }
+                }
+                filterTreeAdapter.notifyDataSetChanged();
+
             }
         });
     }
