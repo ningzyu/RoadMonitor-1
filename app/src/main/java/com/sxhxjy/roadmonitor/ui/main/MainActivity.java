@@ -11,6 +11,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,7 +23,6 @@ import com.sxhxjy.roadmonitor.base.BaseActivity;
 import com.sxhxjy.roadmonitor.base.CacheManager;
 import com.sxhxjy.roadmonitor.base.MyApplication;
 import com.sxhxjy.roadmonitor.util.ActivityUtil;
-import com.sxhxjy.roadmonitor.view.TakePictureActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     public ViewPager mViewPager;
     private static final int FRAGMENTS_IN_VIEW_PAGER = 5;
     private long firstTimeOfExit = 0;
-    private List<Fragment> fragments = new ArrayList<>();
+    public List<Fragment> fragments = new ArrayList<>();
     private LinearLayout bar0, bar1, bar2, bar3, bar4;
     private TextView textViewBar0, textViewBar1, textViewBar2, textViewBar3, textViewBar4;
     private ImageView imageViewBar0, imageViewBar1, imageViewBar2, imageViewBar3, imageViewBar4;
@@ -252,11 +252,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         selectedBar(3);
     }
 
-    public void test(View view) {
-        ActivityUtil.startActivityForResult(this, TakePictureActivity.class);
-    }
 
     public void changePassword(View view) {
         ActivityUtil.startActivityForResult(this, RegisterActivity.class);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        try {
+            return super.dispatchTouchEvent(ev); // Fix pointer index out of range
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }

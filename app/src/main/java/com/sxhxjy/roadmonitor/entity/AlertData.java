@@ -1,11 +1,13 @@
 package com.sxhxjy.roadmonitor.entity;
 
+import java.io.Serializable;
+
 /**
  * 2016/9/26
  *
  * @author Michael Zhao
  */
-public class AlertData {
+public class AlertData implements Serializable{
 
 
     /**

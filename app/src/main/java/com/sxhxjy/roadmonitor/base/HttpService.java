@@ -106,6 +106,10 @@ public interface HttpService {
     @POST("jk/uploadPic.htm")
     Call<HttpResponse<String>> uploadImage(@Part MultipartBody.Part file);
 
+
+
+    //监测点id：stationId；告警列表的产生时间：stime；告警列表的最后时间：etime；等级id：levelId；类型id：typeId；可能原因：generationReason；告警内容：alarmContent；确认人id：userId；确认信息：confirmMsg；确认时间：confirmTime（新增参数）
+
     @GET("alarm/findByStationId")
     Observable<HttpResponse<List<AlertData>>> getAlertDataDetail(@Query("stationId") String stationId, @Query("stime") String startTime, @Query("etime") String endTime);
 

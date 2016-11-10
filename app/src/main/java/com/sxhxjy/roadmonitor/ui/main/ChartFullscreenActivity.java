@@ -34,6 +34,7 @@ public class ChartFullscreenActivity extends Activity {
         lineChartView.yAxisName = LineChartView.lineChartView.yAxisName;
         lineChartView.yAxisNameRight = LineChartView.lineChartView.yAxisNameRight;
         lineChartView.setChartInFullscreen(true);
+        lineChartView.mIsSimpleDraw = LineChartView.lineChartView.mIsSimpleDraw;
         lineChartView.invalidate();
         if (!hinted) {
             Toast.makeText(this, "亲~ 双击可以退出哦", Toast.LENGTH_SHORT).show();

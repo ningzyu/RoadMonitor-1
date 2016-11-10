@@ -29,9 +29,6 @@ public class RealTimeDataListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base_activity);
         Fragment f = new RealTimeDataListFragment();
-        Bundle b = new Bundle();
-        b.putSerializable("data", getIntent().getSerializableExtra("data"));
-        f.setArguments(b);
         getFragmentManager().beginTransaction()
                 .add(R.id.container, f).commit();
         initToolBar("实时数据", true);
@@ -41,7 +38,7 @@ public class RealTimeDataListActivity extends BaseActivity {
 
         @Override
         public Observable<HttpResponse<List<RealTimeData>>> getObservable() {
-            mList.addAll((ArrayList<RealTimeData>) getArguments().getSerializable("data"));
+            mList.addAll((MonitorFragment.monitorFragment.mRealTimes));
             mAdapter.notifyDataSetChanged();
             return null;
 //            return getHttpService().getRealTimeData(getArguments().getString("type"), System.currentTimeMillis() - 10000, System.currentTimeMillis());
