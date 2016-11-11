@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,7 +38,6 @@ import com.sxhxjy.roadmonitor.entity.MonitorTypeTree;
 import com.sxhxjy.roadmonitor.entity.RealTimeData;
 import com.sxhxjy.roadmonitor.entity.SimpleItem;
 import com.sxhxjy.roadmonitor.util.ActivityUtil;
-import com.sxhxjy.roadmonitor.view.DeleteView;
 import com.sxhxjy.roadmonitor.view.LineChartView;
 import com.sxhxjy.roadmonitor.view.MyPopupWindow;
 
@@ -82,6 +80,9 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     public ArrayList<RealTimeData> mRealTimes = new ArrayList<>();
     public static MonitorFragment monitorFragment;
     private ProgressDialog progressDialog;
+
+    public int startDay; //
+
 
     // filter item clicked
     private View.OnClickListener simpleListListener = new View.OnClickListener() {
@@ -524,12 +525,14 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         final StringBuilder sb = new StringBuilder();
         final Date date = new Date(System.currentTimeMillis());
 
+
         new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 sb.append(year);
                 sb.append("-");
                 sb.append(monthOfYear + 1);
+                startDay = dayOfMonth;
                 sb.append("-");
                 sb.append(dayOfMonth);
                 sb.append("  ");
@@ -546,19 +549,25 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                 sb.append(year);
                                 sb.append("-");
                                 sb.append(monthOfYear + 1);
-                                sb.append("-");
-                                sb.append(dayOfMonth);
-                                sb.append("  ");
-                                new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
-                                    @Override
-                                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                        sb.append(hourOfDay < 10 ? "0" + hourOfDay : hourOfDay);
-                                        sb.append(":");
-                                        sb.append(minute < 10 ? "0" + minute : minute);
-                                        adapter.getListData().get(3).setTitle(sb.toString());
-                                        getChartData();
-                                    }
-                                }, 0, 0, true).show();
+                                if (dayOfMonth < startDay) {
+                                    showToastMsg("不能小于开始时间，请重新选择！");
+                                    timeId = "0";
+                                } else {
+                                    sb.append("-");
+                                    sb.append(dayOfMonth);
+                                    sb.append("  ");
+                                    new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                                        @Override
+                                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                            sb.append(hourOfDay < 10 ? "0" + hourOfDay : hourOfDay);
+                                            sb.append(":");
+                                            sb.append(minute < 10 ? "0" + minute : minute);
+                                            adapter.getListData().get(3).setTitle(sb.toString());
+                                            mFilterTitleRight.setText(sb.toString());
+                                            getChartData();
+                                        }
+                                    }, 0, 0, true).show();
+                                }
                             }
                         }, 2016, date.getMonth(), date.getDate()).show();
                         showToastMsg("请选择结束时间");

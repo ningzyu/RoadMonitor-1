@@ -57,6 +57,8 @@ public class AddDataContrastActivity extends BaseActivity {
     private String startTime;
     private String endTime;
     private Random random = new Random();
+    public int startDay; //
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -273,6 +275,7 @@ public class AddDataContrastActivity extends BaseActivity {
                 sb.append(monthOfYear + 1);
                 sb.append("-");
                 sb.append(dayOfMonth);
+                startDay = dayOfMonth;
                 sb.append("  ");
                 new TimePickerDialog(AddDataContrastActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
@@ -287,6 +290,9 @@ public class AddDataContrastActivity extends BaseActivity {
                                 sb.append(year);
                                 sb.append("-");
                                 sb.append(monthOfYear + 1);
+                                if (dayOfMonth < startDay) {
+                                    showToastMsg("不能小于开始时间，请重新选择！");
+                                } else {
                                 sb.append("-");
                                 sb.append(dayOfMonth);
                                 sb.append("  ");
@@ -296,10 +302,13 @@ public class AddDataContrastActivity extends BaseActivity {
                                         sb.append(hourOfDay < 10 ? "0" + hourOfDay : hourOfDay);
                                         sb.append(":");
                                         sb.append(minute < 10 ? "0" + minute : minute);
-                                        timeContent.addView(new DeleteView(AddDataContrastActivity.this, sb.toString(), timeContent));                              }
+                                        timeContent.addView(new DeleteView(AddDataContrastActivity.this, sb.toString(), timeContent));
+                                    }
                                 }, 0, 0, true).show();
+                                }
                             }
                         }, 2016, date.getMonth(), date.getDate()).show();
+
                         showToastMsg("请选择结束时间");
                     }
                 }, 0, 0, true).show();
