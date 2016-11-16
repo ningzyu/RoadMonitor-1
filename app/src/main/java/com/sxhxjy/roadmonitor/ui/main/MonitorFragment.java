@@ -13,8 +13,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -178,10 +180,12 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         mFilterTitleRight.setOnClickListener(this);
 
         mFilterList = (RecyclerView) view.findViewById(R.id.filter_list);
-        mFilterList.setOnClickListener(new View.OnClickListener() {
+
+        mFilterList.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onTouch(View v, MotionEvent event) {
                 mFilterList.setVisibility(View.GONE);
+                return false;
             }
         });
         mFilterList.setLayoutManager(new LinearLayoutManager(getActivity()));
