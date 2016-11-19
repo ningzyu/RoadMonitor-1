@@ -265,7 +265,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         if (mChartsContainer.getChildAt(2) != null)
             mChartsContainer.removeView(mChartsContainer.getChildAt(2));
 
-        mTimer = new CountDownTimer(20000, 10000) {
+        mTimer = new CountDownTimer(999999999, 5000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mRealTimes.clear();
@@ -293,7 +293,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                             @Override
                             public void onStart() {
                                 super.onStart();
-                                if (progressDialog == null) {
+                                if (progressDialog == null && isFirst) {
                                     progressDialog = new ProgressDialog(getActivity());
                                     progressDialog.setMessage("正在获取数据...");
                                     progressDialog.show();
