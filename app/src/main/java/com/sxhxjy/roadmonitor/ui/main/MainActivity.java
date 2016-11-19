@@ -241,8 +241,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 CacheManager.getInstance().remove("login");
-                ActivityUtil.startActivityForResult(MainActivity.this, LoginActivity.class);
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 finish();
+                System.gc();
             }
         }).setNegativeButton("取消", null).show();
     }

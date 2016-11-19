@@ -21,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Extends application to add some methods
  *
+ * password: funing4510
  * @author Michael Zhao
  */
 public class MyApplication extends Application {

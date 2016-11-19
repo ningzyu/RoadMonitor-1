@@ -109,7 +109,7 @@ public class StationListAdapter extends RecyclerView.Adapter<StationListAdapter.
             } else {
 //                getStations(mList.get(p).getId());
 
-                if (mFragment.getActivity().getCallingActivity().getShortClassName().equals(".ui.main.LoginActivity")) {
+                if (mFragment.getActivity().getCallingActivity() != null && mFragment.getActivity().getCallingActivity().getShortClassName().equals(".ui.main.LoginActivity")) {
                     Bundle b = new Bundle();
                     b.putString("stationId", currentGroup.get(p).id);
                     b.putString("stationName", currentGroup.get(p).name);

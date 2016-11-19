@@ -293,7 +293,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                             @Override
                             public void onStart() {
                                 super.onStart();
-                                if (progressDialog == null && isFirst) {
+                                if (progressDialog == null && isFirst && getActivity()!=null) {
                                     progressDialog = new ProgressDialog(getActivity());
                                     progressDialog.setMessage("正在获取数据...");
                                     progressDialog.show();
@@ -333,17 +333,19 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
 
                             @Override
                             public void onCompleted() {
-                                if (getView().findViewById(R.id.empty) != null) {
-                                    if (mChartsContainer.getChildCount() == 0) {
-                                        getView().findViewById(R.id.empty).setVisibility(View.VISIBLE);
-                                    } else {
-                                        getView().findViewById(R.id.empty).setVisibility(View.GONE);
+                                if (getView()!=null) {// logout getview is null
+                                    if (getView().findViewById(R.id.empty) != null) {
+                                        if (mChartsContainer.getChildCount() == 0) {
+                                            getView().findViewById(R.id.empty).setVisibility(View.VISIBLE);
+                                        } else {
+                                            getView().findViewById(R.id.empty).setVisibility(View.GONE);
+                                        }
                                     }
-                                }
 
-                                if (progressDialog != null) {
-                                    progressDialog.dismiss();
-                                    progressDialog = null;
+                                    if (progressDialog != null) {
+                                        progressDialog.dismiss();
+                                        progressDialog = null;
+                                    }
                                 }
                             }
                         });
