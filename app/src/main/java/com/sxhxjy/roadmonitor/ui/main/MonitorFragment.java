@@ -140,6 +140,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     private LinearLayout mChartsContainer;
     private String positionId;
     private boolean paramsGeted;
+    private boolean isFirstProgressDialog = true;
 
     @Nullable
     @Override
@@ -293,10 +294,11 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                             @Override
                             public void onStart() {
                                 super.onStart();
-                                if (progressDialog == null && isFirst && getActivity()!=null) {
+                                if (progressDialog == null && isFirstProgressDialog && getActivity()!=null) {
                                     progressDialog = new ProgressDialog(getActivity());
                                     progressDialog.setMessage("正在获取数据...");
                                     progressDialog.show();
+                                    isFirstProgressDialog = false;
                                 }
                             }
 

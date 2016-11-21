@@ -23,6 +23,7 @@ import com.sxhxjy.roadmonitor.entity.AlertData;
 import com.sxhxjy.roadmonitor.entity.AlertTree;
 import com.sxhxjy.roadmonitor.entity.SimpleItem;
 import com.sxhxjy.roadmonitor.view.MyPopupWindow;
+import com.sxhxjy.roadmonitor.view.NumDrawable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -296,6 +297,12 @@ public class AlertFragment extends BaseListFragment<AlertData> {
 
             }
         });
+
+
+
+            // draw red circle
+        getActivity().findViewById(R.id.imageView_bar3).setBackground(new NumDrawable(3));
+
     }
 
     @Override
