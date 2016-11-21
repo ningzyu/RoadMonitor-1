@@ -2,17 +2,20 @@ package com.sxhxjy.roadmonitor.ui.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.sxhxjy.roadmonitor.R;
 import com.sxhxjy.roadmonitor.adapter.HomelistAdapter;
 import com.sxhxjy.roadmonitor.base.BaseFragment;
 import com.sxhxjy.roadmonitor.base.CacheManager;
 import com.sxhxjy.roadmonitor.base.MyApplication;
+import com.sxhxjy.roadmonitor.entity.HomeTheme;
 import com.sxhxjy.roadmonitor.entity.LoginData;
 import com.sxhxjy.roadmonitor.view.HorizontalListView;
 import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
@@ -29,6 +32,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -50,7 +54,6 @@ public class HomeFragment extends BaseFragment{
     private String path= MyApplication.BASE_URL + "points/findAppRootPoint?groupId=4028812c57b6993b0157b6aca4410004";
     private OkHttpClient okHttpClient;
     private Request request;
-    private Call call;
     private HorizontalListView lv_home;
     @Nullable
     @Override
@@ -85,8 +88,7 @@ public class HomeFragment extends BaseFragment{
     private void getOkHttp() {
         okHttpClient=new OkHttpClient();
         request=new Request.Builder().url(path).build();
-        call=okHttpClient.newCall(request);
-        call.enqueue(new okhttp3.Callback() {
+        okHttpClient.newCall(request).enqueue(new okhttp3.Callback() {
             @Override//请求失败
             public void onFailure(Call call, IOException e) {
 //                Toast.makeText(getActivity(),"请求失败",Toast.LENGTH_SHORT).show();
@@ -98,27 +100,15 @@ public class HomeFragment extends BaseFragment{
                     @Override
                     public void run() {
                         json(result);
+                        Log.i("oooooooooo",result);
                     }
                 });
             }
         });
     }
     public void json(String s){
-        final ArrayList<Map<String,Object>> list=new ArrayList<Map<String,Object>>();
-        try {
-            JSONObject oject=new JSONObject(s);
-            JSONArray array=oject.getJSONArray("data");
-            for (int i=0;i<array.length();i++){
-                Map<String,Object> map=new HashMap<>();
-                JSONObject data=array.getJSONObject(i);
-                String father_id=data.getString("father_id");
-                String id=data.getString("id");
-                String name=data.getString("name");
-                map.put("father_id",father_id);
-                map.put("id",id);
-                map.put("name",name);
-                list.add(map);
-            }
+        final HomeTheme theme= JSON.parseObject(s,HomeTheme.class);
+        List<HomeTheme.DataBean> list=theme.getData();
             HomelistAdapter adapter=new HomelistAdapter(getActivity(),list,R.layout.home_list_item);
             lv_home.setAdapter(adapter);
             lv_home.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -129,9 +119,6 @@ public class HomeFragment extends BaseFragment{
 
                 }
             });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
     public void init(View view){
         lv_home= (HorizontalListView) view.findViewById(R.id.list_home);
