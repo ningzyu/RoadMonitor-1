@@ -10,8 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sxhxjy.roadmonitor.R;
+import com.sxhxjy.roadmonitor.entity.HomeTheme;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,11 +21,11 @@ import java.util.Map;
  */
 
 public class HomelistAdapter extends BaseAdapter {
-    private ArrayList<Map<String,Object>> list;//数据源
+    private List<HomeTheme.DataBean> list;//数据源
     private int resource;//自定义样式
     private LayoutInflater inflater;//布局填充器
     private Context context;
-    public HomelistAdapter(Context context, ArrayList<Map<String,Object>> list, int resource){
+    public HomelistAdapter(Context context, List<HomeTheme.DataBean> list, int resource){
         this.context=context;
         this.list=list;
         this.resource=resource;
@@ -64,8 +66,8 @@ public class HomelistAdapter extends BaseAdapter {
         }else{
             vh=(ViewHolder)convertView.getTag();
         }
-        Map<String,Object> map=list.get(position);//得到列表中某一项的对象
-        vh.name.setText(map.get("name").toString()+"\n\n优");
+        HomeTheme.DataBean map=list.get(position);//得到列表中某一项的对象
+        vh.name.setText(map.getName()+"\n\n优");
         return convertView;
     }
     //內部类优化--定义属性

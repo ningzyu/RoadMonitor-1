@@ -48,7 +48,6 @@ public class AddDataCorrelationActivity extends BaseActivity {
     private String[] aType;
     private ArrayList<SimpleItem> positionItems = new ArrayList<>();
     private ArrayList<SimpleItem> positionItemsCorrelation = new ArrayList<>();
-    //    private ArrayList<>
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
     private String title, titleCorrelation;
     private String startTime, endTime;

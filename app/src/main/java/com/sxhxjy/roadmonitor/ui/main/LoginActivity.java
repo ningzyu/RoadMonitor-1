@@ -88,7 +88,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             case R.id.login:
                     getMessage(getHttpService()
-                            .login(mUser.getText().toString(), MD5_X.md5(mPassword.getText().toString().getBytes()).toLowerCase()), new MySubscriber<LoginData>() {
+                            .login(mUser.getText().toString(), MD5_X.md5(mPassword.getText().toString().getBytes()).toLowerCase()),
+                            new MySubscriber<LoginData>() {
                         @Override
                         public void onMyNext(LoginData loginData) {
                             showToastMsg("登录成功");
