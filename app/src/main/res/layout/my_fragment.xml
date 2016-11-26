@@ -4,7 +4,14 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/toolbar_layout"/>
+    <com.sxhxjy.roadmonitor.view.MyLinearLayout
+        android:layout_width="match_parent"
+        app:titleOfMyLinearLayout="Change IP"
+        android:onClick="changeIp"
+        app:expandedOfMyLinearLayout="true"
+        android:layout_height="wrap_content">
 
+    </com.sxhxjy.roadmonitor.view.MyLinearLayout>
     <com.sxhxjy.roadmonitor.view.MyLinearLayout
         android:layout_width="match_parent"
         app:titleOfMyLinearLayout="修改密码"
@@ -22,5 +29,6 @@
         android:layout_height="wrap_content">
 
     </com.sxhxjy.roadmonitor.view.MyLinearLayout>
+
 
 </LinearLayout>

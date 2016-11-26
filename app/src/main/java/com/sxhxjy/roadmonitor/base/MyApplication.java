@@ -26,7 +26,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class MyApplication extends Application {
     private static MyApplication app;
-    public static final String BASE_URL = "http://124.163.206.251:8080/ClearPro/web/";
+    public static String BASE_IP = "124.163.206.250:8080";
+    public static String BASE_URL = "http://"+ BASE_IP + "/ClearPro/web/";
 //    public static final String BASE_URL = "http://192.168.1.172:8088/ClearPro/web/";
 //    public static final String BASE_URL = "http://192.168.1.123:8080/ClearPro/web/";
 //    public static final String BASE_URL = "http://192.168.1.241:8090/ClearPro/web/";

@@ -23,6 +23,7 @@ import com.sxhxjy.roadmonitor.base.BaseActivity;
 import com.sxhxjy.roadmonitor.base.CacheManager;
 import com.sxhxjy.roadmonitor.base.MyApplication;
 import com.sxhxjy.roadmonitor.util.ActivityUtil;
+import com.sxhxjy.roadmonitor.view.MyLinearLayout;
 import com.sxhxjy.roadmonitor.view.NumDrawable;
 
 import java.util.ArrayList;
@@ -265,5 +266,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         } catch (IllegalArgumentException e) {
             return false;
         }
+    }
+
+    public void changeIp(final View view) {
+        final String[] ips = {"124.163.206.250:8080", "192.168.1.172:8088", "124.163.206.251:8080"};
+        new AlertDialog.Builder(this).setSingleChoiceItems(ips, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                MyApplication.BASE_IP = ips[which];
+                ((MyLinearLayout) view).setContent(ips[which]);
+                dialog.dismiss();
+            }
+        }).show();
     }
 }
