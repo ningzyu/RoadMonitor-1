@@ -2,6 +2,7 @@ package com.sxhxjy.roadmonitor.base;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Process;
 import android.util.Log;
@@ -55,6 +56,10 @@ public class MyApplication extends Application {
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
         httpService = retrofit.create(HttpService.class);
+
+        // start service
+        Intent intent = new Intent(this, SocketService.class);
+        startService(intent);
     }
 
     public SharedPreferences getSharedPreference() {
@@ -69,6 +74,6 @@ public class MyApplication extends Application {
         // close database
         CacheManager.getInstance().closeDB();
         System.exit(0);
-        Process.killProcess(Process.myPid());
+//        Process.killProcess(Process.myPid());
     }
 }

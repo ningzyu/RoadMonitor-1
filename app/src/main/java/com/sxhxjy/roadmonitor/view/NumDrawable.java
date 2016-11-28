@@ -24,6 +24,9 @@ public class NumDrawable extends Drawable {
 
     @Override
     public void draw(Canvas canvas) {
+
+        if (mNum == 0) return;
+
         mPaint.setColor(Color.RED);
         mPaint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(getBounds().right, 0, 30f, mPaint);
@@ -48,5 +51,10 @@ public class NumDrawable extends Drawable {
     @Override
     public int getOpacity() {
         return PixelFormat.OPAQUE;
+    }
+
+    public void setNum(int num) {
+        mNum = num;
+        invalidateSelf();
     }
 }

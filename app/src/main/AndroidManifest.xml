@@ -49,6 +49,9 @@
 
         </activity>
 
+
+        <service android:name=".base.SocketService" />
+
     </application>
 
 </manifest>

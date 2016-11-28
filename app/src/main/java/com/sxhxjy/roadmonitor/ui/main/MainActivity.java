@@ -94,6 +94,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         String i=getIntent().getStringExtra("name");
         selectedBar(0);
         fragments.get(0).setUserVisibleHint(true);
+
+        if (getIntent().getBooleanExtra("alert", false)) {
+            // from ntf
+            selectedBar(3);
+            final AlertFragment alertFragment = (AlertFragment) fragments.get(3);
+            alertFragment.alertDrawable.setNum(getIntent().getIntExtra("alert_num", 0));
+            alertFragment.onRefresh();
+        }
     }
 
     private void initView() {
@@ -201,7 +209,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 showToastMsg("再按一次退出程序");
                 firstTimeOfExit = currentTime;
             } else {
-                MyApplication.getMyApplication().exit();
+                finish();
             }
             return true;
         }

@@ -7,6 +7,9 @@ import android.widget.Toast;
 
 import com.sxhxjy.roadmonitor.entity.Monitor;
 import com.sxhxjy.roadmonitor.ui.main.MainActivity;
+import com.tencent.mapsdk.rastercore.a;
+
+import java.util.Timer;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -39,7 +42,4 @@ import rx.schedulers.Schedulers;
  * @author Michael Zhao
  */
 public class Test extends BaseFragment {
-
-
-
 }

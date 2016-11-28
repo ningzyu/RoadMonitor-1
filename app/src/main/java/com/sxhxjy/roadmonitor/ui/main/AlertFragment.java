@@ -1,5 +1,6 @@
 package com.sxhxjy.roadmonitor.ui.main;
 
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -51,6 +52,8 @@ public class AlertFragment extends BaseListFragment<AlertData> {
     private FilterTreeAdapter filterTreeAdapter;//抽屉中下拉类表适配器
     private String level,cStype, timeCode, state;
     private  long afterTime,beforeTime;
+    public NumDrawable alertDrawable;
+
     @Override
     public Observable<HttpResponse<List<AlertData>>> getObservable() {
         FilterTreeAdapter.Group f1=groups.get(0);//告警等级
@@ -301,7 +304,9 @@ public class AlertFragment extends BaseListFragment<AlertData> {
 
 
             // draw red circle
-        getActivity().findViewById(R.id.imageView_bar3).setBackground(new NumDrawable(3));
+        alertDrawable = new NumDrawable(0);
+        alertDrawable.setNum(3);
+        getActivity().findViewById(R.id.imageView_bar3).setBackground(alertDrawable);
 
     }
 
