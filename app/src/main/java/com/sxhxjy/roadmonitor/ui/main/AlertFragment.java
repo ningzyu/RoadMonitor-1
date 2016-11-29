@@ -305,7 +305,6 @@ public class AlertFragment extends BaseListFragment<AlertData> {
 
             // draw red circle
         alertDrawable = new NumDrawable(0);
-        alertDrawable.setNum(3);
         getActivity().findViewById(R.id.imageView_bar3).setBackground(alertDrawable);
 
     }

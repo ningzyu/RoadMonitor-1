@@ -34,7 +34,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.main.MainActivity" android:launchMode="singleInstance"/>
+        <activity android:name=".ui.main.MainActivity" android:launchMode="singleTask"/>
         <activity android:name=".ui.main.LoginActivity"/>
         <activity android:name=".ui.main.StationListActivity"/>
         <activity android:name=".ui.main.RealTimeDataListActivity"/>

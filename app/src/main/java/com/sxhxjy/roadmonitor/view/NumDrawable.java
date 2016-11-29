@@ -29,12 +29,14 @@ public class NumDrawable extends Drawable {
 
         mPaint.setColor(Color.RED);
         mPaint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(getBounds().right, 0, 30f, mPaint);
+        canvas.drawCircle(getBounds().right+5, 0, 35f, mPaint);
 
         mPaint.setColor(Color.WHITE);
         mPaint.setTextSize(45);
         mPaint.setStrokeWidth(2);
-        canvas.drawText("" + mNum, getBounds().right - 12, 15, mPaint);
+        final String s = "" + mNum;
+        final float len = mPaint.measureText(s);
+        canvas.drawText("" + mNum, getBounds().right+5 - len / 2, 15, mPaint);
 
     }
 

@@ -104,6 +104,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // from ntf
+        selectedBar(3);
+        final AlertFragment alertFragment = (AlertFragment) fragments.get(3);
+        alertFragment.alertDrawable.setNum(intent.getIntExtra("alert_num", 0));
+        alertFragment.onRefresh();
+    }
+
+
     private void initView() {
         bar0 = (LinearLayout) findViewById(R.id.bar0);
         bar1 = (LinearLayout) findViewById(R.id.bar1);

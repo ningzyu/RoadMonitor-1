@@ -42,4 +42,17 @@ import rx.schedulers.Schedulers;
  * @author Michael Zhao
  */
 public class Test extends BaseFragment {
+
+    /**
+     *
+     *
+     *
+     *
+     * resolve
+     *
+     *
+     *
+     *
+     */
+
 }
