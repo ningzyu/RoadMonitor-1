@@ -38,7 +38,8 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class SocketService extends Service {
-    private static final String ADDRESS = "192.168.1.172";
+//    private static final String ADDRESS = "192.168.1.172";
+    private static final String ADDRESS = "124.163.206.250";
     private static final int PORT = 8000;
     private Socket socket;
 //    private PrintWriter out;
@@ -71,7 +72,7 @@ public class SocketService extends Service {
                     if (in.available() > 0) {
                         String s = in.readUTF();
                         int num = JSON.parseObject(s).getIntValue("alarmNum");
-                        Log.i("socket", s);
+                        Log.e("socket", s);
 
                         if (num > 0)
                             sendNtf(num);

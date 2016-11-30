@@ -27,6 +27,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class MyApplication extends Application {
     private static MyApplication app;
+
+    // socket Hostname in socket service
+
     public static String BASE_IP = "124.163.206.250:8080";
     public static String BASE_URL = "http://"+ BASE_IP + "/ClearPro/web/";
 //    public static final String BASE_URL = "http://192.168.1.172:8088/ClearPro/web/";

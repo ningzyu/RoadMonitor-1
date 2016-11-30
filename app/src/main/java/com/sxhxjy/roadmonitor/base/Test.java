@@ -43,16 +43,4 @@ import rx.schedulers.Schedulers;
  */
 public class Test extends BaseFragment {
 
-    /**
-     *
-     *
-     *
-     *
-     * resolve
-     *
-     *
-     *
-     *
-     */
-
 }
