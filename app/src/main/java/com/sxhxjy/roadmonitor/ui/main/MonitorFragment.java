@@ -72,7 +72,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     private RecyclerView mFilterList;
     private MyPopupWindow myPopupWindow;
     private FilterTreeAdapter filterTreeAdapter;
-    private CountDownTimer mTimer;
+    public CountDownTimer mTimer;
     private Random random = new Random(47);
     private String codeId;
     private String timeId = "0";
@@ -185,7 +185,8 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         mFilterList.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                mFilterList.setVisibility(View.GONE);
+                if (event.getAction() == MotionEvent.ACTION_DOWN)
+                    mFilterList.setVisibility(View.GONE);
                 return false;
             }
         });

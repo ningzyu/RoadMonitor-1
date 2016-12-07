@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -28,6 +29,7 @@ import com.sxhxjy.roadmonitor.view.NumDrawable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 // wifi :     hxjy_jszx&
 /**
@@ -222,6 +224,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 firstTimeOfExit = currentTime;
             } else {
                 finish();
+                CountDownTimer t = ((MonitorFragment) fragments.get(1)).mTimer;
+                if (t != null) t.cancel();
+                System.gc();
             }
             return true;
         }
