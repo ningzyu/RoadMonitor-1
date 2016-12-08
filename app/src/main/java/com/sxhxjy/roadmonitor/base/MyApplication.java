@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Process;
 import android.util.Log;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
 
 
 import java.io.File;
@@ -46,7 +45,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         app = this;
-        Fresco.initialize(this);
+//        Fresco.initialize(this);
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);

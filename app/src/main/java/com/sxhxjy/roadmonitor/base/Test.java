@@ -38,9 +38,12 @@ import rx.schedulers.Schedulers;
  fresco:roundWithOverlayColor="@color/corner_color"
  fresco:roundingBorderWidth="2dp"
  fresco:roundingBorderColor="@color/border_color"
- *
+ *forgery
  * @author Michael Zhao
  */
 public class Test extends BaseFragment {
+public void t(){
 
-}
+
+
+}}
