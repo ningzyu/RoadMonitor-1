@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/toolbar_layout"/>
-    <com.sxhxjy.roadmonitor.view.MyLinearLayout
+    <com.sxhxjy.defensemonitor.view.MyLinearLayout
         android:layout_width="match_parent"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         app:titleOfMyLinearLayout="监测因素"
@@ -13,9 +13,9 @@
         android:onClick="monitorType"
         android:layout_height="wrap_content">
 
-    </com.sxhxjy.roadmonitor.view.MyLinearLayout>
+    </com.sxhxjy.defensemonitor.view.MyLinearLayout>
 
-    <com.sxhxjy.roadmonitor.view.MyLinearLayout
+    <com.sxhxjy.defensemonitor.view.MyLinearLayout
         android:layout_width="match_parent"
         app:titleOfMyLinearLayout="监测位置"
         app:expandedOfMyLinearLayout="true"
@@ -23,9 +23,9 @@
         app:dividerShowOfMyLinearLayout="false"
         android:layout_height="wrap_content">
 
-    </com.sxhxjy.roadmonitor.view.MyLinearLayout>
+    </com.sxhxjy.defensemonitor.view.MyLinearLayout>
 
-    <com.sxhxjy.roadmonitor.view.MyLinearLayout
+    <com.sxhxjy.defensemonitor.view.MyLinearLayout
         android:layout_width="match_parent"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         app:titleOfMyLinearLayout="关联监测因素"
@@ -34,9 +34,9 @@
         android:onClick="monitorType"
         android:layout_height="wrap_content">
 
-    </com.sxhxjy.roadmonitor.view.MyLinearLayout>
+    </com.sxhxjy.defensemonitor.view.MyLinearLayout>
 
-    <com.sxhxjy.roadmonitor.view.MyLinearLayout
+    <com.sxhxjy.defensemonitor.view.MyLinearLayout
         android:layout_width="match_parent"
         app:titleOfMyLinearLayout="关联监测位置"
         app:expandedOfMyLinearLayout="true"
@@ -45,8 +45,8 @@
         android:onClick="monitorLocation"
         android:layout_height="wrap_content">
 
-    </com.sxhxjy.roadmonitor.view.MyLinearLayout>
-    <com.sxhxjy.roadmonitor.view.MyLinearLayout
+    </com.sxhxjy.defensemonitor.view.MyLinearLayout>
+    <com.sxhxjy.defensemonitor.view.MyLinearLayout
     android:layout_width="match_parent"
     app:titleOfMyLinearLayout="开始时间"
     android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -55,8 +55,8 @@
     android:onClick="timeStart"
     android:layout_height="wrap_content">
 
-</com.sxhxjy.roadmonitor.view.MyLinearLayout>
-    <com.sxhxjy.roadmonitor.view.MyLinearLayout
+</com.sxhxjy.defensemonitor.view.MyLinearLayout>
+    <com.sxhxjy.defensemonitor.view.MyLinearLayout
         android:layout_width="match_parent"
         app:titleOfMyLinearLayout="结束时间"
         app:expandedOfMyLinearLayout="true"
@@ -66,7 +66,7 @@
         app:dividerShowOfMyLinearLayout="false"
         android:layout_height="wrap_content">
 
-    </com.sxhxjy.roadmonitor.view.MyLinearLayout>
+    </com.sxhxjy.defensemonitor.view.MyLinearLayout>
 
 
 

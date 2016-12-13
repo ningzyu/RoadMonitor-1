@@ -6,12 +6,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <include layout="@layout/toolbar_layout" />
-    <com.sxhxjy.roadmonitor.view.HorizontalListView
+    <com.sxhxjy.defensemonitor.view.HorizontalListView
         android:id="@+id/list_home"
         android:layout_width="match_parent"
         android:layout_height="100dip"
         android:layout_marginTop="10dp">
-    </com.sxhxjy.roadmonitor.view.HorizontalListView>
+    </com.sxhxjy.defensemonitor.view.HorizontalListView>
 
     <com.tencent.tencentmap.mapsdk.map.MapView
         android:id="@+id/map_view"
