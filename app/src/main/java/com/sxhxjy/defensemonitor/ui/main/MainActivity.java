@@ -20,6 +20,7 @@ import com.sxhxjy.defensemonitor.R;
 import com.sxhxjy.defensemonitor.base.BaseActivity;
 import com.sxhxjy.defensemonitor.base.CacheManager;
 import com.sxhxjy.defensemonitor.base.MyApplication;
+import com.sxhxjy.defensemonitor.updateInfo.UpdateUtil;
 import com.sxhxjy.defensemonitor.util.ActivityUtil;
 
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+        UpdateUtil.update(this, MyApplication.BASE_URL+"user/changeVersionPic");
 
         String stationName = getIntent().getStringExtra("stationName");
         String stationId = getIntent().getStringExtra("stationId");
