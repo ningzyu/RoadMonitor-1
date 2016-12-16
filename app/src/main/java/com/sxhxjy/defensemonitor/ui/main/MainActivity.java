@@ -21,12 +21,12 @@ import com.sxhxjy.defensemonitor.base.BaseActivity;
 import com.sxhxjy.defensemonitor.base.CacheManager;
 import com.sxhxjy.defensemonitor.base.MyApplication;
 import com.sxhxjy.defensemonitor.util.ActivityUtil;
-import com.sxhxjy.defensemonitor.view.MyLinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 // wifi :     hxjy_jszx&
+
 /**
  * Main activity
  * <p>
@@ -289,7 +289,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     }
 
     public void changeIp(final View view) {
-        final String[] ips = {"124.163.206.250:8080", "192.168.1.172:8088", "124.163.206.251:8080"};
+        /*final String[] ips = {"124.163.206.250:8080", "192.168.1.172:8088", "124.163.206.251:8080"};
         new AlertDialog.Builder(this).setSingleChoiceItems(ips, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -297,6 +297,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 ((MyLinearLayout) view).setContent(ips[which]);
                 dialog.dismiss();
             }
-        }).show();
+        }).show();*/
     }
 }

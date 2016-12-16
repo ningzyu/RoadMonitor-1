@@ -23,7 +23,7 @@ package com.sxhxjy.defensemonitor.base;
  fresco:roundWithOverlayColor="@color/corner_color"
  fresco:roundingBorderWidth="2dp"
  fresco:roundingBorderColor="@color/border_color"
- *forgery
+ *glom
  * @author Michael Zhao
  */
 public class Test extends BaseFragment {

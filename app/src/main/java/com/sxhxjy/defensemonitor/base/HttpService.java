@@ -1,14 +1,13 @@
 package com.sxhxjy.defensemonitor.base;
 
 
-
 import com.sxhxjy.defensemonitor.entity.AlertData;
 import com.sxhxjy.defensemonitor.entity.AlertTree;
+import com.sxhxjy.defensemonitor.entity.ComplexData;
 import com.sxhxjy.defensemonitor.entity.GroupTree;
 import com.sxhxjy.defensemonitor.entity.LoginData;
 import com.sxhxjy.defensemonitor.entity.Monitor;
 import com.sxhxjy.defensemonitor.entity.MonitorTypeTree;
-import com.sxhxjy.defensemonitor.entity.RealTimeData;
 import com.sxhxjy.defensemonitor.entity.Station;
 
 import java.util.List;
@@ -65,7 +64,7 @@ public interface HttpService {
     Observable<HttpResponse<LoginData>> login(@Query("account") String username, @Query("password") String password);
 
     @GET("sensorData/dataList")
-    Observable<HttpResponse<List<RealTimeData>>> getRealTimeData(@Query("code") String positionID, @Query("beforeTime") long start, @Query("afterTime") long end, @Query("timeState") int timeState);
+    Observable<HttpResponse<ComplexData>> getRealTimeData(@Query("code") String positionID, @Query("beforeTime") long start, @Query("afterTime") long end, @Query("timeState") int timeState);
 
 
     @GET("points/pointDetail")
@@ -108,7 +107,7 @@ public interface HttpService {
     Observable<HttpResponse<List<AlertData>>> getAlertDataDetail(@Query("stationId") String alarmId, @Query("userId") String userId, @Query("confirmMsg") String confirmMsg,
                                                                  @Query("stime") String startTime, @Query("etime") String endTime, @Query("levelId") String levelId, @Query("typeId") String typeId, @Query("generationReason") String generareason, @Query("alarmContent") String alarmCon, @Query("confirmTime") long confirmTime, @Query("confirmInfo") String confirmInfo);
     @GET("alarmUnionData/pageList")
-    Observable<HttpResponse<List<AlertData>>> getAlertDataList(@Query("stationId") String stationId, @Query("orgId") String gid, @Query("level") String level,@Query("cStype") String type, @Query("beforeTime") long beforeTime, @Query("afterTime") long afterTime, @Query("timeState") String timeState, @Query("state") String stateCode);
+    Observable<HttpResponse<List<AlertData>>> getAlertDataList(@Query("stationId") String stationId, @Query("orgId") String gid, @Query("level") String level, @Query("cStype") String type, @Query("beforeTime") long beforeTime, @Query("afterTime") long afterTime, @Query("timeState") String timeState, @Query("state") String stateCode);
 
     /////////////////////////////////////////////////////////////////////////
     ////  home

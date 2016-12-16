@@ -87,7 +87,7 @@ public class AddDataCorrelationActivity extends BaseActivity {
 
     public void monitorType(final View view) {
         if (mTypeList.isEmpty()) {
-            getMessage(getHttpService().getMonitorTypeTree(MyApplication.getMyApplication().getSharedPreference().getString("gid","")), new MySubscriber<List<MonitorTypeTree>>() {
+            getMessage(getHttpService().getMonitorTypeTree(MyApplication.getMyApplication().getSharedPreference().getString("stationId","")), new MySubscriber<List<MonitorTypeTree>>() {
                 @Override
                 protected void onMyNext(List<MonitorTypeTree> monitorTypeTrees) {
                     for (MonitorTypeTree monitorTypeTree : monitorTypeTrees) {
@@ -122,7 +122,7 @@ public class AddDataCorrelationActivity extends BaseActivity {
             final Random random = new Random();
             for (SimpleItem item :mTypeList) {
                 if (item.isChecked()) {
-                    getMessage(getHttpService().getPositions(item.getId(), MyApplication.getMyApplication().getSharedPreference().getString("gid", "")), new MySubscriber<List<MonitorPosition>>() {
+                    getMessage(getHttpService().getPositions(item.getId(), MyApplication.getMyApplication().getSharedPreference().getString("stationId", "")), new MySubscriber<List<MonitorPosition>>() {
                         @Override
                         protected void onMyNext(List<MonitorPosition> monitorPositions) {
                             aLocation = new String[monitorPositions.size()];

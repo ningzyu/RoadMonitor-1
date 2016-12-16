@@ -35,6 +35,7 @@ import com.sxhxjy.defensemonitor.base.MonitorPosition;
 import com.sxhxjy.defensemonitor.base.MyApplication;
 import com.sxhxjy.defensemonitor.base.MySubscriber;
 import com.sxhxjy.defensemonitor.base.ParamInfo;
+import com.sxhxjy.defensemonitor.entity.ComplexData;
 import com.sxhxjy.defensemonitor.entity.MonitorTypeTree;
 import com.sxhxjy.defensemonitor.entity.RealTimeData;
 import com.sxhxjy.defensemonitor.entity.SimpleItem;
@@ -266,7 +267,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         if (mChartsContainer.getChildAt(2) != null)
             mChartsContainer.removeView(mChartsContainer.getChildAt(2));
 
-        mTimer = new CountDownTimer(999999999, 5000) {
+        mTimer = new CountDownTimer(999999999, 15000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mRealTimes.clear();
@@ -290,7 +291,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
 
 
 
-                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), start, end, Integer.parseInt(timeId)), new MySubscriber<List<RealTimeData>>() {
+                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), start, end, Integer.parseInt(timeId)), new MySubscriber<ComplexData>() {
                             @Override
                             public void onStart() {
                                 super.onStart();
@@ -303,13 +304,16 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                             }
 
                             @Override
-                            protected void onMyNext(List<RealTimeData> realTimeDatas) {
+                            protected void onMyNext(ComplexData complexData) {
+                                List<RealTimeData> realTimeDatas = complexData.getContent();
                                 mRealTimes.addAll(realTimeDatas);
 
                                     if (mChartsContainer.getChildAt(0) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView0 = (LineChartView) mChartsContainer.getChildAt(0).findViewById(R.id.chart);
                                     lineChartView0.addPoints(lineChartView0.convert(realTimeDatas, false), simpleItem.getTitle(), simpleItem.getColor(), false);
+                                ((TextView) mChartsContainer.getChildAt(0).findViewById(R.id.min)).setText(complexData.getXmin() + "");
+                                ((TextView) mChartsContainer.getChildAt(0).findViewById(R.id.max)).setText(complexData.getXmax() + "");
 
 
                                 if (realTimeDatas.get(0).getTypeCode() != 1) {
@@ -317,7 +321,8 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView1 = (LineChartView) mChartsContainer.getChildAt(1).findViewById(R.id.chart);
                                     lineChartView1.addPoints(lineChartView1.convertY(realTimeDatas, false), simpleItem.getTitle(), simpleItem.getColor(), false);
-
+                                    ((TextView) mChartsContainer.getChildAt(1).findViewById(R.id.min)).setText(complexData.getYmin() + "");
+                                    ((TextView) mChartsContainer.getChildAt(1).findViewById(R.id.max)).setText(complexData.getYmax() + "");
 
                                 }
                                 if (realTimeDatas.get(0).getTypeCode() == 2) {
@@ -325,12 +330,31 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
                                     LineChartView lineChartView2 = (LineChartView) mChartsContainer.getChildAt(2).findViewById(R.id.chart);
                                     lineChartView2.addPoints(lineChartView2.convertZ(realTimeDatas, false), simpleItem.getTitle(), simpleItem.getColor(), false);
+                                    ((TextView) mChartsContainer.getChildAt(2).findViewById(R.id.min)).setText(complexData.getZmin() + "");
+                                    ((TextView) mChartsContainer.getChildAt(2).findViewById(R.id.max)).setText(complexData.getZmax() + "");
                                 }
 
                                 if (!paramsGeted) {
                                     paramsGeted = true;
                                     getParamInfo();
                                 }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                super.onError(e);
+
+                                if (!paramsGeted) {
+                                    paramsGeted = true;
+                                    getParamInfo();
+                                }
+
+                                for (int i = 0; i < mChartsContainer.getChildCount(); i++) {
+                                    View v = mChartsContainer.getChildAt(i);
+                                    v.invalidate();
+                                }
+
+
                             }
 
                             @Override
@@ -366,7 +390,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     }
     //获得条件请求数据
     private void getLocation(int groupPosition, int childPosition) {
-        getMessage(getHttpService().getPositions(filterTreeAdapter.mGroups.get(groupPosition).getList().get(childPosition).getId(), MyApplication.getMyApplication().getSharedPreference().getString("gid", "")), new MySubscriber<List<MonitorPosition>>() {
+        getMessage(getHttpService().getPositions(filterTreeAdapter.mGroups.get(groupPosition).getList().get(childPosition).getId(), MyApplication.getMyApplication().getSharedPreference().getString("stationId", "")), new MySubscriber<List<MonitorPosition>>() {
             @Override
             protected void onMyNext(List<MonitorPosition> monitorPositions) {
                 mListLeft.clear();
@@ -437,8 +461,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                  if (mChartsContainer.getChildAt(0) != null) {
                      View view = mChartsContainer.getChildAt(0);
                      ((TextView) view.findViewById(R.id.position)).setText(paramInfo.getCode());
-                     ((TextView) view.findViewById(R.id.min)).setText(paramInfo.getXmin() + "");
-                     ((TextView) view.findViewById(R.id.max)).setText(paramInfo.getXmax() + "");
+
                      ((TextView) view.findViewById(R.id.threshold1)).setText(paramInfo.getxOneThreshold());
                      ((TextView) view.findViewById(R.id.threshold2)).setText(paramInfo.getxTwoThreshold());
                      ((TextView) view.findViewById(R.id.threshold3)).setText(paramInfo.getxThreeThreshold());
@@ -448,8 +471,8 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 if (mChartsContainer.getChildAt(1) != null) {
                     View view = mChartsContainer.getChildAt(1);
                     ((TextView) view.findViewById(R.id.position)).setText(paramInfo.getCode());
-                    ((TextView) view.findViewById(R.id.min)).setText(paramInfo.getYmin() + "");
-                    ((TextView) view.findViewById(R.id.max)).setText(paramInfo.getYmax() + "");
+//                    ((TextView) view.findViewById(R.id.min)).setText(paramInfo.getYmin() + "");
+//                    ((TextView) view.findViewById(R.id.max)).setText(paramInfo.getYmax() + "");
                     ((TextView) view.findViewById(R.id.threshold1)).setText(paramInfo.getyOneThreshold());
                     ((TextView) view.findViewById(R.id.threshold2)).setText(paramInfo.getyTwoThreshold());
                     ((TextView) view.findViewById(R.id.threshold3)).setText(paramInfo.getyThreeThreshold());
@@ -459,8 +482,8 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
                 if (mChartsContainer.getChildAt(2) != null) {
                     View view = mChartsContainer.getChildAt(2);
                     ((TextView) view.findViewById(R.id.position)).setText(paramInfo.getCode());
-                    ((TextView) view.findViewById(R.id.min)).setText(paramInfo.getZmin() + "");
-                    ((TextView) view.findViewById(R.id.max)).setText(paramInfo.getZmax() + "");
+//                    ((TextView) view.findViewById(R.id.min)).setText(paramInfo.getZmin() + "");
+//                    ((TextView) view.findViewById(R.id.max)).setText(paramInfo.getZmax() + "");
                     ((TextView) view.findViewById(R.id.threshold1)).setText(paramInfo.getzOneThreshold());
                     ((TextView) view.findViewById(R.id.threshold2)).setText(paramInfo.getzTwoThreshold());
                     ((TextView) view.findViewById(R.id.threshold3)).setText(paramInfo.getzThreeThreshold());

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.sxhxjy.defensemonitor.R;
 import com.sxhxjy.defensemonitor.base.BaseFragment;
 import com.sxhxjy.defensemonitor.base.MySubscriber;
+import com.sxhxjy.defensemonitor.entity.ComplexData;
 import com.sxhxjy.defensemonitor.entity.RealTimeData;
 import com.sxhxjy.defensemonitor.entity.SimpleItem;
 import com.sxhxjy.defensemonitor.view.LineChartView;
@@ -147,9 +148,10 @@ public class DataAnalysisFragment extends BaseFragment {
                         }
                         String str="";
                         for (final SimpleItem item : positionItems) {
-                            getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis()), 3), new MySubscriber<List<RealTimeData>>() {
+                            getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis()), 3), new MySubscriber<ComplexData>() {
                                 @Override
-                                protected void onMyNext(List<RealTimeData> realTimeDatas) {
+                                protected void onMyNext(ComplexData complexData) {
+                                    List<RealTimeData> realTimeDatas = complexData.getContent();
                                     addToChart(realTimeDatas, item, false);
                                 }
 
@@ -195,9 +197,10 @@ public class DataAnalysisFragment extends BaseFragment {
 
                         for (final String s : times) {
                             String[] strings = s.split("  ----  ");
-                            getMessage(getHttpService().getRealTimeData(positionItems.get(0).getCode(), sdf.parse(strings[0], new ParsePosition(0)).getTime(), sdf.parse(strings[1], new ParsePosition(0)).getTime(), 3), new MySubscriber<List<RealTimeData>>() {
+                            getMessage(getHttpService().getRealTimeData(positionItems.get(0).getCode(), sdf.parse(strings[0], new ParsePosition(0)).getTime(), sdf.parse(strings[1], new ParsePosition(0)).getTime(), 3), new MySubscriber<ComplexData>() {
                                 @Override
-                                protected void onMyNext(List<RealTimeData> realTimeDatas) {
+                                protected void onMyNext(ComplexData complexData) {
+                                    List<RealTimeData> realTimeDatas = complexData.getContent();
 
                                     if (mChartsContainer.getChildAt(0) == null)
                                         getActivity().getLayoutInflater().inflate(R.layout.chart_layout, mChartsContainer);
@@ -278,9 +281,11 @@ public class DataAnalysisFragment extends BaseFragment {
                         ((LineChartView) mChartsContainer.getChildAt(j).findViewById(R.id.chart)).getLinesRight().clear();
                     }
                     for (final SimpleItem item : positionItems) {
-                        getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis()), 3), new MySubscriber<List<RealTimeData>>() {
+                        getMessage(getHttpService().getRealTimeData(item.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis()), 3), new MySubscriber<ComplexData>() {
                             @Override
-                            protected void onMyNext(List<RealTimeData> realTimeDatas) {
+                            protected void onMyNext(ComplexData complexData) {
+                                List<RealTimeData> realTimeDatas = complexData.getContent();
+
                                 addToChart(realTimeDatas, item, false);
                             }
 
@@ -295,9 +300,11 @@ public class DataAnalysisFragment extends BaseFragment {
                         });
                     }
                     for (final SimpleItem simpleItem : positionItemsCorrelation) {
-                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis()), 3), new MySubscriber<List<RealTimeData>>() {
+                        getMessage(getHttpService().getRealTimeData(simpleItem.getCode(), data.getLongExtra("start", 0), data.getLongExtra("end", System.currentTimeMillis()), 3), new MySubscriber<ComplexData>() {
                             @Override
-                            protected void onMyNext(List<RealTimeData> realTimeDatas) {
+                            protected void onMyNext(ComplexData complexData) {
+                                List<RealTimeData> realTimeDatas = complexData.getContent();
+
                                 addToChart(realTimeDatas, simpleItem, true);
                             }
 
