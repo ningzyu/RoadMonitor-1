@@ -49,6 +49,12 @@ public interface HttpService {
 
 //    @FormUrlEncoded
 //    @POST("stations/findPointByStationId")
+    //设备状态列表
+//    @GET("weixin/query")
+//    Call<Entity_8> getGong1(@Query("key") String sort);//请求网络需要的参数（id，第几页，多少条数据）
+
+
+
 @GET("stations/findPointByStationId")
     Observable<HttpResponse<List<Monitor>>> getMonitors(@Query("stationId") String stationId);
 

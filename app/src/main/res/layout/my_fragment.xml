@@ -6,11 +6,17 @@
     <include layout="@layout/toolbar_layout"/>
     <com.sxhxjy.defensemonitor.view.MyLinearLayout
         android:layout_width="match_parent"
+        app:titleOfMyLinearLayout="查看当前设备状态"
+        android:onClick="look_state"
+        app:expandedOfMyLinearLayout="true"
+        android:layout_height="wrap_content">
+    </com.sxhxjy.defensemonitor.view.MyLinearLayout>
+    <com.sxhxjy.defensemonitor.view.MyLinearLayout
+        android:layout_width="match_parent"
         app:titleOfMyLinearLayout="Change IP"
         android:onClick="changeIp"
         app:expandedOfMyLinearLayout="true"
         android:layout_height="wrap_content">
-
     </com.sxhxjy.defensemonitor.view.MyLinearLayout>
     <com.sxhxjy.defensemonitor.view.MyLinearLayout
         android:layout_width="match_parent"

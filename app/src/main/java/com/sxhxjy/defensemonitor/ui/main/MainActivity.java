@@ -280,7 +280,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     public void changePassword(View view) {
         ActivityUtil.startActivityForResult(this, RegisterActivity.class);
     }
-
+    public void look_state(View view) {
+        ActivityUtil.startActivityForResult(this, LookStateActivity.class);
+    }
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         try {

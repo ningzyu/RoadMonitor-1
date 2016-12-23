@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sxhxjy.defensemonitor">
 
@@ -19,39 +20,43 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
+        android:name=".base.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name="com.sxhxjy.defensemonitor.base.MyApplication"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="TencentMapSDK"
-            android:value="BPUBZ-HB3RQ-5SB5M-GLB4U-2A4QF-E7FT7"/>
-        <activity android:name="com.sxhxjy.defensemonitor.ui.main.FlashActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
+            android:value="BPUBZ-HB3RQ-5SB5M-GLB4U-2A4QF-E7FT7" />
+
+        <activity
+            android:name=".ui.main.FlashActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.sxhxjy.defensemonitor.ui.main.MainActivity" android:launchMode="singleTask"/>
-        <activity android:name="com.sxhxjy.defensemonitor.ui.main.LoginActivity"/>
-        <activity android:name="com.sxhxjy.defensemonitor.ui.main.StationListActivity"/>
-        <activity android:name="com.sxhxjy.defensemonitor.ui.main.RealTimeDataListActivity"/>
-        <activity android:name="com.sxhxjy.defensemonitor.ui.main.AddDataContrastActivity"/>
-        <activity android:name="com.sxhxjy.defensemonitor.ui.main.AddDataCorrelationActivity"/>
-        <activity android:name="com.sxhxjy.defensemonitor.ui.main.AlertDetailActivity"/>
-        <activity android:name="com.sxhxjy.defensemonitor.ui.main.RegisterActivity"/>
-        <activity android:name="com.sxhxjy.defensemonitor.ui.main.ChartFullscreenActivity"
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:launchMode="singleTask" />
+        <activity android:name=".ui.main.LoginActivity" />
+        <activity android:name=".ui.main.StationListActivity" />
+        <activity android:name=".ui.main.RealTimeDataListActivity" />
+        <activity android:name=".ui.main.AddDataContrastActivity" />
+        <activity android:name=".ui.main.AddDataCorrelationActivity" />
+        <activity android:name=".ui.main.AlertDetailActivity" />
+        <activity android:name=".ui.main.RegisterActivity" />
+        <activity
+            android:name=".ui.main.ChartFullscreenActivity"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
 
+        <service android:name=".base.SocketService" />
 
-        </activity>
-
-
-        <service android:name="com.sxhxjy.defensemonitor.base.SocketService" />
-
+        <activity android:name=".ui.main.LookStateActivity"></activity>
     </application>
 
 </manifest>

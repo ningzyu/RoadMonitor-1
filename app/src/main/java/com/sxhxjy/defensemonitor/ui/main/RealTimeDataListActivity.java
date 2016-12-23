@@ -50,7 +50,7 @@ public class RealTimeDataListActivity extends BaseActivity {
 
         @Override
         protected void init() {
-
+            mPullRefreshLoadLayout.enableRefresh(false);
         }
 
         @Override

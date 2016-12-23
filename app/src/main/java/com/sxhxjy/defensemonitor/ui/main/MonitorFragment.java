@@ -253,7 +253,7 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
     }
 
     private void getChartData() {
-
+        isFirstProgressDialog=true;
         if (mTimer != null)
             mTimer.cancel();
 
@@ -264,10 +264,10 @@ public class MonitorFragment extends BaseFragment implements View.OnClickListene
         if (mChartsContainer.getChildAt(1) != null)
             mChartsContainer.removeView(mChartsContainer.getChildAt(1));
 
-        if (mChartsContainer.getChildAt(2) != null)
-            mChartsContainer.removeView(mChartsContainer.getChildAt(2));
+        if (mChartsContainer.getChildAt(1) != null)
+            mChartsContainer.removeView(mChartsContainer.getChildAt(1));
 
-        mTimer = new CountDownTimer(999999999, 15000) {
+        mTimer = new CountDownTimer(999999999, 60000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mRealTimes.clear();

@@ -144,7 +144,7 @@ public abstract class BaseListFragment<I> extends BaseFragment implements SwipeR
         mRecyclerView.setAdapter(mAdapter);
 
         if (getObservable() != null) {
-            getMessage();
+//            getMessage();
         } else {
             if (FAKE) {
                 if (MyConstants.IS_DEBUG)
